@@ -24,7 +24,12 @@ Go to procurement (the truck icon) follow instructions there
     - Not allowed: eBay, Temu, AliExpress.
  
 # Kinect SDK for driver
+## Windows
 - [camera](aka.ms/kinectdocs)
+- [viewer](https://github.com/microsoft/Azure-Kinect-Sensor-SDK/blob/develop/docs/usage.md) - first one
+- [body tracking aspect](https://learn.microsoft.com/en-us/previous-versions/azure/kinect-dk/body-sdk-setup) - first one
 
-
+## Mac 
+- [go to linux](https://learn.microsoft.com/en-us/previous-versions/azure/kinect-dk/sensor-sdk-download)
+- [body tracking](https://learn.microsoft.com/en-us/previous-versions/azure/kinect-dk/body-sdk-download)
 
