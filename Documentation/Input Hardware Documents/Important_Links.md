@@ -22,6 +22,9 @@ Go to procurement (the truck icon) follow instructions there
 - Materials and hardware suppliers
     - Amazon: Only allowed if the item isn't available from preferred suppliers, and only via Amazon Business. No electronic items or chemicals.
     - Not allowed: eBay, Temu, AliExpress.
+ 
+# Kinect SDK for driver
+- [here](https://www.microsoft.com/en-gb/download/details.aspx?id=44561)
 
 
 
