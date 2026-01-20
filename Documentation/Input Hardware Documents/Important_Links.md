@@ -4,7 +4,7 @@
 Go to procurement (the truck icon) follow instructions there
 
 ## Loan links
-[Loaning : ](https://forms.office.com/Pages/ResponsePage.aspx?id=MH_ksn3NTkql2rGM8aQVG2oA_GI10cVFqmOJ8YPjGLRUN0daMFdISUpVNUJXTkVEQTBXQzZXWEJKTi4u&origin=QRCode)
+[Loaning](https://forms.office.com/Pages/ResponsePage.aspx?id=MH_ksn3NTkql2rGM8aQVG2oA_GI10cVFqmOJ8YPjGLRUN0daMFdISUpVNUJXTkVEQTBXQzZXWEJKTi4u&origin=QRCode)
 
 ## Important Contacts
 - 	fse-tech-hub@bristol.ac.uk
@@ -24,7 +24,7 @@ Go to procurement (the truck icon) follow instructions there
     - Not allowed: eBay, Temu, AliExpress.
  
 # Kinect SDK for driver
-- [here](https://www.microsoft.com/en-gb/download/details.aspx?id=44561)
+- [camera](aka.ms/kinectdocs)
 
 
 
