@@ -33,3 +33,5 @@ Go to procurement (the truck icon) follow instructions there
 - [go to linux](https://learn.microsoft.com/en-us/previous-versions/azure/kinect-dk/sensor-sdk-download)
 - [body tracking](https://learn.microsoft.com/en-us/previous-versions/azure/kinect-dk/body-sdk-download)
 
+## Zigfu Plugin for Kinect integration
+- [soemone help me research this please](https://github.com/zigfu/ZDKForUnity3D)
