@@ -11,15 +11,17 @@ Go to procurement (the truck icon) follow instructions there
 -   tq20074@bristol.ac.uk
 
 ## Other Information
-Preferred suppliers
-Electronics: OneCall (Farnell), Rapid Electronics, RS Components
-IT cables and accessories: Softcat - only University staff can browse this store. Ask Technical Services for help with this.
-Stationery and workplace supplies: Lyreco
-Other suppliers
-For other suppliers, check the lists below. If you can't see what you're looking for, contact Technical Services.
-Materials and hardware suppliers
-Amazon: Only allowed if the item isn't available from preferred suppliers, and only via Amazon Business. No electronic items or chemicals.
-Not allowed: eBay, Temu, AliExpress.
+
+### Preferred suppliers
+- Electronics: OneCall (Farnell), Rapid Electronics, RS Components
+- IT cables and accessories: Softcat - only University staff can browse this store. Ask Technical Services for help with this.
+- Stationery and workplace supplies: Lyreco
+
+### Other suppliers
+- For other suppliers, check the lists below. If you can't see what you're looking for, contact Technical Services.
+- Materials and hardware suppliers
+    - Amazon: Only allowed if the item isn't available from preferred suppliers, and only via Amazon Business. No electronic items or chemicals.
+    - Not allowed: eBay, Temu, AliExpress.
 
 
 
