@@ -1,0 +1,37 @@
+# Important Links
+## Forms for procurement
+[Procurement Link : ](https://www.ole.bris.ac.uk/ultra/organizations/_238502_1/cl/outline)
+Go to procurement (the truck icon) follow instructions there
+
+## Loan links
+[Loaning](https://forms.office.com/Pages/ResponsePage.aspx?id=MH_ksn3NTkql2rGM8aQVG2oA_GI10cVFqmOJ8YPjGLRUN0daMFdISUpVNUJXTkVEQTBXQzZXWEJKTi4u&origin=QRCode)
+
+## Important Contacts
+- 	fse-tech-hub@bristol.ac.uk
+-   tq20074@bristol.ac.uk
+
+## Other Information
+
+### Preferred suppliers
+- Electronics: OneCall (Farnell), Rapid Electronics, RS Components
+- IT cables and accessories: Softcat - only University staff can browse this store. Ask Technical Services for help with this.
+- Stationery and workplace supplies: Lyreco
+
+### Other suppliers
+- For other suppliers, check the lists below. If you can't see what you're looking for, contact Technical Services.
+- Materials and hardware suppliers
+    - Amazon: Only allowed if the item isn't available from preferred suppliers, and only via Amazon Business. No electronic items or chemicals.
+    - Not allowed: eBay, Temu, AliExpress.
+ 
+# Kinect SDK for driver
+## Windows
+- [camera](aka.ms/kinectdocs)
+- [viewer](https://github.com/microsoft/Azure-Kinect-Sensor-SDK/blob/develop/docs/usage.md) - first one
+- [body tracking aspect](https://learn.microsoft.com/en-us/previous-versions/azure/kinect-dk/body-sdk-setup) - first one
+
+## Mac 
+- [go to linux](https://learn.microsoft.com/en-us/previous-versions/azure/kinect-dk/sensor-sdk-download)
+- [body tracking](https://learn.microsoft.com/en-us/previous-versions/azure/kinect-dk/body-sdk-download)
+
+## Zigfu Plugin for Kinect integration
+- [soemone help me research this please](https://github.com/zigfu/ZDKForUnity3D)
