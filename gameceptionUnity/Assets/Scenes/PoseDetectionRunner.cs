@@ -1,94 +1,167 @@
+using System;
 using System.Collections;
-using UnityEngine;
-using UnityEngine.UI;
-using Mediapipe.Tasks.Vision.PoseLandmarker;
-using System.Diagnostics;
-using Mediapipe.Unity.CoordinateSystem;
-using Stopwatch  = System.Diagnostics.Stopwatch;
-using NUnit.Framework.Interfaces;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Mediapipe;
+using Mediapipe.Tasks.Vision.PoseLandmarker;
+using Mediapipe.Unity;
+using Mediapipe.Unity.Sample;
+using Unity.Loading;
+using UnityEditor.Build;
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.UI;
 
-public class PoseDetectionRunner : MonoBehaviour
+// NOTE: this script currently holds a lot of switch statements depending on the type of imagesource and processing selected
+// possibly can strip this back for performance if needed
+
+public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
 {
-    [SerializeField] private RawImage screen;
-    [SerializeField] private int width;
-    [SerializeField] private int height;
-    [SerializeField] private int fps;
-    [SerializeField] private TextAsset modelAsset;
+    [SerializeField] private PoseLandmarkerResultAnnotationController _poseLandmarkerResultAnnotationController;
+    private Mediapipe.Unity.Experimental.TextureFramePool _textureFramePool;
 
-    private WebCamTexture webCamTexture;
+    // instance of the config class
+    public readonly PoseDetectionConfig config = new PoseDetectionConfig();
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private IEnumerator Start()
+    public override void Stop()
     {
-        if(WebCamTexture.devices.Length == 0)
+        base.Stop();
+        _textureFramePool?.Dispose();
+        _textureFramePool = null;
+    }
+
+    protected override IEnumerator Run()
+    {
+        //wait on loading the model
+        yield return AssetLoader.PrepareAssetAsync(config.ModelPath);
+
+        //load the options from the config and create a new task API instance
+        var options = config.GetPoseLandmarkerOptions(config.RunningMode == Mediapipe.Tasks.Vision.Core.RunningMode.LIVE_STREAM ? OnPoseLandmarkDetectionOutput : null);
+        taskApi = PoseLandmarker.CreateFromOptions(options, GpuManager.GpuResources);
+
+        //TODO move this from the samples folder
+        //e.g., do our own implementation of accessing the image source and waiting for a response
+        var imageSource = ImageSourceProvider.ImageSource;
+        yield return imageSource.Play();
+        if (!imageSource.isPrepared)
         {
-            throw new System.Exception("Web camera devices are not found");
+            Mediapipe.Logger.LogError(TAG, "Failed to start ImageSource, exiting...");
+            yield break;
         }
-        var webCamDevice = WebCamTexture.devices[0];
-        webCamTexture = new WebCamTexture(webCamDevice.name, width, height, fps);
-        webCamTexture.Play();
-        // NOTE: On macOS, the contents of webCamTexture may not be readable immediately, so wait until it is readable
-        yield return new WaitUntil(() => webCamTexture.width >16);
 
-        screen.rectTransform.sizeDelta = new Vector2(width, height);
-        screen.texture = webCamTexture;
+        _textureFramePool = new Mediapipe.Unity.Experimental.TextureFramePool(imageSource.textureWidth, imageSource.textureHeight, TextureFormat.RGBA32, 10);
 
-        //create the task
-        var options = new PoseLandmarkerOptions(
-            baseOptions: new Mediapipe.Tasks.Core.BaseOptions(
-                Mediapipe.Tasks.Core.BaseOptions.Delegate.CPU,
-                modelAssetBuffer: modelAsset.bytes
-            ),
-            runningMode: Mediapipe.Tasks.Vision.Core.RunningMode.VIDEO
-        );
+        //this is helf in the visiontaskapirunner
+        screen.Initialize(imageSource);
 
-        using var poseLandmarker = PoseLandmarker.CreateFromOptions(options);
+        SetupAnnotationController(_poseLandmarkerResultAnnotationController, imageSource);
+        _poseLandmarkerResultAnnotationController.InitScreen(imageSource.textureWidth, imageSource.textureHeight);
 
-        var stopwatch = new Stopwatch();
-        stopwatch.Start();
-        
-        var textureFrame = new Mediapipe.Unity.Experimental.TextureFrame(webCamTexture.width, webCamTexture.height, TextureFormat.RGBA32);
+        var transformationOptions = imageSource.GetTransformationOptions();
+        var flipHorizontally = transformationOptions.flipHorizontally;
+        var flipVertically = transformationOptions.flipVertically;
+        var imageProcessingOptions = new Mediapipe.Tasks.Vision.Core.ImageProcessingOptions(rotationDegrees: 0);
+
+        AsyncGPUReadbackRequest req = default;
+        var waitUntilReqDone = new WaitUntil(() => req.done);
         var waitForEndOfFrame = new WaitForEndOfFrame();
+        var result = PoseLandmarkerResult.Alloc(options.numPoses, options.outputSegmentationMasks);
 
-        var screenRect = screen.rectTransform.rect;
-
-        // try to get sphere on nose
-        var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        sphere.transform.SetParent(screen.transform);
-        sphere.transform.localPosition = new Vector3(0,0,0);
-        sphere.transform.localScale = new Vector3(10f, 10f, 10f);
-        sphere.SetActive(false);
+        // checking if we can use the GPU
+        var canUseGpuImage = SystemInfo.graphicsDeviceType == GraphicsDeviceType.OpenGLES3 && GpuManager.GpuResources != null;
+        using var glContext = canUseGpuImage ? GpuManager.GetGlContext() : null;
 
         while (true)
         {
-            textureFrame.ReadTextureOnCPU(webCamTexture, flipHorizontally: false, flipVertically: true);
-            using var image = textureFrame.BuildCPUImage();
-
-            var result = poseLandmarker.DetectForVideo(image, stopwatch.ElapsedMilliseconds);
-            if(result.poseLandmarks?.Count > 0)
+            if (isPaused)
             {
-                var landmarks = result.poseLandmarks[0].landmarks;
-                var nose = landmarks[0];
-                var position = screenRect.GetPoint(in nose);
-                position.z = 0;
-                sphere.transform.localPosition = position;
-                sphere.SetActive(true);
-            }
-            else
-            {
-                sphere.SetActive(false);
+                yield return new WaitWhile(() => isPaused);
             }
 
-            yield return waitForEndOfFrame;
+            if(!_textureFramePool.TryGetTextureFrame(out var textureFrame))
+            {
+                yield return new WaitForEndOfFrame();
+                continue;
+            }
+
+            //Building the output image
+            Mediapipe.Image image;
+            switch (config.ImageReadMode)
+            {
+                case ImageReadMode.GPU:
+                    if (!canUseGpuImage)
+                    {
+                        throw new System.Exception("ImageReadMode.GPU is not supported");
+                    }
+                    textureFrame.ReadTextureOnGPU(imageSource.GetCurrentTexture(), flipHorizontally, flipVertically);
+                    image = textureFrame.BuildGPUImage(glContext);
+                    yield return waitForEndOfFrame;
+                    break;
+                case ImageReadMode.CPU:
+                    yield return waitForEndOfFrame;
+                    textureFrame.ReadTextureOnCPU(imageSource.GetCurrentTexture(), flipHorizontally, flipVertically);
+                    image = textureFrame.BuildCPUImage();
+                    textureFrame.Release();
+                    break;
+                case ImageReadMode.CPUAsync:
+                default:
+                    req = textureFrame.ReadTextureAsync(imageSource.GetCurrentTexture(), flipHorizontally, flipVertically);
+                    yield return waitUntilReqDone;
+
+                    if (req.hasError)
+                    {
+                        Debug.LogWarning($"Failed to read texture from the image source");
+                        continue;
+                    }
+                    image = textureFrame.BuildCPUImage();
+                    textureFrame.Release();
+                    break;
+            }
+
+            switch (taskApi.runningMode)
+            {
+                case Mediapipe.Tasks.Vision.Core.RunningMode.IMAGE:
+                    if(taskApi.TryDetect(image, imageProcessingOptions, ref result))
+                    {
+                        _poseLandmarkerResultAnnotationController.DrawNow(result);
+                    }
+                    else
+                    {
+                        _poseLandmarkerResultAnnotationController.DrawNow(default);
+                    }
+                    DisposeAllMasks(result);
+                    break;
+                case Mediapipe.Tasks.Vision.Core.RunningMode.VIDEO:
+                    if(taskApi.TryDetectForVideo(image, GetCurrentTimestampMillisec(), imageProcessingOptions, ref result))
+                    {
+                        _poseLandmarkerResultAnnotationController.DrawNow(result);
+                    }
+                    else
+                    {
+                        _poseLandmarkerResultAnnotationController.DrawNow(result);
+                    }
+                    DisposeAllMasks(result);
+                    break;
+                case Mediapipe.Tasks.Vision.Core.RunningMode.LIVE_STREAM:
+                    taskApi.DetectAsync(image, GetCurrentTimestampMillisec(), imageProcessingOptions);
+                    break;
+            }
         }
     }
 
-    private void OnDestroy()
+    private void OnPoseLandmarkDetectionOutput(PoseLandmarkerResult result, Mediapipe.Image image, long timestamp)
     {
-        if (webCamTexture != null)
+        _poseLandmarkerResultAnnotationController.DrawLater(result);
+        DisposeAllMasks(result);
+    }
+    private void DisposeAllMasks(PoseLandmarkerResult result)
+    {
+        if(result.segmentationMasks != null)
         {
-            webCamTexture.Stop();
+            foreach (var mask in result.segmentationMasks)
+            {
+                mask.Dispose();
+            }
         }
     }
 }
