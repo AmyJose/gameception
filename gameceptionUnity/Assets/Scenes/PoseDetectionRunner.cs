@@ -21,6 +21,9 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
     [SerializeField] private PoseLandmarkerResultAnnotationController _poseLandmarkerResultAnnotationController;
     private Mediapipe.Unity.Experimental.TextureFramePool _textureFramePool;
 
+    // heads up display
+    [SerializeField] private PoseLandmarkHUD _hud;
+
     // instance of the config class
     public readonly PoseDetectionConfig config = new PoseDetectionConfig();
 
@@ -153,7 +156,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
 
     private void OnPoseLandmarkDetectionOutput(PoseLandmarkerResult result, Mediapipe.Image image, long timestamp)
     {
-        LogPoseLandmarks(result);
+        _hud?.EnqueueResult(result);
         _poseLandmarkerResultAnnotationController.DrawLater(result);
         DisposeAllMasks(result);
     }
