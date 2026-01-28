@@ -8,6 +8,7 @@ using Mediapipe.Unity;
 using Mediapipe.Unity.Sample;
 using Unity.Loading;
 using UnityEditor.Build;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -51,10 +52,11 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
 
         _textureFramePool = new Mediapipe.Unity.Experimental.TextureFramePool(imageSource.textureWidth, imageSource.textureHeight, TextureFormat.RGBA32, 10);
 
-        //this is helf in the visiontaskapirunner
+        //this is held in the visiontaskapirunner
         screen.Initialize(imageSource);
 
         SetupAnnotationController(_poseLandmarkerResultAnnotationController, imageSource);
+        
         _poseLandmarkerResultAnnotationController.InitScreen(imageSource.textureWidth, imageSource.textureHeight);
 
         var transformationOptions = imageSource.GetTransformationOptions();
@@ -151,6 +153,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
 
     private void OnPoseLandmarkDetectionOutput(PoseLandmarkerResult result, Mediapipe.Image image, long timestamp)
     {
+        LogPoseLandmarks(result);
         _poseLandmarkerResultAnnotationController.DrawLater(result);
         DisposeAllMasks(result);
     }
@@ -161,6 +164,36 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
             foreach (var mask in result.segmentationMasks)
             {
                 mask.Dispose();
+            }
+        }
+    }
+
+    // logger function for accessing underlying data structure
+    private void LogPoseLandmarks(PoseLandmarkerResult result)
+    {
+        if (result.poseLandmarks == null || result.poseLandmarks.Count == 0)
+        {
+            Debug.Log("No pose landmarks detected");
+            return;
+        }
+
+        for(int poseIndex = 0; poseIndex < result.poseLandmarks.Count; poseIndex++)
+        {
+            var pose = result.poseLandmarks[poseIndex];
+
+            var landmarks = pose.landmarks;
+
+            Debug.Log($"Pose {poseIndex} - Landmark count: {landmarks.Count}");
+
+            for (int i=0; i<landmarks.Count; i++)
+            {
+                var lm = landmarks[i];
+
+                Debug.Log(
+                    $"Pose {poseIndex}, Landmark {i}: " +
+                    $"x={lm.x:F4}, y={lm.y:F4}, z={lm.z:F4}, " +
+                    $"visibility={lm.visibility:F4}, presence={lm.presence:F4}"
+                );
             }
         }
     }
