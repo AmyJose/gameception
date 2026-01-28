@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: aa569ced239fce141b4035a55b747440
+AssetOrigin:
+  serializedVersion: 1
+  productId: 322855
+  packageName: Free retro pixel font - GNF
+  packageVersion: 1.1.1
+  assetPath: Assets/Nytrock/Global Nytrock Font/Demo/DemoBackground.png
+  uploadId: 820242
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -180,10 +187,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 322855
-  packageName: Free retro pixel font - GNF
-  packageVersion: 1.1.1
-  assetPath: Assets/Nytrock/Global Nytrock Font/Demo/DemoBackground.png
-  uploadId: 820242
