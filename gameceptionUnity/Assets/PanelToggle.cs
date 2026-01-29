@@ -1,12 +1,21 @@
 using UnityEngine;
 
-public class PanelToggler : MonoBehaviour
+public class PanelToggle : MonoBehaviour
 {
-    public GameObject panel;
+    public GameObject firstPanel; 
+    public GameObject secondPanel; 
 
-    // This MUST have the word 'public' at the start!
-    public void TogglePanel() 
+    // Moves forward (Planet -> Rain)
+    public void SwitchToRainPanel()
     {
-        panel.SetActive(!panel.activeSelf);
+        firstPanel.SetActive(false);
+        secondPanel.SetActive(true);
+    }
+
+    // Moves backward (Rain -> Planet)
+    public void GoBackToPlanet()
+    {
+        secondPanel.SetActive(false);
+        firstPanel.SetActive(true);
     }
 }
