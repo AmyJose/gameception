@@ -8,8 +8,9 @@ public class PoseLandmarkHUD : MonoBehaviour
     [SerializeField] private TMP_Text text;
     [SerializeField] private int poseIndex = 0;
     //Picking the landmarks to show
-    // Currently 11 LShoulder, 12 RShoulder, 13 LElbow, 14 RElbow, 15 LWrist, 16 RWrist
-    [SerializeField] private int[] landmarkIndices = {11, 12, 13, 14, 15, 16};
+    //Landmarks to display (from landmark diagram in mediapipe)
+    [SerializeField] private readonly int[] landmarkIndices = {
+        0, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28};
 
     private readonly object _lock = new object();
     private string _pendingText;
@@ -62,14 +63,13 @@ public class PoseLandmarkHUD : MonoBehaviour
         var lms = pose.landmarks;
 
         sb.Clear();
-        sb.AppendLine($"Pose {poseIndex}");
-        sb.AppendLine($"Landmarks: {lms.Count}");
+        sb.AppendLine($"Landmarks Detected: {lms.Count}");
 
         foreach(var idx in landmarkIndices)
         {
             if (idx < 0 || idx >= lms.Count) continue;
             var lm = lms[idx];
-            sb.AppendLine($"{idx:00}: x={lm.x:F3} y={lm.y:F3} z={lm.z:F3} v={lm.visibility:F2}");
+            sb.AppendLine($"{idx:00}: x={lm.x:F3} y={lm.y:F3}");
         }
 
         return sb.ToString();
