@@ -9,10 +9,10 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
-    path: Assets/Main_menu.unity
+    path: Assets/Scenes/Main_menu.unity
     guid: 83fb7d2027bb141cc9d88eca27a9a13e
   - enabled: 1
-    path: Assets/Planet_scene .unity
+    path: Assets/Scenes/Planet_scene .unity
     guid: 5dfee0ff5b2cf46e28defb83d0409253
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

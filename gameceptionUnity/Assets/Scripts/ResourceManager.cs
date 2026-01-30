@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 // Hanfles decay logic
 // Key-presses
 public class ResourceManager: MonoBehaviour
@@ -7,28 +8,40 @@ public class ResourceManager: MonoBehaviour
     private readonly List<Planet> planets = new();
     private int idx=0;
     private Planet selected;
+    [SerializeField] private Planet planetPrefab;
     // key press logic
 
     void Awake()
     {   
-        var gameObj = new GameObject($"Planet_{0}");
-        Planet p = gameObj.AddComponent<Planet>();
+        Planet p = Instantiate(planetPrefab);
+        p.name = $"Planet_{planets.Count}";
         planets.Add(p);
-        selected = planets[0];
+        selected = p;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        var kb = Keyboard.current;
+        if (kb == null) return;
+
+        if (kb.tabKey.wasPressedThisFrame)
         {
             idx = (idx + 1) % planets.Count;
             selected = planets[idx];
         }
 
-        if (Input.GetKeyDown(KeyCode.W)) selected.AddWater(1f);
-        if (Input.GetKeyDown(KeyCode.E)) selected.AddEarth(1f);
-        if (Input.GetKeyDown(KeyCode.F)) selected.AddFire(1f);
-        if (Input.GetKeyDown(KeyCode.A)) selected.AddAir(1f);
+        if (kb.tKey.wasPressedThisFrame)
+        {
+            Planet p = Instantiate(planetPrefab);
+            p.name = $"Planet_{planets.Count}";
+            planets.Add(p);
+            selected = p; // optionally auto-select new planet
+        }
+
+        if (kb.wKey.wasPressedThisFrame) selected.AddWater(1f);
+        if (kb.eKey.wasPressedThisFrame) selected.AddEarth(1f);
+        if (kb.fKey.wasPressedThisFrame) selected.AddFire(1f);
+        if (kb.aKey.wasPressedThisFrame) selected.AddAir(1f);
 
         float dt = Time.deltaTime;
         foreach (var p in planets)
