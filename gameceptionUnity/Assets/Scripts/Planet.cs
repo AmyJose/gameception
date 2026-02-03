@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Planet : MonoBehaviour
 {
@@ -14,6 +15,10 @@ public class Planet : MonoBehaviour
     [SerializeField, Tooltip("Current population (read-only)")]
     private int populationDebug;
 
+    public ElementEffect fireEffect;
+    public ElementEffect waterEffect;
+    public ElementEffect airEffect;
+    public ElementEffect earthEffect;
 
     public void AddAir(float amount)
     {
@@ -44,10 +49,18 @@ public class Planet : MonoBehaviour
 
     void Update()
     {
+
         GeneralDecay(Time.deltaTime);
         habitabilityDebug = Habitability;
         populationDebug = inhabitants != null ? inhabitants.Population : 0;
         inhabitants.UpdateAliens(Time.deltaTime, Habitability);
+        var kb = Keyboard.current;
+        if (kb == null) return;
+        if (kb.wKey.wasPressedThisFrame) waterEffect.Activate();
+        if (kb.eKey.wasPressedThisFrame) earthEffect.Activate();
+        if (kb.fKey.wasPressedThisFrame) fireEffect.Activate();
+        if (kb.aKey.wasPressedThisFrame) airEffect.Activate();
+
     }
     public void GeneralDecay(float dt)
     {
