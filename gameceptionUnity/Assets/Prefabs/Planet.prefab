@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6227769605342492571}
   - component: {fileID: 4720410911120748954}
   - component: {fileID: 158052442583759145}
+  - component: {fileID: 7496776116274810388}
   m_Layer: 0
   m_Name: Planet
   m_TagString: Untagged
@@ -109,5 +110,19 @@ MonoBehaviour:
     earth: 0
     fire: 0
     water: 0
-  habitability: 0
-  population: 0
+  inhabitants: {fileID: 0}
+--- !u!114 &7496776116274810388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958751269531010023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0aefffd3d053041ef89663b4f13e6002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlienManager
+  reproductionThreshold: 0.7
+  reproductionRate: 0.2
+  maxPopulation: 100

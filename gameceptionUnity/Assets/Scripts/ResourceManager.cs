@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 // Hanfles decay logic
 // Key-presses
-public class ResourceManager: MonoBehaviour
+public class ResourceManager : MonoBehaviour
 {
     private readonly List<Planet> planets = new();
-    private int idx=0;
+    private int idx = 0;
     private Planet selected;
     [SerializeField] private Planet planetPrefab;
     // key press logic
 
     void Awake()
-    {   
+    {
         Planet p = Instantiate(planetPrefab);
         p.name = $"Planet_{planets.Count}";
         planets.Add(p);
@@ -49,13 +49,13 @@ public class ResourceManager: MonoBehaviour
             // optional decay (example)
             p.elements.water = Mathf.Max(0f, p.elements.water - 0.1f * dt);
             p.elements.earth = Mathf.Max(0f, p.elements.earth - 0.1f * dt);
-            p.elements.fire  = Mathf.Max(0f, p.elements.fire  - 0.1f * dt);
-            p.elements.air   = Mathf.Max(0f, p.elements.air   - 0.1f * dt);
+            p.elements.fire = Mathf.Max(0f, p.elements.fire - 0.1f * dt);
+            p.elements.air = Mathf.Max(0f, p.elements.air - 0.1f * dt);
 
             // compute habitability
-            p.habitability = HabitabilityLogic.Compute(p.elements);
-            p.population += (p.habitability - 0.5f) * 10f * dt;
-            p.population = Mathf.Max(0f, p.population);
+            //p.habitability = HabitabilityLogic.Compute(p.elements);
+            //p.population += (p.habitability - 0.5f) * 10f * dt;
+            //p.population = Mathf.Max(0f, p.population);
         }
 
     }
