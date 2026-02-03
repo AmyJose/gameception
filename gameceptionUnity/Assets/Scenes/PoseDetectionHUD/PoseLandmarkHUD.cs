@@ -9,6 +9,7 @@ public class PoseLandmarkHUD : MonoBehaviour
 {
     [SerializeField] private TMP_Text text;
     [SerializeField] private int poseIndex = 0;
+    [SerializeField] private int[] jointLandmarks = {12, 14, 16};
     //Picking the landmarks to show
     //Landmarks to display (from landmark diagram in mediapipe)
     [SerializeField] private readonly int[] landmarkIndices = {
@@ -66,7 +67,8 @@ public class PoseLandmarkHUD : MonoBehaviour
 
         sb.Clear();
         sb.AppendLine($"Landmarks Detected: {lms.Count}");
-        sb.AppendLine($"Angle between 12 14 16: {getJointAngle(lms[12], lms[14], lms[16]):F2}");
+        sb.AppendLine($"Angle between 12 14 16: " +
+            $"{getJointAngle(lms[jointLandmarks[0]], lms[jointLandmarks[1]], lms[jointLandmarks[2]]):F2}");
 
         foreach(var idx in landmarkIndices)
         {
