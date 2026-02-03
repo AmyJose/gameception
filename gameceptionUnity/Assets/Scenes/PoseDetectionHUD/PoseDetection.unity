@@ -336,7 +336,7 @@ GameObject:
   - component: {fileID: 396028761}
   - component: {fileID: 396028760}
   m_Layer: 5
-  m_Name: LandmarkHUD
+  m_Name: LandmarkText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -862,7 +862,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PoseLandmarkHUD
   text: {fileID: 396028760}
-  poseIndex: 0
+  joint: LArm
 --- !u!224 &1242658065 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8571076844135231236, guid: 140d1d2c406167c50819d89f86d9092e, type: 3}

@@ -1,15 +1,27 @@
 using Mediapipe.Tasks.Components.Containers;
 using Mediapipe.Tasks.Vision.PoseLandmarker;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
 
 public class PoseLandmarkHUD : MonoBehaviour
 {
+    /// <summary>
+    /// Define the joint mapping used for angles
+    /// </summary>
+    public static readonly Dictionary<string, int[]> jointMap = new Dictionary<string, int[]>()
+    {
+        {"LArm", new[]{12, 14, 16}}, //left shoulder, left elbow, left wrist
+        {"RArm", new[]{11, 13, 15}}, //right shoulder, right elbow, right wrist
+        {"LLeg", new[]{24, 26, 28}}, //left hip, left knee, left ankle
+        {"RLeg", new[]{23, 25, 27}}  //right hip, right knee, right ankle
+    };
+
     [SerializeField] private TMP_Text text;
-    [SerializeField] private int poseIndex = 0;
-    [SerializeField] private int[] jointLandmarks = {12, 14, 16};
+    [SerializeField] private string joint = "LArm";
+
     //Picking the landmarks to show
     //Landmarks to display (from landmark diagram in mediapipe)
     [SerializeField] private readonly int[] landmarkIndices = {
@@ -57,18 +69,24 @@ public class PoseLandmarkHUD : MonoBehaviour
 
     private string BuildText(PoseLandmarkerResult result)
     {
-        if (result.poseLandmarks == null || result.poseLandmarks.Count <= poseIndex)
+        if (result.poseLandmarks == null || result.poseLandmarks.Count <= 0)
         {
             return "No pose";
         }
 
-        var pose = result.poseLandmarks[poseIndex];
+        var pose = result.poseLandmarks[0];
         var lms = pose.landmarks;
 
         sb.Clear();
         sb.AppendLine($"Landmarks Detected: {lms.Count}");
-        sb.AppendLine($"Angle between 12 14 16: " +
-            $"{getJointAngle(lms[jointLandmarks[0]], lms[jointLandmarks[1]], lms[jointLandmarks[2]]):F2}");
+
+        int[] jointIndices;
+        if (jointMap.TryGetValue(joint, out jointIndices))
+        {
+            sb.AppendLine($"{joint} Angle: " +
+            $"{getJointAngle(lms[jointIndices[0]], lms[jointIndices[1]], lms[jointIndices[2]]):F2}");
+        }
+        
 
         foreach(var idx in landmarkIndices)
         {

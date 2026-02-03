@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Mediapipe.Tasks.Vision.PoseLandmarker;
@@ -25,7 +26,7 @@ public class PoseDetectionConfig
     #endif
 
     public ImageReadMode ImageReadMode {get;set;} = ImageReadMode.CPUAsync;
-    public ModelType Model{get;set;} = ModelType.BlazePoseFull;
+    public ModelType Model{get;set;} = ModelType.BlazePoseLite;
     public Mediapipe.Tasks.Vision.Core.RunningMode RunningMode{get; set;} = Mediapipe.Tasks.Vision.Core.RunningMode.LIVE_STREAM;
 
     public int NumPoses{get;set;} = 1;
@@ -62,5 +63,4 @@ public class PoseDetectionConfig
             resultCallback : resultCallback
         );
     }
-
 }
