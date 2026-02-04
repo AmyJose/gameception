@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
+using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -36,8 +37,8 @@ public class PoseLandmarkHUD : MonoBehaviour
     [SerializeField] private TMP_Text text;
 
     [Header("Detection thresholds")]
-    [SerializeField] private double angleToleranceDeg = 10.0; //around 180
-    [SerializeField] private float yTolerance = 0.07f; // wrist ~= shoulder (in normalised coords)
+    [SerializeField] private double angleToleranceDeg = 12.0; //around 180
+    [SerializeField] private float yTolerance = 0.06f; // wrist ~= shoulder (in normalised coords)
 
     private readonly object _lock = new object();
     private string _pendingText;
@@ -108,9 +109,18 @@ public class PoseLandmarkHUD : MonoBehaviour
         var lArmYDiff = Math.Abs(landmarks[Joints.LeftWrist].y - landmarks[Joints.LeftShoulder].y);
         var rArmYDiff = Math.Abs(landmarks[Joints.RightWrist].y - landmarks[Joints.RightShoulder].y);
 
-        if (isTPose(lArmAngle, rArmAngle, lArmYDiff, rArmYDiff))
+        sb.AppendLine($"LArm Y Difference: {lArmYDiff:F2}");
+        sb.AppendLine($"RArm Y Difference: {rArmYDiff:F2}");
+
+
+        // get this into a switch statement?
+        if (isEarthPose(lArmAngle, rArmAngle, lArmYDiff, rArmYDiff))
         {
              sb.AppendLine("T Pose detected!");
+        }
+        else if (isWaterPose(lArmAngle, rArmAngle, landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y, landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y))
+        {
+            sb.AppendLine("Water Pose detected");
         }
 
         return sb.ToString();
@@ -136,7 +146,16 @@ public class PoseLandmarkHUD : MonoBehaviour
         return angle;
     }
 
-    private bool isTPose(double leftArmAngle, double rightArmAngle, float leftArmYDiff, float rightArmYDiff)
+    /// <summary>
+    /// Earth Pose = T Pose.
+    /// Tests both elbows are at 180 degree angles, wrists are in the same y as shoulders
+    /// </summary>
+    /// <param name="leftArmAngle"></param>
+    /// <param name="rightArmAngle"></param>
+    /// <param name="leftArmYDiff"></param>
+    /// <param name="rightArmYDiff"></param>
+    /// <returns>True if T pose conditions are met</returns>
+    private bool isEarthPose(double leftArmAngle, double rightArmAngle, float leftArmYDiff, float rightArmYDiff)
     {
         bool armsLevel = leftArmYDiff <= yTolerance && rightArmYDiff <= yTolerance;
 
@@ -145,6 +164,28 @@ public class PoseLandmarkHUD : MonoBehaviour
             isWithin(rightArmAngle, 180.0, angleToleranceDeg);
 
         return armsLevel && armsStraight;
+    }
+
+    /// <summary>
+    /// Water Pose = touching hands above your head.
+    /// Tests elbows are at 130 degrees and wrists are above shoulders
+    /// </summary>
+    /// <param name="leftArmAngle"></param>
+    /// <param name="rightArmAngle"></param>
+    /// <param name="leftWristY"></param>
+    /// <param name="leftShoulderY"></param>
+    /// <param name="rightWristY"></param>
+    /// <param name="rightShoulderY"></param>
+    /// <returns>True if hands above head and arms at 130 angle</returns>
+    private bool isWaterPose(double leftArmAngle, double rightArmAngle, float leftWristY, float leftShoulderY, float rightWristY, float rightShoulderY)
+    {
+        bool armsAboveHead = leftWristY < leftShoulderY && rightWristY < rightShoulderY;
+
+        bool armsAngledInwards = 
+            isWithin(leftArmAngle, 130.0, angleToleranceDeg) && 
+            isWithin(rightArmAngle, 130.0, angleToleranceDeg);
+
+        return armsAngledInwards && armsAboveHead;
     }
 
     private static bool isWithin(double value, double target, double tolerance) => 
