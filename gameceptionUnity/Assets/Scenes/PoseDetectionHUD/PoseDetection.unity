@@ -771,7 +771,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 973.8103, y: -0.000061035156}
+  m_AnchoredPosition: {x: 973.8103, y: 0}
   m_SizeDelta: {x: -1947.621, y: -0.00024414}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &955841541
@@ -862,7 +862,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PoseLandmarkHUD
   text: {fileID: 396028760}
-  joint: LArm
+  angleThreshold: 10
+  yThreshold: 0.05
 --- !u!224 &1242658065 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8571076844135231236, guid: 140d1d2c406167c50819d89f86d9092e, type: 3}

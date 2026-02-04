@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PoseLandmarkHUD : MonoBehaviour
 {
@@ -20,7 +21,9 @@ public class PoseLandmarkHUD : MonoBehaviour
     };
 
     [SerializeField] private TMP_Text text;
-    [SerializeField] private string joint = "LArm";
+
+    [SerializeField] private double angleThreshold = 10;
+    [SerializeField] private float yThreshold = 0.07f;
 
     //Picking the landmarks to show
     //Landmarks to display (from landmark diagram in mediapipe)
@@ -80,19 +83,27 @@ public class PoseLandmarkHUD : MonoBehaviour
         sb.Clear();
         sb.AppendLine($"Landmarks Detected: {lms.Count}");
 
-        int[] jointIndices;
-        if (jointMap.TryGetValue(joint, out jointIndices))
-        {
-            sb.AppendLine($"{joint} Angle: " +
-            $"{getJointAngle(lms[jointIndices[0]], lms[jointIndices[1]], lms[jointIndices[2]]):F2}");
-        }
-        
+        double lArmAngle = getJointAngle(lms[jointMap["LArm"][0]], lms[jointMap["LArm"][1]], lms[jointMap["LArm"][2]]);
+        double rArmAngle = getJointAngle(lms[jointMap["RArm"][0]], lms[jointMap["RArm"][1]], lms[jointMap["RArm"][2]]);
+        double lLegAngle = getJointAngle(lms[jointMap["LLeg"][0]], lms[jointMap["LLeg"][1]], lms[jointMap["LLeg"][2]]);
+        double rLegAngle = getJointAngle(lms[jointMap["RLeg"][0]], lms[jointMap["RLeg"][1]], lms[jointMap["RLeg"][2]]);
 
-        foreach(var idx in landmarkIndices)
+        sb.AppendLine($"LArm Angle: {lArmAngle}");
+        sb.AppendLine($"RArm Angle: {rArmAngle}");
+        sb.AppendLine($"LLeg Angle: {lLegAngle}");
+        sb.AppendLine($"RLeg Angle: {rLegAngle}");
+
+        var lWrist = lms[jointMap["LArm"][2]].y;
+        var lShoulder = lms[jointMap["LArm"][0]].y;
+        var lArmYDiff = Math.Abs(lWrist - lShoulder);
+
+        var rWrist = lms[jointMap["RArm"][2]].y;
+        var rShoulder = lms[jointMap["RArm"][0]].y; 
+        var rArmYDiff = Math.Abs(rWrist - rShoulder);
+
+        if (poseDectectionTPose(lArmAngle, rArmAngle, lArmYDiff, rArmYDiff))
         {
-            if (idx < 0 || idx >= lms.Count) continue;
-            var lm = lms[idx];
-            sb.AppendLine($"{idx:00}: x={lm.x:F3} y={lm.y:F3}");
+             sb.AppendLine("T Pose detected!");
         }
 
         return sb.ToString();
@@ -104,7 +115,7 @@ public class PoseLandmarkHUD : MonoBehaviour
     {
         // computing the angle at midPoint formed by two segments
         double result = 
-            (Math.Atan2(lastPoint.y - midPoint.y, lastPoint.x - midPoint.x) //last to mid vector
+            (Math.Atan2(lastPoint.y - midPoint.y, lastPoint.x - midPoint.x) // last to mid vector
             - Math.Atan2(firstPoint.y - midPoint.y, firstPoint.x - midPoint.x)) // first to mid vector
             * (180.0 / Math.PI); //convert to degrees
 
@@ -117,5 +128,20 @@ public class PoseLandmarkHUD : MonoBehaviour
             result = (360.0 - result);
         }
         return result;
+    }
+
+    //right now this is just angles. probs need orientation too
+    private bool poseDectectionTPose(double lArmAngle, double rArmAngle, float lArmY, float rArmY)
+    {
+        if (lArmY <= 0 + yThreshold && rArmY <= 0 + yThreshold)
+        {
+            if (lArmAngle >= 180.0 - angleThreshold && lArmAngle <= 180.0 + angleThreshold
+            && rArmAngle >= 180.0 - angleThreshold && rArmAngle <= 180.0 + angleThreshold)
+            {
+                return true;
+            }
+            else return false;
+        }
+        else return false;
     }
 }
