@@ -9,26 +9,35 @@ using UnityEngine.UIElements;
 
 public class PoseLandmarkHUD : MonoBehaviour
 {
-    /// <summary>
-    /// Define the joint mapping used for angles
-    /// </summary>
-    public static readonly Dictionary<string, int[]> jointMap = new Dictionary<string, int[]>()
+    //indices from Mediapipe poselandmarker landmark diagram
+    private static class Joints
     {
-        {"LArm", new[]{12, 14, 16}}, //left shoulder, left elbow, left wrist
-        {"RArm", new[]{11, 13, 15}}, //right shoulder, right elbow, right wrist
-        {"LLeg", new[]{24, 26, 28}}, //left hip, left knee, left ankle
-        {"RLeg", new[]{23, 25, 27}}  //right hip, right knee, right ankle
-    };
+        // Left
+        public const int LeftShoulder = 12;
+        public const int LeftElbow = 14;
+        public const int LeftWrist = 16;
 
+        public const int LeftHip = 24;
+        public const int LeftKnee = 26;
+        public const int LeftAnkle = 28;
+
+        // Right
+        public const int RightShoulder = 11;
+        public const int RightElbow = 13;
+        public const int RightWrist = 15;
+
+        public const int RightHip = 23;
+        public const int RightKnee = 25;
+        public const int RightAnkle = 27;
+    }
+
+
+    [Header("UI")]
     [SerializeField] private TMP_Text text;
 
-    [SerializeField] private double angleThreshold = 10;
-    [SerializeField] private float yThreshold = 0.07f;
-
-    //Picking the landmarks to show
-    //Landmarks to display (from landmark diagram in mediapipe)
-    [SerializeField] private readonly int[] landmarkIndices = {
-        0, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28};
+    [Header("Detection thresholds")]
+    [SerializeField] private double angleToleranceDeg = 10.0; //around 180
+    [SerializeField] private float yTolerance = 0.07f; // wrist ~= shoulder (in normalised coords)
 
     private readonly object _lock = new object();
     private string _pendingText;
@@ -72,36 +81,34 @@ public class PoseLandmarkHUD : MonoBehaviour
 
     private string BuildText(PoseLandmarkerResult result)
     {
-        if (result.poseLandmarks == null || result.poseLandmarks.Count <= 0)
+        if (result.poseLandmarks == null || result.poseLandmarks.Count == 0)
         {
             return "No pose";
         }
 
-        var pose = result.poseLandmarks[0];
-        var lms = pose.landmarks;
+        var landmarks = result.poseLandmarks[0].landmarks;
+        if (landmarks == null || landmarks.Count== 0)
+        {
+            return "No pose";
+        }
 
         sb.Clear();
-        sb.AppendLine($"Landmarks Detected: {lms.Count}");
+        sb.AppendLine($"Landmarks Detected: {landmarks.Count}");
 
-        double lArmAngle = getJointAngle(lms[jointMap["LArm"][0]], lms[jointMap["LArm"][1]], lms[jointMap["LArm"][2]]);
-        double rArmAngle = getJointAngle(lms[jointMap["RArm"][0]], lms[jointMap["RArm"][1]], lms[jointMap["RArm"][2]]);
-        double lLegAngle = getJointAngle(lms[jointMap["LLeg"][0]], lms[jointMap["LLeg"][1]], lms[jointMap["LLeg"][2]]);
-        double rLegAngle = getJointAngle(lms[jointMap["RLeg"][0]], lms[jointMap["RLeg"][1]], lms[jointMap["RLeg"][2]]);
+        double lArmAngle = JointAngleDeg(landmarks[Joints.LeftShoulder], landmarks[Joints.LeftElbow], landmarks[Joints.LeftWrist]);
+        double rArmAngle = JointAngleDeg(landmarks[Joints.RightShoulder], landmarks[Joints.RightElbow], landmarks[Joints.RightWrist]);
+        double lLegAngle = JointAngleDeg(landmarks[Joints.LeftHip], landmarks[Joints.LeftKnee], landmarks[Joints.LeftAnkle]);
+        double rLegAngle = JointAngleDeg(landmarks[Joints.RightHip], landmarks[Joints.RightKnee], landmarks[Joints.RightAnkle]);
 
-        sb.AppendLine($"LArm Angle: {lArmAngle}");
-        sb.AppendLine($"RArm Angle: {rArmAngle}");
-        sb.AppendLine($"LLeg Angle: {lLegAngle}");
-        sb.AppendLine($"RLeg Angle: {rLegAngle}");
+        sb.AppendLine($"LArm Angle: {lArmAngle:F1}");
+        sb.AppendLine($"RArm Angle: {rArmAngle:F1}");
+        sb.AppendLine($"LLeg Angle: {lLegAngle:F1}");
+        sb.AppendLine($"RLeg Angle: {rLegAngle:F1}");
 
-        var lWrist = lms[jointMap["LArm"][2]].y;
-        var lShoulder = lms[jointMap["LArm"][0]].y;
-        var lArmYDiff = Math.Abs(lWrist - lShoulder);
+        var lArmYDiff = Math.Abs(landmarks[Joints.LeftWrist].y - landmarks[Joints.LeftShoulder].y);
+        var rArmYDiff = Math.Abs(landmarks[Joints.RightWrist].y - landmarks[Joints.RightShoulder].y);
 
-        var rWrist = lms[jointMap["RArm"][2]].y;
-        var rShoulder = lms[jointMap["RArm"][0]].y; 
-        var rArmYDiff = Math.Abs(rWrist - rShoulder);
-
-        if (poseDectectionTPose(lArmAngle, rArmAngle, lArmYDiff, rArmYDiff))
+        if (isTPose(lArmAngle, rArmAngle, lArmYDiff, rArmYDiff))
         {
              sb.AppendLine("T Pose detected!");
         }
@@ -109,39 +116,37 @@ public class PoseLandmarkHUD : MonoBehaviour
         return sb.ToString();
     }
 
-    //getting angle at a joint
-    //code from https://developers.google.com/ml-kit/vision/pose-detection/classifying-poses#java
-    private double getJointAngle(NormalizedLandmark firstPoint, NormalizedLandmark midPoint, NormalizedLandmark lastPoint)
+    /// <summary>
+    /// Computes the angle at midPoint formed by firstPoint-midPoint-lastPoint, in degrees [0, 180]
+    /// </summary>
+    /// <param name="firstPoint"></param>
+    /// <param name="midPoint"></param>
+    /// <param name="lastPoint"></param>
+    /// <returns></returns>
+    private static double JointAngleDeg(NormalizedLandmark firstPoint, NormalizedLandmark midPoint, NormalizedLandmark lastPoint)
     {
-        // computing the angle at midPoint formed by two segments
-        double result = 
-            (Math.Atan2(lastPoint.y - midPoint.y, lastPoint.x - midPoint.x) // last to mid vector
-            - Math.Atan2(firstPoint.y - midPoint.y, firstPoint.x - midPoint.x)) // first to mid vector
+        double angle =
+            (Math.Atan2(lastPoint.y - midPoint.y, lastPoint.x - midPoint.x)
+            - Math.Atan2(firstPoint.y - midPoint.y, firstPoint.x - midPoint.x))
             * (180.0 / Math.PI); //convert to degrees
 
-        //angle should never be negative
-        result = Math.Abs(result);
+        angle = Math.Abs(angle);
+        if (angle > 180.00) angle = 360.0 - angle;
 
-        if (result > 180)
-        {
-            //get acute representation
-            result = (360.0 - result);
-        }
-        return result;
+        return angle;
     }
 
-    //right now this is just angles. probs need orientation too
-    private bool poseDectectionTPose(double lArmAngle, double rArmAngle, float lArmY, float rArmY)
+    private bool isTPose(double leftArmAngle, double rightArmAngle, float leftArmYDiff, float rightArmYDiff)
     {
-        if (lArmY <= 0 + yThreshold && rArmY <= 0 + yThreshold)
-        {
-            if (lArmAngle >= 180.0 - angleThreshold && lArmAngle <= 180.0 + angleThreshold
-            && rArmAngle >= 180.0 - angleThreshold && rArmAngle <= 180.0 + angleThreshold)
-            {
-                return true;
-            }
-            else return false;
-        }
-        else return false;
+        bool armsLevel = leftArmYDiff <= yTolerance && rightArmYDiff <= yTolerance;
+
+        bool armsStraight =
+            isWithin(leftArmAngle, 180.0, angleToleranceDeg) &&
+            isWithin(rightArmAngle, 180.0, angleToleranceDeg);
+
+        return armsLevel && armsStraight;
     }
+
+    private static bool isWithin(double value, double target, double tolerance) => 
+        value >= target-tolerance && value <= target+tolerance; 
 }
