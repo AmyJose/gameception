@@ -9,7 +9,6 @@ public class AlienMovement : MonoBehaviour
     {
         // If the spawner hasn't given us a planet yet, don't do anything
         if (planet == null) return;
-
         // 1. POSITIONING: Keep the alien at a fixed distance from the planet center
         // This acts like "fake gravity" to keep him on the surface
         Vector3 directionToPlanet = (transform.position - planet.position).normalized;

@@ -170,4 +170,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AlienMovement
   planet: {fileID: 0}
-  walkSpeed: -40
+  walkSpeed: -10

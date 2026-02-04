@@ -10,7 +10,8 @@ public class AlienSpawner : MonoBehaviour
     void Update()
     {
         // Press 'E' to spawn
-        if (Input.GetKeyDown(KeyCode.E) && currentAlien == null)
+        // if (Input.GetKeyDown(KeyCode.E) && currentAlien == null)
+        if (Input.GetKeyDown(KeyCode.E))
         {
             SpawnAlien();
         }
