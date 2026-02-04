@@ -109,3 +109,22 @@ InitTestScene*.unity*
 .fseventsd
 .AppleDouble
 .LSOverride
+# Additions
+# Visual Studio / IDE
+.vs/
+.vSCode/
+*.sln
+*.slnx
+*.csproj
+*.user
+*.userprefs
+*.pidb
+*.booproj
+
+# Unity generated
+Library/
+Temp/
+Obj/
+Build/
+Builds/
+Logs/
