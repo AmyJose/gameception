@@ -170,34 +170,4 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
             }
         }
     }
-
-    // logger function for accessing underlying data structure
-    private void LogPoseLandmarks(PoseLandmarkerResult result)
-    {
-        if (result.poseLandmarks == null || result.poseLandmarks.Count == 0)
-        {
-            Debug.Log("No pose landmarks detected");
-            return;
-        }
-
-        for(int poseIndex = 0; poseIndex < result.poseLandmarks.Count; poseIndex++)
-        {
-            var pose = result.poseLandmarks[poseIndex];
-
-            var landmarks = pose.landmarks;
-
-            Debug.Log($"Pose {poseIndex} - Landmark count: {landmarks.Count}");
-
-            for (int i=0; i<landmarks.Count; i++)
-            {
-                var lm = landmarks[i];
-
-                Debug.Log(
-                    $"Pose {poseIndex}, Landmark {i}: " +
-                    $"x={lm.x:F4}, y={lm.y:F4}, z={lm.z:F4}, " +
-                    $"visibility={lm.visibility:F4}, presence={lm.presence:F4}"
-                );
-            }
-        }
-    }
 }
