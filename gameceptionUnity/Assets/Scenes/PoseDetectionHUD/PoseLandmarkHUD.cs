@@ -4,9 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
-using UnityEditor.Build;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class PoseLandmarkHUD : MonoBehaviour
 {
@@ -34,15 +32,17 @@ public class PoseLandmarkHUD : MonoBehaviour
 
 
     [Header("UI")]
-    [SerializeField] private TMP_Text text;
+    [SerializeField] private TMP_Text landmarksText;
+    [SerializeField] private TMP_Text poseText;
 
     [Header("Detection thresholds")]
-    [SerializeField] private double angleToleranceDeg = 12.0; //around 180
-    [SerializeField] private float yTolerance = 0.06f; // wrist ~= shoulder (in normalised coords)
+    [SerializeField] private double angleToleranceDeg = 12.0;
+    [SerializeField] private float yTolerance = 0.06f;
 
     private readonly object _lock = new object();
-    private string _pendingText;
-    private bool _hasPendingText;
+    private string _pendingLandmarkText;
+    private string _pendingPoseText;
+    private bool _hasPending;
 
     private readonly StringBuilder sb = new StringBuilder(512);
 
@@ -51,48 +51,50 @@ public class PoseLandmarkHUD : MonoBehaviour
     /// </summary>
     public void EnqueueResult(PoseLandmarkerResult result)
     {
-        string built = BuildText(result);
+        (string landmarksBuilt, string poseBuilt) = BuildTexts(result);
 
         lock (_lock)
         {
-            _pendingText = built;
-            _hasPendingText = true;
+            _pendingLandmarkText = landmarksBuilt;
+            _pendingPoseText = poseBuilt;
+            _hasPending = true;
         }
     }
 
     private void Update()
     {
-        if (text == null) return;
-        string toApply = null;
+        if (landmarksText == null && poseText == null) return;
+        string lm = null;
+        string pose = null;
 
         lock (_lock)
         {
-            if (_hasPendingText)
+            if (_hasPending)
             {
-                toApply = _pendingText;
-                _hasPendingText = false;
+                lm = _pendingLandmarkText;
+                pose = _pendingPoseText;
+                _hasPending = false;
             }
         }
-        
-        if(toApply != null)
-        {
-            text.text = toApply;
-        }
+
+        if (lm != null && landmarksText != null) landmarksText.text = lm;
+        if (pose!= null && poseText != null) poseText.text = pose;
     }
 
-    private string BuildText(PoseLandmarkerResult result)
+    private (string landmarksTextOut, string poseTextOut) BuildTexts(PoseLandmarkerResult result)
     {
         if (result.poseLandmarks == null || result.poseLandmarks.Count == 0)
         {
-            return "No pose";
+            return ("No pose", "None");
         }
 
         var landmarks = result.poseLandmarks[0].landmarks;
         if (landmarks == null || landmarks.Count== 0)
         {
-            return "No pose";
+            return ("No pose", "None");
         }
 
+        // Landmarks debug text
         sb.Clear();
         sb.AppendLine($"Landmarks Detected: {landmarks.Count}");
 
@@ -112,18 +114,23 @@ public class PoseLandmarkHUD : MonoBehaviour
         sb.AppendLine($"LArm Y Difference: {lArmYDiff:F2}");
         sb.AppendLine($"RArm Y Difference: {rArmYDiff:F2}");
 
+        string landmarksOut = sb.ToString();
+
+        //Decide pose text
+        string poseOut = "None";
 
         // get this into a switch statement?
         if (isEarthPose(lArmAngle, rArmAngle, lArmYDiff, rArmYDiff))
         {
-             sb.AppendLine("T Pose detected!");
+            poseOut = "Earth Pose";
         }
         else if (isWaterPose(lArmAngle, rArmAngle, landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y, landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y))
         {
-            sb.AppendLine("Water Pose detected");
+            poseOut = "Water Pose";
         }
+        else poseOut = "No Pose";
 
-        return sb.ToString();
+            return (landmarksOut, poseOut);
     }
 
     /// <summary>
