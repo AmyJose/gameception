@@ -38,6 +38,7 @@ public class PoseLandmarkHUD : MonoBehaviour
     [Header("Detection thresholds")]
     [SerializeField] private double angleToleranceDeg = 12.0;
     [SerializeField] private float yTolerance = 0.06f;
+    [SerializeField] private float xTolerance = 0.06f;
 
     private readonly object _lock = new object();
     private string _pendingLandmarkText;
@@ -110,9 +111,17 @@ public class PoseLandmarkHUD : MonoBehaviour
 
         var lArmYDiff = Math.Abs(landmarks[Joints.LeftWrist].y - landmarks[Joints.LeftShoulder].y);
         var rArmYDiff = Math.Abs(landmarks[Joints.RightWrist].y - landmarks[Joints.RightShoulder].y);
+        var lElbowInline = Math.Abs(landmarks[Joints.LeftElbow].y - landmarks[Joints.LeftShoulder].y);
+        var rElbowInline = Math.Abs(landmarks[Joints.RightElbow].y - landmarks[Joints.RightShoulder].y);
+        var lArmXDiff = Math.Abs(landmarks[Joints.LeftWrist].x - landmarks[Joints.LeftShoulder].x);
+        var rArmXDiff = Math.Abs(landmarks[Joints.RightWrist].x - landmarks[Joints.RightShoulder].x);
 
         sb.AppendLine($"LArm Y Difference: {lArmYDiff:F2}");
         sb.AppendLine($"RArm Y Difference: {rArmYDiff:F2}");
+        sb.AppendLine($"LElbow Y Difference: {lElbowInline:F2}");
+        sb.AppendLine($"RElbow Y Difference: {rElbowInline:F2}");
+        sb.AppendLine($"LArm X Difference: {lArmXDiff:F2}");
+        sb.AppendLine($"RArm X Difference: {rArmXDiff:F2}");
 
         string landmarksOut = sb.ToString();
 
@@ -127,6 +136,14 @@ public class PoseLandmarkHUD : MonoBehaviour
         else if (isWaterPose(lArmAngle, rArmAngle, landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y, landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y))
         {
             poseOut = "Water Pose";
+        }
+        else if (isFirePose(lArmAngle, rArmAngle, landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y, landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y, lElbowInline, rElbowInline))
+        {
+            poseOut = "Fire Pose";
+        }
+        else if (isAirPose(lArmAngle, rArmAngle, landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y, landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y, lArmXDiff, rArmXDiff))
+        {
+            poseOut = "Air Pose";
         }
         else poseOut = "No Pose";
 
@@ -194,6 +211,62 @@ public class PoseLandmarkHUD : MonoBehaviour
 
         return armsAngledInwards && armsAboveHead;
     }
+
+    /// <summary>
+    /// Fire Pose = hands pointing downwards and elbow level with shoulders.
+    /// Tests arms are 90 degrees and wrists are below shoulders
+    /// </summary>
+    /// <param name="leftArmAngle"></param>
+    /// <param name="rightArmAngle"></param>
+    /// <param name="leftWristY"></param>
+    /// <param name="leftShoulderY"></param>
+    /// <param name="rightWristY"></param>
+    /// <param name="rightShoulderY"></param>
+    /// <returns>True if hands below head and arms at 90 angle downwards</returns>
+    private bool isFirePose(double leftArmAngle, double rightArmAngle, float leftWristY, float leftShoulderY, float rightWristY, float rightShoulderY, float lElbowInline, float rElbowInline)
+    {
+        // ensure arms are below head
+        bool armsbelowShoulder = leftWristY > leftShoulderY && rightWristY > rightShoulderY;
+
+        //ensure shoulder and elbows are level 
+        bool elbowsLevel = lElbowInline <= yTolerance && rElbowInline <= yTolerance;
+
+        //ensure arms are angled downwards (90 degree angle)
+        bool armsAngledInwards = 
+            isWithin(leftArmAngle, 90.0, angleToleranceDeg) && 
+            isWithin(rightArmAngle, 90.0, angleToleranceDeg);
+
+        return armsAngledInwards && armsbelowShoulder && elbowsLevel;
+    }
+
+     /// <summary>
+    ///  Air Pose = hands pointing upwards, arm aligned in X plane
+    /// Tests arms are straight and above shoulders
+    /// </summary>
+    /// <param name="leftArmAngle"></param>
+    /// <param name="rightArmAngle"></param>
+    /// <param name="leftWristY"></param>
+    /// <param name="leftShoulderY"></param>
+    /// <param name="rightWristY"></param>
+    /// <param name="rightShoulderY"></param>
+    /// <returns>True if hands above head and arms straight</returns>
+    private bool isAirPose(double leftArmAngle, double rightArmAngle, float leftWristY, float leftShoulderY, float rightWristY, float rightShoulderY, float leftArmXDiff, float rightArmXDiff)
+    {
+        // ensure arms are above head
+        bool armsaboveShoulder = leftWristY < leftShoulderY && rightWristY < rightShoulderY;
+
+        //ensure arms are algined in x plane
+        bool armsAligned = leftArmXDiff <= xTolerance && rightArmXDiff <= xTolerance;
+
+        //ensure arms are angled downwards (90 degree angle)
+        bool armStraight = 
+            isWithin(leftArmAngle, 180.0, angleToleranceDeg) && 
+            isWithin(rightArmAngle, 180.0, angleToleranceDeg);
+
+        return armStraight && armsaboveShoulder && armsAligned;
+    }
+
+
 
     private static bool isWithin(double value, double target, double tolerance) => 
         value >= target-tolerance && value <= target+tolerance; 
