@@ -1,9 +1,20 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+
 public class AlienManager : MonoBehaviour
 {
-    public List<Alien> aliens = new List<Alien>();
+    [SerializeField] private SpriteRenderer planetRenderer;
+
+    [Header("Logic")]
+    public List<Alien> aliens = new();
+
+    [Header("Visuals")]
+    [SerializeField] private Transform alienVisualRoot;
+    [SerializeField] private GameObject alienVisualPrefab;
+
+    private readonly List<GameObject> visuals = new();
+
 
     public int Population => aliens.Count;
 
@@ -29,9 +40,12 @@ public class AlienManager : MonoBehaviour
 
             if (!aliens[i].IsAlive)
             {
+                Destroy(visuals[i]);
+                visuals.RemoveAt(i);
                 aliens.RemoveAt(i);
                 continue;
             }
+
 
             moodSum += aliens[i].mood;
         }
@@ -59,8 +73,38 @@ public class AlienManager : MonoBehaviour
         };
 
         aliens.Add(newAlien);
+        SpawnAlienVisual();
+
         Debug.Log($"<color=green>Alien Spawned!</color> Current Population: {Population}");
 
 
     }
+
+    void SpawnAlienVisual()
+    {
+        GameObject vis = Instantiate(alienVisualPrefab, alienVisualRoot);
+        visuals.Add(vis);
+        UpdateVisualLayout();
+    }
+
+    void UpdateVisualLayout()
+    {
+        int count = visuals.Count;
+
+        float radius = 0.6f;
+
+        for (int i = 0; i < count; i++)
+        {
+            float angle = i * Mathf.PI * 2f / count;
+            Vector3 pos = new Vector3(
+                Mathf.Cos(angle),
+                Mathf.Sin(angle),
+                0f
+            ) * radius;
+
+            visuals[i].transform.localPosition = pos;
+        }
+    }
+
+
 }

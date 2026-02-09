@@ -223,6 +223,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0aefffd3d053041ef89663b4f13e6002, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AlienManager
+  alienVisualRoot: {fileID: 0}
+  alienVisualPrefab: {fileID: 0}
   reproductionThreshold: 0.7
   reproductionRate: 0.2
   maxPopulation: 100

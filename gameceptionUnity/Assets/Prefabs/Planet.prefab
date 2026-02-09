@@ -1,5 +1,50 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &350349213277651547
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5553841328278849319}
+  - component: {fileID: 5024961330259148117}
+  m_Layer: 0
+  m_Name: AlienVisualRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5553841328278849319
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 350349213277651547}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6227769605342492571}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5024961330259148117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 350349213277651547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69c32ede8b3b74328ab11e4008397d04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlienMovement
+  orbitSpeed: 30
 --- !u!1 &958751269531010023
 GameObject:
   m_ObjectHideFlags: 0
@@ -36,6 +81,7 @@ Transform:
   - {fileID: 6267548433079475536}
   - {fileID: 3540809860294407181}
   - {fileID: 1616345550526574058}
+  - {fileID: 5553841328278849319}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4720410911120748954
@@ -133,6 +179,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0aefffd3d053041ef89663b4f13e6002, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AlienManager
+  planetRenderer: {fileID: 4720410911120748954}
+  alienVisualRoot: {fileID: 5553841328278849319}
+  alienVisualPrefab: {fileID: 7301164466518583733, guid: 8b714ce8ca8704a7590141330e37d700, type: 3}
   reproductionThreshold: 0.7
   reproductionRate: 0.2
   maxPopulation: 100
