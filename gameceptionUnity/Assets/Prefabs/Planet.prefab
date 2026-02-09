@@ -114,6 +114,7 @@ MonoBehaviour:
     earth: 0
     fire: 0
     water: 0
+  waterBar: {fileID: 0}
   inhabitants: {fileID: 0}
   habitabilityDebug: 0
   populationDebug: 0

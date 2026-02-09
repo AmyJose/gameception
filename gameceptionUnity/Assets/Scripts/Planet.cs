@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 public class Planet : MonoBehaviour
 {
     public ElementState elements = new ElementState();
+
+    public ResourceBarTracker waterBar;
     public float Habitability => HabitabilityLogic.Compute(elements);
     //public float population;
     public AlienManager inhabitants;
@@ -27,6 +29,7 @@ public class Planet : MonoBehaviour
     public void AddWater(float amount)
     {
         elements.water += amount;
+        waterBar.SetValue(elements.water);
     }
     public void AddFire(float amount)
     {
