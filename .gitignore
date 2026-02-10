@@ -128,3 +128,4 @@ Obj/
 Build/
 Builds/
 Logs/
+*.slnx
