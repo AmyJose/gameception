@@ -132,18 +132,22 @@ public class PoseLandmarkHUD : MonoBehaviour
         if (isEarthPose(lArmAngle, rArmAngle, lArmYDiff, rArmYDiff))
         {
             poseOut = "Earth Pose";
+            Debug.Log("Earth Pose detected");
         }
         else if (isWaterPose(lArmAngle, rArmAngle, landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y, landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y))
         {
             poseOut = "Water Pose";
+            Debug.Log("Water Pose");
         }
         else if (isFirePose(lArmAngle, rArmAngle, landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y, landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y, lElbowInline, rElbowInline))
         {
             poseOut = "Fire Pose";
+            Debug.Log("Fire Pose detected");
         }
         else if (isAirPose(lArmAngle, rArmAngle, landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y, landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y, lArmXDiff, rArmXDiff))
         {
             poseOut = "Air Pose";
+            Debug.Log("Air Pose detected");
         }
         else poseOut = "No Pose";
 
