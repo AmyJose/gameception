@@ -5,6 +5,10 @@ using UnityEngine.InputSystem;
 public class Planet : MonoBehaviour
 {
     public ElementState elements = new ElementState();
+    public ResourceBarTracker waterBar;
+    public ResourceBarTracker earthBar;
+    public ResourceBarTracker airBar;
+    public ResourceBarTracker fireBar;
     public float Habitability => HabitabilityLogic.Compute(elements);
     //public float population;
     public AlienManager inhabitants;
@@ -23,18 +27,22 @@ public class Planet : MonoBehaviour
     public void AddAir(float amount)
     {
         elements.air += amount;
+        airBar.SetValue(elements.air);
     }
     public void AddWater(float amount)
     {
         elements.water += amount;
+        waterBar.SetValue(elements.water);
     }
     public void AddFire(float amount)
     {
         elements.fire += amount;
+        fireBar.SetValue(elements.fire);
     }
     public void AddEarth(float amount)
     {
         elements.earth += amount;
+        earthBar.SetValue(elements.earth);
     }
 
     void Awake()
@@ -69,6 +77,11 @@ public class Planet : MonoBehaviour
         elements.earth = Mathf.Max(0f, elements.earth - 0.1f * dt);
         elements.fire = Mathf.Max(0f, elements.fire - 0.1f * dt);
         elements.air = Mathf.Max(0f, elements.air - 0.1f * dt);
+        
+        waterBar.SetValue(elements.water);
+        earthBar.SetValue(elements.earth);
+        airBar.SetValue(elements.air);
+        fireBar.SetValue(elements.fire);
 
     }
 
