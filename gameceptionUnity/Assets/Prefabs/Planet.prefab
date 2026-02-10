@@ -56,6 +56,7 @@ GameObject:
   - component: {fileID: 4171137836873319097}
   - component: {fileID: 744199979376815253}
   - component: {fileID: 1983929122194919300}
+  - component: {fileID: 5348601333646551252}
   m_Layer: 5
   m_Name: AirTrackingBar
   m_TagString: Untagged
@@ -115,11 +116,26 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5348601333646551252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593021766310718985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2e639d851bb942e18a08c60802240ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceBarTracker
+  bar: {fileID: 1983929122194919300}
+  currentResource: 100
+  maxResource: 100
 --- !u!1 &958751269531010023
 GameObject:
   m_ObjectHideFlags: 0
@@ -236,6 +252,10 @@ MonoBehaviour:
     earth: 0
     fire: 0
     water: 0
+  waterBar: {fileID: 5635006433032849074}
+  earthBar: {fileID: 6756208441512747310}
+  airBar: {fileID: 5348601333646551252}
+  fireBar: {fileID: 4864988785440268851}
   inhabitants: {fileID: 0}
   habitabilityDebug: 0
   populationDebug: 0
@@ -272,6 +292,7 @@ GameObject:
   - component: {fileID: 5957926726822386806}
   - component: {fileID: 4451128219528075214}
   - component: {fileID: 8236058203657000735}
+  - component: {fileID: 4864988785440268851}
   m_Layer: 5
   m_Name: FireTrackingBar
   m_TagString: Untagged
@@ -331,11 +352,26 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4864988785440268851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1108596004481250149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2e639d851bb942e18a08c60802240ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceBarTracker
+  bar: {fileID: 8236058203657000735}
+  currentResource: 100
+  maxResource: 100
 --- !u!1 &1241764929225922953
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,6 +593,7 @@ GameObject:
   - component: {fileID: 2624166673357981371}
   - component: {fileID: 6480086099764671560}
   - component: {fileID: 8772962852645575849}
+  - component: {fileID: 6756208441512747310}
   m_Layer: 5
   m_Name: EarthTrackingBar
   m_TagString: Untagged
@@ -616,11 +653,26 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6756208441512747310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3777998551839928789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2e639d851bb942e18a08c60802240ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceBarTracker
+  bar: {fileID: 8772962852645575849}
+  currentResource: 100
+  maxResource: 100
 --- !u!1 &3905874171399488035
 GameObject:
   m_ObjectHideFlags: 0
@@ -1146,6 +1198,7 @@ GameObject:
   - component: {fileID: 4753845442758034112}
   - component: {fileID: 6038062133510207475}
   - component: {fileID: 9116838996502834193}
+  - component: {fileID: 5635006433032849074}
   m_Layer: 5
   m_Name: WaterTrackingBar
   m_TagString: Untagged
@@ -1205,11 +1258,26 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5635006433032849074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8596268287808739089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2e639d851bb942e18a08c60802240ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceBarTracker
+  bar: {fileID: 9116838996502834193}
+  currentResource: 100
+  maxResource: 100
 --- !u!1 &8994196644293227207
 GameObject:
   m_ObjectHideFlags: 0
