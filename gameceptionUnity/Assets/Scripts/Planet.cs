@@ -62,12 +62,12 @@ public class Planet : MonoBehaviour
         habitabilityDebug = Habitability;
         populationDebug = inhabitants != null ? inhabitants.Population : 0;
         inhabitants.UpdateAliens(Time.deltaTime, Habitability);
-        var kb = Keyboard.current;
+        /*var kb = Keyboard.current;
         if (kb == null) return;
         if (kb.wKey.wasPressedThisFrame) waterEffect.Activate();
         if (kb.eKey.wasPressedThisFrame) earthEffect.Activate();
         if (kb.fKey.wasPressedThisFrame) fireEffect.Activate();
-        if (kb.aKey.wasPressedThisFrame) airEffect.Activate();
+        if (kb.aKey.wasPressedThisFrame) airEffect.Activate();*/
 
     }
     public void GeneralDecay(float dt)
@@ -77,7 +77,7 @@ public class Planet : MonoBehaviour
         elements.earth = Mathf.Max(0f, elements.earth - 0.1f * dt);
         elements.fire = Mathf.Max(0f, elements.fire - 0.1f * dt);
         elements.air = Mathf.Max(0f, elements.air - 0.1f * dt);
-        
+
         waterBar.SetValue(elements.water);
         earthBar.SetValue(elements.earth);
         airBar.SetValue(elements.air);

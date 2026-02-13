@@ -30,6 +30,17 @@ public class PoseLandmarkHUD : MonoBehaviour
         public const int RightAnkle = 27;
     }
 
+    public enum ElementPose
+    {
+        None,
+        Earth,
+        Water,
+        Fire,
+        Air
+    }
+
+    public ElementPose CurrentPose { get; private set; }
+    private ElementPose _pendingPose = ElementPose.None;
 
     [Header("UI")]
     [SerializeField] private TMP_Text landmarksText;
@@ -74,12 +85,13 @@ public class PoseLandmarkHUD : MonoBehaviour
             {
                 lm = _pendingLandmarkText;
                 pose = _pendingPoseText;
+                CurrentPose = _pendingPose;
                 _hasPending = false;
             }
         }
 
         if (lm != null && landmarksText != null) landmarksText.text = lm;
-        if (pose!= null && poseText != null) poseText.text = pose;
+        if (pose != null && poseText != null) poseText.text = pose;
     }
 
     private (string landmarksTextOut, string poseTextOut) BuildTexts(PoseLandmarkerResult result)
@@ -90,7 +102,7 @@ public class PoseLandmarkHUD : MonoBehaviour
         }
 
         var landmarks = result.poseLandmarks[0].landmarks;
-        if (landmarks == null || landmarks.Count== 0)
+        if (landmarks == null || landmarks.Count == 0)
         {
             return ("No pose", "None");
         }
@@ -126,32 +138,38 @@ public class PoseLandmarkHUD : MonoBehaviour
         string landmarksOut = sb.ToString();
 
         //Decide pose text
-        string poseOut = "None";
+        ElementPose detectedPose = ElementPose.None;
+
 
         // get this into a switch statement?
         if (isEarthPose(lArmAngle, rArmAngle, lArmYDiff, rArmYDiff))
         {
-            poseOut = "Earth Pose";
-            Debug.Log("Earth Pose detected");
+            detectedPose = ElementPose.Earth;
+            Debug.Log("Earth pose detected");
         }
         else if (isWaterPose(lArmAngle, rArmAngle, landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y, landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y))
         {
-            poseOut = "Water Pose";
-            Debug.Log("Water Pose");
+            detectedPose = ElementPose.Water;
+            Debug.Log("Water pose detected");
         }
         else if (isFirePose(lArmAngle, rArmAngle, landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y, landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y, lElbowInline, rElbowInline))
         {
-            poseOut = "Fire Pose";
-            Debug.Log("Fire Pose detected");
+            detectedPose = ElementPose.Fire;
+            Debug.Log("Fire pose detected");
+
         }
         else if (isAirPose(lArmAngle, rArmAngle, landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y, landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y, lArmXDiff, rArmXDiff))
         {
-            poseOut = "Air Pose";
-            Debug.Log("Air Pose detected");
-        }
-        else poseOut = "No Pose";
+            detectedPose = ElementPose.Air;
+            Debug.Log("Air pose detected");
 
-            return (landmarksOut, poseOut);
+        }
+        else detectedPose = ElementPose.None;
+
+        _pendingPose = detectedPose;
+        string poseOut = detectedPose.ToString();
+
+        return (landmarksOut, poseOut);
     }
 
     /// <summary>
@@ -209,8 +227,8 @@ public class PoseLandmarkHUD : MonoBehaviour
     {
         bool armsAboveHead = leftWristY < leftShoulderY && rightWristY < rightShoulderY;
 
-        bool armsAngledInwards = 
-            isWithin(leftArmAngle, 130.0, angleToleranceDeg) && 
+        bool armsAngledInwards =
+            isWithin(leftArmAngle, 130.0, angleToleranceDeg) &&
             isWithin(rightArmAngle, 130.0, angleToleranceDeg);
 
         return armsAngledInwards && armsAboveHead;
@@ -236,14 +254,14 @@ public class PoseLandmarkHUD : MonoBehaviour
         bool elbowsLevel = lElbowInline <= yTolerance && rElbowInline <= yTolerance;
 
         //ensure arms are angled downwards (90 degree angle)
-        bool armsAngledInwards = 
-            isWithin(leftArmAngle, 90.0, angleToleranceDeg) && 
+        bool armsAngledInwards =
+            isWithin(leftArmAngle, 90.0, angleToleranceDeg) &&
             isWithin(rightArmAngle, 90.0, angleToleranceDeg);
 
         return armsAngledInwards && armsbelowShoulder && elbowsLevel;
     }
 
-     /// <summary>
+    /// <summary>
     ///  Air Pose = hands pointing upwards, arm aligned in X plane
     /// Tests arms are straight and above shoulders
     /// </summary>
@@ -263,8 +281,8 @@ public class PoseLandmarkHUD : MonoBehaviour
         bool armsAligned = leftArmXDiff <= xTolerance && rightArmXDiff <= xTolerance;
 
         //ensure arms are angled downwards (90 degree angle)
-        bool armStraight = 
-            isWithin(leftArmAngle, 180.0, angleToleranceDeg) && 
+        bool armStraight =
+            isWithin(leftArmAngle, 180.0, angleToleranceDeg) &&
             isWithin(rightArmAngle, 180.0, angleToleranceDeg);
 
         return armStraight && armsaboveShoulder && armsAligned;
@@ -272,6 +290,6 @@ public class PoseLandmarkHUD : MonoBehaviour
 
 
 
-    private static bool isWithin(double value, double target, double tolerance) => 
-        value >= target-tolerance && value <= target+tolerance; 
+    private static bool isWithin(double value, double target, double tolerance) =>
+        value >= target - tolerance && value <= target + tolerance;
 }
