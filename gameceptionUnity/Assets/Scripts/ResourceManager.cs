@@ -94,8 +94,8 @@ public class ResourceManager : MonoBehaviour
     {
         foreach (var p in planets)
         {
-            p.transform.localScale = Vector3.one;
+            p.transform.localScale = Vector3.one * 1.5f; // default scale
         }
-        selected.transform.localScale = Vector3.one * 1.2f;
+        selected.transform.localScale = Vector3.one * 1.7f; // enlarge selected
     }
 }
