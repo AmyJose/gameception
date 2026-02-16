@@ -81,20 +81,33 @@ public class AlienManager : MonoBehaviour
     }
 
     void SpawnAlienVisual()
-    {
-        GameObject vis = Instantiate(alienVisualPrefab, alienVisualRoot);
-        visuals.Add(vis);
-        UpdateVisualLayout();
-    }
+{
+    GameObject vis = Instantiate(alienVisualPrefab, alienVisualRoot);
+    visuals.Add(vis);
+
+    float randomAngle = Random.Range(0f, Mathf.PI * 2f);
+    float radius = 4.5f;
+
+
+    Vector3 spawnPosition = new Vector3(
+        Mathf.Cos(randomAngle),
+        Mathf.Sin(randomAngle),
+        0f
+    ) * radius;
+
+    vis.transform.localPosition = spawnPosition;
+    Vector3 directionFromCenter = spawnPosition.normalized;
+    vis.transform.up = directionFromCenter;
+}
 
     void UpdateVisualLayout()
     {
         int count = visuals.Count;
-
-        float radius = 0.6f;
+        float radius = 4.5f;
 
         for (int i = 0; i < count; i++)
         {
+            
             float angle = i * Mathf.PI * 2f / count;
             Vector3 pos = new Vector3(
                 Mathf.Cos(angle),
@@ -103,6 +116,7 @@ public class AlienManager : MonoBehaviour
             ) * radius;
 
             visuals[i].transform.localPosition = pos;
+            visuals[i].transform.up = pos;
         }
     }
 
