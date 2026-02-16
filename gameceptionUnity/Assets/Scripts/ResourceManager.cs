@@ -20,11 +20,14 @@ public class ResourceManager : MonoBehaviour
 
     void Awake()
     {
-        //Create initial planet
-        Planet p = Instantiate(planetPrefab, Vector3.zero, Quaternion.identity);
-        p.name = $"Planet_{planets.Count}";
-        planets.Add(p);
-        selected = p;
+        //Create 2 initial planets by default
+        for (int i = 0; i < 2; i++)
+        {
+            Planet p = Instantiate(planetPrefab, Vector3.zero, Quaternion.identity);
+            p.name = $"Planet_{planets.Count}";
+            planets.Add(p);
+            if (i == 0) selected = p; // select first planet
+        }
 
         ArrangePlanets();
         HighlightSelected();
@@ -35,8 +38,8 @@ public class ResourceManager : MonoBehaviour
         var kb = Keyboard.current;
         if (kb == null) return;
 
-        //switch planets with TAB
-        if (kb.tabKey.wasPressedThisFrame)
+        //switch planets with right arrow key
+        if (kb.rightArrowKey.wasPressedThisFrame)
         {
             if (planets.Count == 0) return;
 
@@ -44,6 +47,49 @@ public class ResourceManager : MonoBehaviour
             selected = planets[idx];
             HighlightSelected();
         }
+
+        if (kb.leftArrowKey.wasPressedThisFrame)
+        {
+            if (planets.Count == 0) return;
+
+            idx = (idx - 1 + planets.Count) % planets.Count;
+            selected = planets[idx];
+            HighlightSelected();
+        }
+
+        //switch to planet 1 with key 1
+        if (kb.digit1Key.wasPressedThisFrame)
+        {
+            if (planets.Count >= 1)
+            {
+                idx = 0;
+                selected = planets[idx];
+                HighlightSelected();
+            }
+        }
+
+        //switch to planet 2 with key 2
+        if (kb.digit2Key.wasPressedThisFrame)
+        {
+            if (planets.Count >= 2)
+            {
+                idx = 1;
+                selected = planets[idx];
+                HighlightSelected();
+            }
+        }
+
+        //switch to planet 3 with key 3
+        if (kb.digit3Key.wasPressedThisFrame)
+        {
+            if (planets.Count >= 3)
+            {
+                idx = 2;
+                selected = planets[idx];
+                HighlightSelected();
+            }
+        }
+
 
         //create new planet with T
         if (kb.tKey.wasPressedThisFrame)
@@ -87,7 +133,7 @@ public class ResourceManager : MonoBehaviour
     //arranging planets horizontally & centered
     private void ArrangePlanets()
     {
-        float spacing = 3f; // distance between planets
+        float spacing = 4f; // distance between planets
         
         float totalWidth = (planets.Count - 1) * spacing;
         float startX = -totalWidth / 2f;
@@ -104,9 +150,9 @@ public class ResourceManager : MonoBehaviour
     {
         foreach (var p in planets)
         {
-            p.transform.localScale = Vector3.one * 1.5f; // default scale
+            p.transform.localScale = Vector3.one * 2.5f; // default scale
         }
-        selected.transform.localScale = Vector3.one * 1.7f; // enlarge selected
+        selected.transform.localScale = Vector3.one * 3f; // enlarge selected
     }
 
     private void HandlePoseInput()
