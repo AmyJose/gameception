@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 // Hanfles decay logic
 // Key-presses
 public class ResourceManager : MonoBehaviour
@@ -10,6 +11,12 @@ public class ResourceManager : MonoBehaviour
     private Planet selected;
     [SerializeField] private Planet planetPrefab;
     // key press logic
+    [SerializeField] private PoseDetectionRunner poseRunner;
+
+    [SerializeField] private float poseHoldTime = 3f;
+
+    private PoseLandmarkHUD.ElementPose lastPose = PoseLandmarkHUD.ElementPose.None;
+    private float poseTimer = 0f;
 
     void Awake()
     {
@@ -53,10 +60,13 @@ public class ResourceManager : MonoBehaviour
         }
         
         //element controls
-        if (kb.wKey.wasPressedThisFrame) selected.AddWater(1f);
+        //if (kb.wKey.wasPressedThisFrame) selected.AddWater(1f);
+        /**if (kb.wKey.wasPressedThisFrame) selected.AddWater(1f);
         if (kb.eKey.wasPressedThisFrame) selected.AddEarth(1f);
         if (kb.fKey.wasPressedThisFrame) selected.AddFire(1f);
-        if (kb.aKey.wasPressedThisFrame) selected.AddAir(1f);
+        if (kb.aKey.wasPressedThisFrame) selected.AddAir(1f);**/
+
+        HandlePoseInput();
 
         //decay logic
         float dt = Time.deltaTime;
@@ -97,5 +107,50 @@ public class ResourceManager : MonoBehaviour
             p.transform.localScale = Vector3.one * 1.5f; // default scale
         }
         selected.transform.localScale = Vector3.one * 1.7f; // enlarge selected
+    }
+
+    private void HandlePoseInput()
+    {
+        if (poseRunner.HUD == null) return;
+
+        var currentPose = poseRunner.HUD.CurrentPose;
+
+        // 1. If we are seeing a pose we weren't seeing last frame
+        if (currentPose != PoseLandmarkHUD.ElementPose.None && currentPose != lastPose)
+        {
+            TriggerElementEffect(currentPose);
+        }
+
+        // 2. Remember what we saw this frame for next frame's comparison
+        lastPose = currentPose;
+    }
+    private void TriggerElementEffect(PoseLandmarkHUD.ElementPose pose)
+    {
+        if (selected == null) return;
+
+        switch (pose)
+        {
+            case PoseLandmarkHUD.ElementPose.Water:
+                selected.AddWater(10f);
+                selected.waterEffect.Activate();
+                break;
+
+            case PoseLandmarkHUD.ElementPose.Fire:
+                selected.AddFire(10f);
+                selected.fireEffect.Activate();
+                break;
+
+            case PoseLandmarkHUD.ElementPose.Air:
+                selected.AddAir(10f);
+                selected.airEffect.Activate();
+                break;
+
+            case PoseLandmarkHUD.ElementPose.Earth:
+                selected.AddEarth(10f);
+                selected.earthEffect.Activate();
+                break;
+        }
+
+
     }
 }

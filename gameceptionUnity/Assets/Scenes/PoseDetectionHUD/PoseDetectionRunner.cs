@@ -23,6 +23,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
 
     // heads up display
     [SerializeField] private PoseLandmarkHUD _hud;
+    public PoseLandmarkHUD HUD => _hud;
 
     // instance of the config class
     public readonly PoseDetectionConfig config = new PoseDetectionConfig();
@@ -59,7 +60,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         screen.Initialize(imageSource);
 
         SetupAnnotationController(_poseLandmarkerResultAnnotationController, imageSource);
-        
+
         _poseLandmarkerResultAnnotationController.InitScreen(imageSource.textureWidth, imageSource.textureHeight);
 
         var transformationOptions = imageSource.GetTransformationOptions();
@@ -83,7 +84,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
                 yield return new WaitWhile(() => isPaused);
             }
 
-            if(!_textureFramePool.TryGetTextureFrame(out var textureFrame))
+            if (!_textureFramePool.TryGetTextureFrame(out var textureFrame))
             {
                 yield return new WaitForEndOfFrame();
                 continue;
@@ -126,7 +127,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
             switch (taskApi.runningMode)
             {
                 case Mediapipe.Tasks.Vision.Core.RunningMode.IMAGE:
-                    if(taskApi.TryDetect(image, imageProcessingOptions, ref result))
+                    if (taskApi.TryDetect(image, imageProcessingOptions, ref result))
                     {
                         _poseLandmarkerResultAnnotationController.DrawNow(result);
                     }
@@ -137,7 +138,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
                     DisposeAllMasks(result);
                     break;
                 case Mediapipe.Tasks.Vision.Core.RunningMode.VIDEO:
-                    if(taskApi.TryDetectForVideo(image, GetCurrentTimestampMillisec(), imageProcessingOptions, ref result))
+                    if (taskApi.TryDetectForVideo(image, GetCurrentTimestampMillisec(), imageProcessingOptions, ref result))
                     {
                         _poseLandmarkerResultAnnotationController.DrawNow(result);
                     }
@@ -162,7 +163,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
     }
     private void DisposeAllMasks(PoseLandmarkerResult result)
     {
-        if(result.segmentationMasks != null)
+        if (result.segmentationMasks != null)
         {
             foreach (var mask in result.segmentationMasks)
             {

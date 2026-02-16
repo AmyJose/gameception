@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 public class Planet : MonoBehaviour
 {
@@ -26,22 +27,22 @@ public class Planet : MonoBehaviour
 
     public void AddAir(float amount)
     {
-        elements.air += amount;
+        elements.air = Math.Min(elements.air + amount, 100);
         airBar.SetValue(elements.air);
     }
     public void AddWater(float amount)
     {
-        elements.water += amount;
+        elements.water = Math.Min(elements.water + amount, 100);
         waterBar.SetValue(elements.water);
     }
     public void AddFire(float amount)
     {
-        elements.fire += amount;
+        elements.fire = Math.Min(elements.fire + amount, 100);
         fireBar.SetValue(elements.fire);
     }
     public void AddEarth(float amount)
     {
-        elements.earth += amount;
+        elements.earth = Math.Min(elements.earth + amount, 100);
         earthBar.SetValue(elements.earth);
     }
 
@@ -62,12 +63,12 @@ public class Planet : MonoBehaviour
         habitabilityDebug = Habitability;
         populationDebug = inhabitants != null ? inhabitants.Population : 0;
         inhabitants.UpdateAliens(Time.deltaTime, Habitability);
-        var kb = Keyboard.current;
+        /*var kb = Keyboard.current;
         if (kb == null) return;
         if (kb.wKey.wasPressedThisFrame) waterEffect.Activate();
         if (kb.eKey.wasPressedThisFrame) earthEffect.Activate();
         if (kb.fKey.wasPressedThisFrame) fireEffect.Activate();
-        if (kb.aKey.wasPressedThisFrame) airEffect.Activate();
+        if (kb.aKey.wasPressedThisFrame) airEffect.Activate();*/
 
     }
     public void GeneralDecay(float dt)
@@ -77,7 +78,7 @@ public class Planet : MonoBehaviour
         elements.earth = Mathf.Max(0f, elements.earth - 0.1f * dt);
         elements.fire = Mathf.Max(0f, elements.fire - 0.1f * dt);
         elements.air = Mathf.Max(0f, elements.air - 0.1f * dt);
-        
+
         waterBar.SetValue(elements.water);
         earthBar.SetValue(elements.earth);
         airBar.SetValue(elements.air);

@@ -337,7 +337,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8571076842583978917, guid: 140d1d2c406167c50819d89f86d9092e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -343.35995
+      value: -343.36
       objectReference: {fileID: 0}
     - target: {fileID: 8571076844135231236, guid: 140d1d2c406167c50819d89f86d9092e, type: 3}
       propertyPath: m_SizeDelta.x
@@ -1590,6 +1590,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceManager
   planetPrefab: {fileID: 158052442583759145, guid: b637b57f414ed4c31b6528d2f76b798f, type: 3}
+  poseRunner: {fileID: 1019512104}
+  poseHoldTime: 3
 --- !u!4 &1966269193
 Transform:
   m_ObjectHideFlags: 0
