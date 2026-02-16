@@ -1590,8 +1590,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceManager
   planetPrefab: {fileID: 158052442583759145, guid: b637b57f414ed4c31b6528d2f76b798f, type: 3}
-  poseRunner: {fileID: 1019512104}
-  poseHoldTime: 3
+  spacing: 15
 --- !u!4 &1966269193
 Transform:
   m_ObjectHideFlags: 0
