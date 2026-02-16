@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 public class Planet : MonoBehaviour
 {
@@ -26,22 +27,22 @@ public class Planet : MonoBehaviour
 
     public void AddAir(float amount)
     {
-        elements.air += amount;
+        elements.air = Math.Min(elements.air + amount, 100);
         airBar.SetValue(elements.air);
     }
     public void AddWater(float amount)
     {
-        elements.water += amount;
+        elements.water = Math.Min(elements.water + amount, 100);
         waterBar.SetValue(elements.water);
     }
     public void AddFire(float amount)
     {
-        elements.fire += amount;
+        elements.fire = Math.Min(elements.fire + amount, 100);
         fireBar.SetValue(elements.fire);
     }
     public void AddEarth(float amount)
     {
-        elements.earth += amount;
+        elements.earth = Math.Min(elements.earth + amount, 100);
         earthBar.SetValue(elements.earth);
     }
 
