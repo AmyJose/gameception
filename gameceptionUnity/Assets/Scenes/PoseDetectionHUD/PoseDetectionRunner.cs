@@ -7,8 +7,6 @@ using Mediapipe.Tasks.Vision.PoseLandmarker;
 using Mediapipe.Unity;
 using Mediapipe.Unity.Sample;
 using Unity.Loading;
-using UnityEditor.Build;
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -37,12 +35,22 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
 
     protected override IEnumerator Run()
     {
-        //wait on loading the model
-        yield return AssetLoader.PrepareAssetAsync(config.ModelPath);
+        //wait on asset being prepared or copied into StreamingAssets if needed
+        yield return AssetLoader.PrepareAssetAsync(config.ModelResourcePath);
+        Debug.Log($"[PoseDetectionRunner] Expecting model at: {config.StreamingAssetsModelPath}");
 
-        //load the options from the config and create a new task API instance
-        var options = config.GetPoseLandmarkerOptions(config.RunningMode == Mediapipe.Tasks.Vision.Core.RunningMode.LIVE_STREAM ? OnPoseLandmarkDetectionOutput : null);
-        taskApi = PoseLandmarker.CreateFromOptions(options, GpuManager.GpuResources);
+        //load the options from the config
+        var options = config.GetPoseLandmarkerOptions(
+            config.RunningMode == Mediapipe.Tasks.Vision.Core.RunningMode.LIVE_STREAM ? OnPoseLandmarkDetectionOutput : null);
+
+        //only pass GPU resources if actually using GPU delegate
+        var gpuResources = (config.Delegate == Mediapipe.Tasks.Core.BaseOptions.Delegate.GPU)
+            ? GpuManager.GpuResources
+            : null;
+
+        //new task api instance
+        Debug.Log("[PoseDetectionRunner] Options created, creating PoseLandmarker...");
+        taskApi = PoseLandmarker.CreateFromOptions(options, gpuResources);
 
         //TODO move this from the samples folder
         //e.g., do our own implementation of accessing the image source and waiting for a response

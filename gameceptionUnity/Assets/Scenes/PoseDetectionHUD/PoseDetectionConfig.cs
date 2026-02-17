@@ -4,19 +4,14 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Mediapipe.Tasks.Vision.PoseLandmarker;
 using Mediapipe.Unity;
 using Unity.VisualScripting;
+using System.IO;
+using UnityEngine;
 
 // This file does the configuration for the mediapipe model used to detection pose landmarks
 
-
-public enum ModelType : int
-    {
-        BlazePoseLite = 0,
-        BlazePoseFull = 1,
-        BlazePoseHeavy = 2,
-    }
-
 public class PoseDetectionConfig
 {
+    private byte[] _cachedModelBytes;
     // delegation
     public Mediapipe.Tasks.Core.BaseOptions.Delegate Delegate{get; set;} =
     #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
@@ -26,7 +21,6 @@ public class PoseDetectionConfig
     #endif
 
     public ImageReadMode ImageReadMode {get;set;} = ImageReadMode.CPUAsync;
-    public ModelType Model{get;set;} = ModelType.BlazePoseLite;
     public Mediapipe.Tasks.Vision.Core.RunningMode RunningMode{get; set;} = Mediapipe.Tasks.Vision.Core.RunningMode.LIVE_STREAM;
 
     public int NumPoses{get;set;} = 1;
@@ -34,26 +28,43 @@ public class PoseDetectionConfig
     public float MinPosePresenceConfidence{get;set;} = 0.5f;
     public float MinTrackingConfidence{get;set;} = 0.5f;
     public bool OutputSegmentationMasks{get;set;} = false;
-    
-    public string ModelPath
+
+    public string ModelResourcePath => "MediaPipe/pose_landmarker_lite.bytes";
+    public string StreamingAssetsModelPath =>
+        Path.Combine(Application.streamingAssetsPath, "MediaPipe", "pose_landmarker_lite.bytes")
+            .Replace("\\", "/");
+
+    //loading the model bytes directly with some messing around for weiiiirdddd paths
+    public byte[] LoadModelBytes()
     {
-        get
+        if(_cachedModelBytes != null)
         {
-            switch(Model){
-                case ModelType.BlazePoseLite: return "pose_landmarker_lite.bytes";
-                case ModelType.BlazePoseFull: return "pose_landmarker_full.bytes";
-                case ModelType.BlazePoseHeavy: return "pose_landmarker_heavy.bytes";
-                default : return null;
-            }
+            return _cachedModelBytes;
         }
+
+        var fullPath = Path.Combine(Application.streamingAssetsPath, "MediaPipe", "pose_landmarker_lite.bytes");
+        fullPath = fullPath.Replace("\\", "/");
+        if (!File.Exists(fullPath))
+        {
+            Debug.LogError($"[PoseDetectionConfig] Model file not found at: {fullPath}");
+            return null;
+        }
+        var bytes = File.ReadAllBytes(fullPath);
+        Debug.Log($"[PoseDetectionConfig] Loaded model bytes: {bytes?.Length ?? 0} from {fullPath}");
+        return bytes;
     }
 
     // configuring the task
     // use the varibles assigned aboce to define the options we will be using
     public PoseLandmarkerOptions GetPoseLandmarkerOptions(PoseLandmarkerOptions.ResultCallback resultCallback = null)
     {
+        var modelBytes = LoadModelBytes();
+        if (modelBytes == null || modelBytes.Length == 0)
+        {
+            Debug.LogError("[PoseDetectionConfig] Model bytes were null/empty.");
+        }
         return new PoseLandmarkerOptions(
-            new Mediapipe.Tasks.Core.BaseOptions(Delegate, modelAssetPath: ModelPath),
+            new Mediapipe.Tasks.Core.BaseOptions(Delegate, modelAssetBuffer: modelBytes),
             runningMode: RunningMode,
             numPoses: NumPoses,
             minPoseDetectionConfidence : MinPoseDetectionConfidence,
