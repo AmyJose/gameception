@@ -133,7 +133,7 @@ public class ResourceManager : MonoBehaviour
     //arranging planets horizontally & centered
     private void ArrangePlanets()
     {
-        float spacing = 4f; // distance between planets
+        float spacing = 9f; // distance between planets
         
         float totalWidth = (planets.Count - 1) * spacing;
         float startX = -totalWidth / 2f;
@@ -141,7 +141,7 @@ public class ResourceManager : MonoBehaviour
         for (int i = 0; i < planets.Count; i++)
         {
            float xPos = startX + i * spacing;
-           planets[i].transform.position = new Vector3(xPos, 0f, 0f);
+           planets[i].transform.position = new Vector3(xPos, 0f, 5f);
         }
     }
 
@@ -150,9 +150,9 @@ public class ResourceManager : MonoBehaviour
     {
         foreach (var p in planets)
         {
-            p.transform.localScale = Vector3.one * 2.5f; // default scale
+            p.transform.localScale = Vector3.one * 0.8f; // default scale
         }
-        selected.transform.localScale = Vector3.one * 3f; // enlarge selected
+        selected.transform.localScale = Vector3.one * 0.9f; // enlarge selected
     }
 
     private void HandlePoseInput()

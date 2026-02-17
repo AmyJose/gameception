@@ -55,6 +55,16 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         //TODO move this from the samples folder
         //e.g., do our own implementation of accessing the image source and waiting for a response
         var imageSource = ImageSourceProvider.ImageSource;
+
+        if (imageSource is WebCamSource webCamSource)
+        {
+            var names = webCamSource.sourceCandidateNames;
+            var usbIndex = Array.FindIndex(names, n => n== "USB Camera");
+            if(usbIndex >= 0){
+                webCamSource.SelectSource(usbIndex);
+            }
+        }
+
         yield return imageSource.Play();
         if (!imageSource.isPrepared)
         {
