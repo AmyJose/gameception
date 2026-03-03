@@ -128,3 +128,6 @@ Obj/
 Build/
 Builds/
 Logs/
+
+#python-venv
+venv/
