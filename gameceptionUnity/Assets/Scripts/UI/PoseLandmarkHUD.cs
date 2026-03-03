@@ -111,6 +111,9 @@ public class PoseLandmarkHUD : MonoBehaviour
         sb.Clear();
         sb.AppendLine($"Landmarks Detected: {landmarks.Count}");
 
+        sb.AppendLine($"index 0 x: {landmarks[0].x}");
+        sb.AppendLine($"index 0 y: {landmarks[0].y}");
+
         double lArmAngle = JointAngleDeg(landmarks[Joints.LeftShoulder], landmarks[Joints.LeftElbow], landmarks[Joints.LeftWrist]);
         double rArmAngle = JointAngleDeg(landmarks[Joints.RightShoulder], landmarks[Joints.RightElbow], landmarks[Joints.RightWrist]);
         double lLegAngle = JointAngleDeg(landmarks[Joints.LeftHip], landmarks[Joints.LeftKnee], landmarks[Joints.LeftAnkle]);
@@ -145,23 +148,19 @@ public class PoseLandmarkHUD : MonoBehaviour
         if (isEarthPose(lArmAngle, rArmAngle, lArmYDiff, rArmYDiff))
         {
             detectedPose = ElementPose.Earth;
-            Debug.Log("Earth pose detected");
         }
         else if (isWaterPose(lArmAngle, rArmAngle, landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y, landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y))
         {
             detectedPose = ElementPose.Water;
-            Debug.Log("Water pose detected");
         }
         else if (isFirePose(lArmAngle, rArmAngle, landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y, landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y, lElbowInline, rElbowInline))
         {
             detectedPose = ElementPose.Fire;
-            Debug.Log("Fire pose detected");
 
         }
         else if (isAirPose(lArmAngle, rArmAngle, landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y, landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y, lArmXDiff, rArmXDiff))
         {
             detectedPose = ElementPose.Air;
-            Debug.Log("Air pose detected");
 
         }
         else detectedPose = ElementPose.None;

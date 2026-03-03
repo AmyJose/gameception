@@ -1,11 +1,12 @@
-using System;
-using System.Collections;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
+using InputLayer;
 using Mediapipe;
 using Mediapipe.Tasks.Vision.PoseLandmarker;
 using Mediapipe.Unity;
 using Mediapipe.Unity.Sample;
+using System;
+using System.Collections;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Unity.Loading;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -26,6 +27,10 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
     // instance of the config class
     public readonly PoseDetectionConfig config = new PoseDetectionConfig();
 
+    [SerializeField] private PoseState poseState;
+    [SerializeField] private MonoBehaviour poseClassifierComponent; // assign HeuristicPoseClassifier
+    private IPoseClassifier poseClassifier;
+
     public override void Stop()
     {
         base.Stop();
@@ -38,6 +43,13 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         //wait on asset being prepared or copied into StreamingAssets if needed
         yield return AssetLoader.PrepareAssetAsync(config.ModelResourcePath);
         Debug.Log($"[PoseDetectionRunner] Expecting model at: {config.StreamingAssetsModelPath}");
+
+        //cache interface
+        poseClassifier = poseClassifierComponent as IPoseClassifier;
+        if (poseClassifier == null)
+        {
+            Debug.LogError("[PoseDetectionRunner] poseClassifierComponent does not implement IPoseClassifier");
+        }
 
         //load the options from the config
         var options = config.GetPoseLandmarkerOptions(
@@ -175,6 +187,15 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
 
     private void OnPoseLandmarkDetectionOutput(PoseLandmarkerResult result, Mediapipe.Image image, long timestamp)
     {
+        // 1) classify pose (thread-safe: pure math)
+        if (poseClassifier != null && poseState != null)
+        {
+            var c = poseClassifier.Classify(result);
+
+            poseState.SetPose(c.pose, c.confidence, timestamp);
+        }
+
+        // 2) UI / annotation (keep)
         _hud?.EnqueueResult(result);
         _poseLandmarkerResultAnnotationController.DrawLater(result);
         DisposeAllMasks(result);

@@ -1,202 +1,253 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem;
-using Unity.VisualScripting;
-// Hanfles decay logic
-// Key-presses
+using InputLayer;   // PoseState + ElementPose
+using Rhythm;       // BeatClock
+
+/// <summary>
+/// ResourceManager (finalised for "sample pose on beat").
+/// - Dance mat = keyboard digits (1/2/3...) as MULTI-SELECT toggles
+/// - Pose is read from PoseState (NOT HUD)
+/// - Elements are applied ONLY on beat events from BeatClock
+/// - Keeps your existing planet spawning/arranging/decay + effect triggers
+/// </summary>
 public class ResourceManager : MonoBehaviour
 {
-    private readonly List<Planet> planets = new();
-    private int idx = 0;
-    private Planet selected;
+    [Header("Prefabs / References")]
     [SerializeField] private Planet planetPrefab;
-    // key press logic
-    [SerializeField] private PoseDetectionRunner poseRunner;
 
-    [SerializeField] private float poseHoldTime = 3f;
+    [Tooltip("BeatClock that fires OnBeat events (music/metronome).")]
+    [SerializeField] private BeatClock beatClock;
 
-    private PoseLandmarkHUD.ElementPose lastPose = PoseLandmarkHUD.ElementPose.None;
-    private float poseTimer = 0f;
+    [Tooltip("PoseState that contains latest detected pose + confidence.")]
+    [SerializeField] private PoseState poseState;
 
-    void Awake()
+    [Header("Startup")]
+    [SerializeField] private int initialPlanets = 2;
+
+    [Header("Selection (Dance Mat as Keyboard Digits)")]
+    [Tooltip("If true: holding Shift while pressing a digit will SOLO-select that planet (clears others).")]
+    [SerializeField] private bool shiftToSoloSelect = true;
+
+    [Tooltip("Digit keys map to planet indices starting at 0 (1->0, 2->1, 3->2...). Increase if you want more hotkeys.")]
+    [SerializeField] private int maxDigitSelect = 9;
+
+    [Header("Pose Filtering")]
+    [SerializeField, Range(0f, 1f)] private float minConfidence = 0.6f;
+
+    [Header("Planet Layout")]
+    [SerializeField] private float spacing = 9f;
+    [SerializeField] private Vector3 planetBasePosition = new Vector3(0f, 0f, 5f);
+
+    [Header("Decay")]
+    [SerializeField] private bool enableDecay = true;
+    [SerializeField] private float decayPerSecond = 0.1f; // per element
+
+    // Runtime
+    private readonly List<Planet> planets = new();
+    private readonly HashSet<int> selectedIndices = new();
+
+    private void Awake()
     {
-        //Create 2 initial planets by default
-        for (int i = 0; i < 2; i++)
+        // Spawn initial planets
+        for (int i = 0; i < initialPlanets; i++)
         {
-            Planet p = Instantiate(planetPrefab, Vector3.zero, Quaternion.identity);
-            p.name = $"Planet_{planets.Count}";
-            planets.Add(p);
-            if (i == 0) selected = p; // select first planet
+            SpawnPlanet();
         }
 
-        ArrangePlanets();
-        HighlightSelected();
+        // Select first by default if available
+        if (planets.Count > 0)
+        {
+            selectedIndices.Add(0);
+            HighlightSelected();
+        }
     }
 
-    void Update()
+    private void OnEnable()
+    {
+        if (beatClock != null)
+            beatClock.OnBeat += HandleBeat;
+    }
+
+    private void OnDisable()
+    {
+        if (beatClock != null)
+            beatClock.OnBeat -= HandleBeat;
+    }
+
+    private void Update()
+    {
+        HandleKeyboardSelectionAndSpawning();
+        TickDecay(Time.deltaTime);
+    }
+
+    /// <summary>
+    /// Fired by BeatClock on the music beat. This is the ONLY place that applies elements.
+    /// </summary>
+    private void HandleBeat(int beatIndex)
+    {
+        Debug.Log($"[Beat] pose={poseState.CurrentPose} conf={poseState.Confidence} ts={poseState.LastTimestampMs}");
+        if (poseState == null) return;
+        if (selectedIndices.Count == 0) return;
+
+        var pose = poseState.CurrentPose;
+        var conf = poseState.Confidence;
+
+        if (pose == ElementPose.None) return;
+        if (conf < minConfidence) return;
+
+        foreach (var i in selectedIndices)
+        {
+            if (i < 0 || i >= planets.Count) continue;
+            TriggerElementEffect(planets[i], pose);
+        }
+    }
+
+    private void HandleKeyboardSelectionAndSpawning()
     {
         var kb = Keyboard.current;
         if (kb == null) return;
 
-        //switch planets with right arrow key
-        if (kb.rightArrowKey.wasPressedThisFrame)
-        {
-            if (planets.Count == 0) return;
-
-            idx = (idx + 1) % planets.Count;
-            selected = planets[idx];
-            HighlightSelected();
-        }
-
-        if (kb.leftArrowKey.wasPressedThisFrame)
-        {
-            if (planets.Count == 0) return;
-
-            idx = (idx - 1 + planets.Count) % planets.Count;
-            selected = planets[idx];
-            HighlightSelected();
-        }
-
-        //switch to planet 1 with key 1
-        if (kb.digit1Key.wasPressedThisFrame)
-        {
-            if (planets.Count >= 1)
-            {
-                idx = 0;
-                selected = planets[idx];
-                HighlightSelected();
-            }
-        }
-
-        //switch to planet 2 with key 2
-        if (kb.digit2Key.wasPressedThisFrame)
-        {
-            if (planets.Count >= 2)
-            {
-                idx = 1;
-                selected = planets[idx];
-                HighlightSelected();
-            }
-        }
-
-        //switch to planet 3 with key 3
-        if (kb.digit3Key.wasPressedThisFrame)
-        {
-            if (planets.Count >= 3)
-            {
-                idx = 2;
-                selected = planets[idx];
-                HighlightSelected();
-            }
-        }
-
-
-        //create new planet with T
+        // Spawn planet (T)
         if (kb.tKey.wasPressedThisFrame)
         {
-            Planet p = Instantiate(planetPrefab, Vector3.zero, Quaternion.identity);
-            p.name = $"Planet_{planets.Count}";
-            planets.Add(p);
+            SpawnPlanet();
+        }
 
-            idx = planets.Count - 1;
-            selected = p; // optionally auto-select new planet
-
-            ArrangePlanets();
+        // Clear selection (0)
+        if (kb.digit0Key.wasPressedThisFrame)
+        {
+            selectedIndices.Clear();
             HighlightSelected();
         }
-        
-        //element controls
-        //if (kb.wKey.wasPressedThisFrame) selected.AddWater(1f);
-        /**if (kb.wKey.wasPressedThisFrame) selected.AddWater(1f);
-        if (kb.eKey.wasPressedThisFrame) selected.AddEarth(1f);
-        if (kb.fKey.wasPressedThisFrame) selected.AddFire(1f);
-        if (kb.aKey.wasPressedThisFrame) selected.AddAir(1f);**/
 
-        HandlePoseInput();
+        // Multi-select toggles (1..9)
+        // 1 -> planet index 0, 2 -> 1, etc.
+        // Note: Unity InputSystem exposes digit keys individually; we handle 1..9 explicitly.
+        bool shiftHeld = (kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed);
 
-        //decay logic
-        float dt = Time.deltaTime;
-        foreach (var p in planets)
-        {
-            // optional decay (example)
-            p.elements.water = Mathf.Max(0f, p.elements.water - 0.1f * dt);
-            p.elements.earth = Mathf.Max(0f, p.elements.earth - 0.1f * dt);
-            p.elements.fire = Mathf.Max(0f, p.elements.fire - 0.1f * dt);
-            p.elements.air = Mathf.Max(0f, p.elements.air - 0.1f * dt);
-
-            // compute habitability
-            //p.habitability = HabitabilityLogic.Compute(p.elements);
-            //p.population += (p.habitability - 0.5f) * 10f * dt;
-            //p.population = Mathf.Max(0f, p.population);
-        }
+        if (kb.digit1Key.wasPressedThisFrame) SelectByDigit(1, shiftHeld);
+        if (kb.digit2Key.wasPressedThisFrame) SelectByDigit(2, shiftHeld);
+        if (kb.digit3Key.wasPressedThisFrame) SelectByDigit(3, shiftHeld);
+        if (kb.digit4Key.wasPressedThisFrame) SelectByDigit(4, shiftHeld);
+        if (kb.digit5Key.wasPressedThisFrame) SelectByDigit(5, shiftHeld);
+        if (kb.digit6Key.wasPressedThisFrame) SelectByDigit(6, shiftHeld);
+        if (kb.digit7Key.wasPressedThisFrame) SelectByDigit(7, shiftHeld);
+        if (kb.digit8Key.wasPressedThisFrame) SelectByDigit(8, shiftHeld);
+        if (kb.digit9Key.wasPressedThisFrame) SelectByDigit(9, shiftHeld);
     }
-    //arranging planets horizontally & centered
+
+    private void SelectByDigit(int digit, bool shiftHeld)
+    {
+        if (digit < 1 || digit > maxDigitSelect) return;
+
+        int idx = digit - 1;
+        if (idx < 0 || idx >= planets.Count) return;
+
+        bool doSolo = shiftToSoloSelect && shiftHeld;
+
+        if (doSolo)
+        {
+            selectedIndices.Clear();
+            selectedIndices.Add(idx);
+        }
+        else
+        {
+            // toggle selection
+            if (!selectedIndices.Add(idx))
+                selectedIndices.Remove(idx);
+        }
+
+        HighlightSelected();
+    }
+
+    private void SpawnPlanet()
+    {
+        if (planetPrefab == null)
+        {
+            Debug.LogError("[ResourceManager] Planet prefab not assigned.");
+            return;
+        }
+
+        Planet p = Instantiate(planetPrefab, Vector3.zero, Quaternion.identity);
+        p.name = $"Planet_{planets.Count}";
+        planets.Add(p);
+
+        ArrangePlanets();
+
+        // Optional: auto-select newly created planet
+        // selectedIndices.Add(planets.Count - 1);
+        // HighlightSelected();
+    }
+
     private void ArrangePlanets()
     {
-        float spacing = 9f; // distance between planets
-        
         float totalWidth = (planets.Count - 1) * spacing;
-        float startX = -totalWidth / 2f;
+        float startX = planetBasePosition.x - totalWidth / 2f;
 
         for (int i = 0; i < planets.Count; i++)
         {
-           float xPos = startX + i * spacing;
-           planets[i].transform.position = new Vector3(xPos, 0f, 5f);
+            float xPos = startX + i * spacing;
+            planets[i].transform.position = new Vector3(xPos, planetBasePosition.y, planetBasePosition.z);
         }
     }
 
-    //highlight selected planet
     private void HighlightSelected()
     {
+        for (int i = 0; i < planets.Count; i++)
+        {
+            bool isSelected = selectedIndices.Contains(i);
+            planets[i].transform.localScale = isSelected ? Vector3.one * 0.9f : Vector3.one * 0.8f;
+        }
+    }
+
+    private void TickDecay(float dt)
+    {
+        if (!enableDecay) return;
+
         foreach (var p in planets)
         {
-            p.transform.localScale = Vector3.one * 0.8f; // default scale
+            p.elements.water = Mathf.Max(0f, p.elements.water - decayPerSecond * dt);
+            p.elements.earth = Mathf.Max(0f, p.elements.earth - decayPerSecond * dt);
+            p.elements.fire = Mathf.Max(0f, p.elements.fire - decayPerSecond * dt);
+            p.elements.air = Mathf.Max(0f, p.elements.air - decayPerSecond * dt);
+
+            // habitability/population logic can live elsewhere later
+            // p.habitability = HabitabilityLogic.Compute(p.elements);
+            // p.population += (p.habitability - 0.5f) * 10f * dt;
+            // p.population = Mathf.Max(0f, p.population);
         }
-        selected.transform.localScale = Vector3.one * 0.9f; // enlarge selected
     }
 
-    private void HandlePoseInput()
+    private void TriggerElementEffect(Planet target, ElementPose pose)
     {
-        if (poseRunner.HUD == null) return;
-
-        var currentPose = poseRunner.HUD.CurrentPose;
-
-        // 1. If we are seeing a pose we weren't seeing last frame
-        if (currentPose != PoseLandmarkHUD.ElementPose.None && currentPose != lastPose)
-        {
-            TriggerElementEffect(currentPose);
-        }
-
-        // 2. Remember what we saw this frame for next frame's comparison
-        lastPose = currentPose;
-    }
-    private void TriggerElementEffect(PoseLandmarkHUD.ElementPose pose)
-    {
-        if (selected == null) return;
+        if (target == null) return;
 
         switch (pose)
         {
-            case PoseLandmarkHUD.ElementPose.Water:
-                selected.AddWater(10f);
-                selected.waterEffect.Activate();
+            case ElementPose.Water:
+                target.AddWater(10f);
+                target.waterEffect?.Activate();
                 break;
 
-            case PoseLandmarkHUD.ElementPose.Fire:
-                selected.AddFire(10f);
-                selected.fireEffect.Activate();
+            case ElementPose.Fire:
+                target.AddFire(10f);
+                target.fireEffect?.Activate();
                 break;
 
-            case PoseLandmarkHUD.ElementPose.Air:
-                selected.AddAir(10f);
-                selected.airEffect.Activate();
+            case ElementPose.Air:
+                target.AddAir(10f);
+                target.airEffect?.Activate();
                 break;
 
-            case PoseLandmarkHUD.ElementPose.Earth:
-                selected.AddEarth(10f);
-                selected.earthEffect.Activate();
+            case ElementPose.Earth:
+                target.AddEarth(10f);
+                target.earthEffect?.Activate();
+                break;
+
+            case ElementPose.None:
+            default:
                 break;
         }
-
-
     }
 }
