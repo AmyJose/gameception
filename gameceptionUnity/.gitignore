@@ -118,3 +118,6 @@ Obj/
 Build/
 Builds/
 Logs/
+
+# CSV data
+*.csv

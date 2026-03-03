@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
+using System.Globalization;
+using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading.Tasks;
 using Mediapipe;
 using Mediapipe.Tasks.Vision.PoseLandmarker;
@@ -8,6 +11,7 @@ using Mediapipe.Unity;
 using Mediapipe.Unity.Sample;
 using Unity.Loading;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 
@@ -26,11 +30,69 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
     // instance of the config class
     public readonly PoseDetectionConfig config = new PoseDetectionConfig();
 
+    // CSV data collection fields
+    private StreamWriter _csvWriter;
+    private volatile int _currentLabel = 0; // 0 = paused (don't write), 1-4 = pose labels, 9 = idle
+    private readonly object _csvLock = new object();
+
+    // Maps key number to label string. Empty string = not writing.
+    private static readonly string[] LabelNames = new string[]
+    {
+        "",       // 0 — not writing
+        "earth",  // 1
+        "water",  // 2
+        "fire",   // 3
+        "air",    // 4
+        "",       // 5 
+        "",       // 6 
+        "",       // 7 
+        "",       // 8 
+        "idle"    // 9
+    };
+
     public override void Stop()
     {
         base.Stop();
         _textureFramePool?.Dispose();
         _textureFramePool = null;
+        CloseCsv();
+    }
+
+    private void Update()
+    {
+        var kb = Keyboard.current;
+        if (kb == null) return;
+
+        if (kb.digit0Key.wasPressedThisFrame || kb.numpad0Key.wasPressedThisFrame)
+        {
+            _currentLabel = 0;
+            Debug.Log("[CSV] Label set to 0 — PAUSED (not writing)");
+        }
+        else if (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame)
+        {
+            _currentLabel = 1;
+            Debug.Log("[CSV] Label set to 1 — earth");
+        }
+        else if (kb.digit2Key.wasPressedThisFrame || kb.numpad2Key.wasPressedThisFrame)
+        {
+            _currentLabel = 2;
+            Debug.Log("[CSV] Label set to 2 — water");
+        }
+        else if (kb.digit3Key.wasPressedThisFrame || kb.numpad3Key.wasPressedThisFrame)
+        {
+            _currentLabel = 3;
+            Debug.Log("[CSV] Label set to 3 — fire");
+        }
+        else if (kb.digit4Key.wasPressedThisFrame || kb.numpad4Key.wasPressedThisFrame)
+        {
+            _currentLabel = 4;
+            Debug.Log("[CSV] Label set to 4 — air");
+        }
+        else if (kb.digit9Key.wasPressedThisFrame || kb.numpad9Key.wasPressedThisFrame)
+        {
+            _currentLabel = 9;
+            Debug.Log("[CSV] Label set to 9 — idle");
+        }
     }
 
     protected override IEnumerator Run()
@@ -94,6 +156,11 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         // checking if we can use the GPU
         var canUseGpuImage = SystemInfo.graphicsDeviceType == GraphicsDeviceType.OpenGLES3 && GpuManager.GpuResources != null;
         using var glContext = canUseGpuImage ? GpuManager.GetGlContext() : null;
+
+        // Create a new CSV file for this session
+        OpenCsv();
+        _currentLabel = 0; // start paused
+        Debug.Log("[CSV] Ready. Keys: 1=earth 2=water 3=fire 4=air 9=idle 0=pause");
 
         while (true)
         {
@@ -173,9 +240,89 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         }
     }
 
+    // CSV helpers
+
+    private void OpenCsv()
+    {
+        // Write CSVs to a PoseData/ folder 
+        var projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        var folder = Path.Combine(projectRoot, "PoseData");
+        Directory.CreateDirectory(folder);
+
+        var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        var filePath = Path.Combine(folder, $"posedata_{timestamp}.csv");
+
+        _csvWriter = new StreamWriter(filePath, append: false, Encoding.UTF8);
+
+        // Header: x0,y0,x1,y1,...,x32,y32,label
+        var header = new StringBuilder();
+        for (int i = 0; i < 33; i++)
+        {
+            header.Append($"x{i},y{i}");
+            header.Append(',');
+        }
+        header.Append("label");
+        _csvWriter.WriteLine(header.ToString());
+        _csvWriter.Flush();
+
+        Debug.Log($"[CSV] File opened: {filePath}");
+    }
+
+    private void CloseCsv()
+    {
+        lock (_csvLock)
+        {
+            if (_csvWriter != null)
+            {
+                _csvWriter.Flush();
+                _csvWriter.Close();
+                _csvWriter.Dispose();
+                _csvWriter = null;
+                Debug.Log("[CSV] File closed.");
+            }
+        }
+    }
+
+    private void WriteLandmarksToCsv(PoseLandmarkerResult result)
+    {
+        int label = _currentLabel;
+
+        // 0 is paused, don't write anything
+        if (label == 0) return;
+
+        // Validate label index
+        if (label < 0 || label >= LabelNames.Length || string.IsNullOrEmpty(LabelNames[label])) return;
+
+        // Need at least one detected pose
+        if (result.poseLandmarks == null || result.poseLandmarks.Count == 0) return;
+
+        var landmarks = result.poseLandmarks[0].landmarks;
+        if (landmarks == null || landmarks.Count < 33) return;
+
+        var row = new StringBuilder(512);
+        for (int i = 0; i < 33; i++)
+        {
+            row.Append(landmarks[i].x.ToString("F6", CultureInfo.InvariantCulture));
+            row.Append(',');
+            row.Append(landmarks[i].y.ToString("F6", CultureInfo.InvariantCulture));
+            row.Append(',');
+        }
+        row.Append(LabelNames[label]);
+
+        lock (_csvLock)
+        {
+            if (_csvWriter != null)
+            {
+                _csvWriter.WriteLine(row.ToString());
+                _csvWriter.Flush();
+            }
+        }
+    }
+
     private void OnPoseLandmarkDetectionOutput(PoseLandmarkerResult result, Mediapipe.Image image, long timestamp)
     {
         _hud?.EnqueueResult(result);
+        WriteLandmarksToCsv(result);
         _poseLandmarkerResultAnnotationController.DrawLater(result);
         DisposeAllMasks(result);
     }
