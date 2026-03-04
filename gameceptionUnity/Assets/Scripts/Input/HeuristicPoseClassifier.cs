@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace InputLayer
 {
+    //uses the pose classification interface
     public class HeuristicPoseClassifier : MonoBehaviour, IPoseClassifier
     {
         private static class Joints
@@ -54,11 +55,11 @@ namespace InputLayer
                     lElbowInline, rElbowInline))
                 return new PoseClassification { pose = ElementPose.Fire, confidence = 1f };
 
-            if (IsAirPose(lArmAngle, rArmAngle,
+            if (IsIcePose(lArmAngle, rArmAngle,
                     landmarks[Joints.LeftWrist].y, landmarks[Joints.LeftShoulder].y,
                     landmarks[Joints.RightWrist].y, landmarks[Joints.RightShoulder].y,
                     lArmXDiff, rArmXDiff))
-                return new PoseClassification { pose = ElementPose.Air, confidence = 1f };
+                return new PoseClassification { pose = ElementPose.Ice, confidence = 1f };
 
             return new PoseClassification { pose = ElementPose.None, confidence = 0f };
         }
@@ -103,7 +104,7 @@ namespace InputLayer
             return armsAngled && armsBelowShoulder && elbowsLevel;
         }
 
-        private bool IsAirPose(double leftArmAngle, double rightArmAngle, float leftWristY, float leftShoulderY, float rightWristY, float rightShoulderY, float leftArmXDiff, float rightArmXDiff)
+        private bool IsIcePose(double leftArmAngle, double rightArmAngle, float leftWristY, float leftShoulderY, float rightWristY, float rightShoulderY, float leftArmXDiff, float rightArmXDiff)
         {
             bool armsAboveShoulder = leftWristY < leftShoulderY && rightWristY < rightShoulderY;
             bool armsAligned = leftArmXDiff <= xTolerance && rightArmXDiff <= xTolerance;

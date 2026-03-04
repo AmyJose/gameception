@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace InputLayer
 {
-    public enum ElementPose { None, Earth, Water, Fire, Air }
+    public enum ElementPose { None, Earth, Water, Fire, Ice }
 
     public class PoseState : MonoBehaviour
     {

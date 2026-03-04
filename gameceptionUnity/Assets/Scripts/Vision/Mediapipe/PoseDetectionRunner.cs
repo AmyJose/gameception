@@ -20,10 +20,6 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
     [SerializeField] private PoseLandmarkerResultAnnotationController _poseLandmarkerResultAnnotationController;
     private Mediapipe.Unity.Experimental.TextureFramePool _textureFramePool;
 
-    // heads up display
-    [SerializeField] private PoseLandmarkHUD _hud;
-    public PoseLandmarkHUD HUD => _hud;
-
     // instance of the config class
     public readonly PoseDetectionConfig config = new PoseDetectionConfig();
 
@@ -64,8 +60,6 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         Debug.Log("[PoseDetectionRunner] Options created, creating PoseLandmarker...");
         taskApi = PoseLandmarker.CreateFromOptions(options, gpuResources);
 
-        //TODO move this from the samples folder
-        //e.g., do our own implementation of accessing the image source and waiting for a response
         var imageSource = ImageSourceProvider.ImageSource;
 
         if (imageSource is WebCamSource webCamSource)
@@ -86,7 +80,6 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
 
         _textureFramePool = new Mediapipe.Unity.Experimental.TextureFramePool(imageSource.textureWidth, imageSource.textureHeight, TextureFormat.RGBA32, 10);
 
-        //this is held in the visiontaskapirunner
         screen.Initialize(imageSource);
 
         SetupAnnotationController(_poseLandmarkerResultAnnotationController, imageSource);
@@ -195,8 +188,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
             poseState.SetPose(c.pose, c.confidence, timestamp);
         }
 
-        // 2) UI / annotation (keep)
-        _hud?.EnqueueResult(result);
+        // 2) UI / annotation
         _poseLandmarkerResultAnnotationController.DrawLater(result);
         DisposeAllMasks(result);
     }

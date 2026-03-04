@@ -1,16 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using InputLayer;   // PoseState + ElementPose
-using Rhythm;       // BeatClock
+using InputLayer;
+using Rhythm;
 
-/// <summary>
-/// ResourceManager (finalised for "sample pose on beat").
-/// - Dance mat = keyboard digits (1/2/3...) as MULTI-SELECT toggles
-/// - Pose is read from PoseState (NOT HUD)
-/// - Elements are applied ONLY on beat events from BeatClock
-/// - Keeps your existing planet spawning/arranging/decay + effect triggers
-/// </summary>
+
 public class ResourceManager : MonoBehaviour
 {
     [Header("Prefabs / References")]
@@ -63,44 +57,9 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-        if (beatClock != null)
-            beatClock.OnBeat += HandleBeat;
-    }
-
-    private void OnDisable()
-    {
-        if (beatClock != null)
-            beatClock.OnBeat -= HandleBeat;
-    }
-
     private void Update()
     {
         HandleKeyboardSelectionAndSpawning();
-        TickDecay(Time.deltaTime);
-    }
-
-    /// <summary>
-    /// Fired by BeatClock on the music beat. This is the ONLY place that applies elements.
-    /// </summary>
-    private void HandleBeat(int beatIndex)
-    {
-        Debug.Log($"[Beat] pose={poseState.CurrentPose} conf={poseState.Confidence} ts={poseState.LastTimestampMs}");
-        if (poseState == null) return;
-        if (selectedIndices.Count == 0) return;
-
-        var pose = poseState.CurrentPose;
-        var conf = poseState.Confidence;
-
-        if (pose == ElementPose.None) return;
-        if (conf < minConfidence) return;
-
-        foreach (var i in selectedIndices)
-        {
-            if (i < 0 || i >= planets.Count) continue;
-            TriggerElementEffect(planets[i], pose);
-        }
     }
 
     private void HandleKeyboardSelectionAndSpawning()
@@ -175,9 +134,8 @@ public class ResourceManager : MonoBehaviour
 
         ArrangePlanets();
 
-        // Optional: auto-select newly created planet
-        // selectedIndices.Add(planets.Count - 1);
-        // HighlightSelected();
+        selectedIndices.Add(planets.Count - 1);
+        HighlightSelected();
     }
 
     private void ArrangePlanets()
@@ -198,56 +156,6 @@ public class ResourceManager : MonoBehaviour
         {
             bool isSelected = selectedIndices.Contains(i);
             planets[i].transform.localScale = isSelected ? Vector3.one * 0.9f : Vector3.one * 0.8f;
-        }
-    }
-
-    private void TickDecay(float dt)
-    {
-        if (!enableDecay) return;
-
-        foreach (var p in planets)
-        {
-            p.elements.water = Mathf.Max(0f, p.elements.water - decayPerSecond * dt);
-            p.elements.earth = Mathf.Max(0f, p.elements.earth - decayPerSecond * dt);
-            p.elements.fire = Mathf.Max(0f, p.elements.fire - decayPerSecond * dt);
-            p.elements.air = Mathf.Max(0f, p.elements.air - decayPerSecond * dt);
-
-            // habitability/population logic can live elsewhere later
-            // p.habitability = HabitabilityLogic.Compute(p.elements);
-            // p.population += (p.habitability - 0.5f) * 10f * dt;
-            // p.population = Mathf.Max(0f, p.population);
-        }
-    }
-
-    private void TriggerElementEffect(Planet target, ElementPose pose)
-    {
-        if (target == null) return;
-
-        switch (pose)
-        {
-            case ElementPose.Water:
-                target.AddWater(10f);
-                target.waterEffect?.Activate();
-                break;
-
-            case ElementPose.Fire:
-                target.AddFire(10f);
-                target.fireEffect?.Activate();
-                break;
-
-            case ElementPose.Air:
-                target.AddAir(10f);
-                target.airEffect?.Activate();
-                break;
-
-            case ElementPose.Earth:
-                target.AddEarth(10f);
-                target.earthEffect?.Activate();
-                break;
-
-            case ElementPose.None:
-            default:
-                break;
         }
     }
 }
