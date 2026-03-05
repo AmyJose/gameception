@@ -87,7 +87,7 @@ public class PoseClassifier : IDisposable
         }
 
         // Confidence threshold - reject low-confidence predictions
-        if (bestScore < 6f)
+        if (bestScore < 0.9f)
             return "none";
 
         if (bestIndex >= 0 && bestIndex < _labelNames.Length)
