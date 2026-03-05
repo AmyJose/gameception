@@ -9,6 +9,7 @@ using Mediapipe;
 using Mediapipe.Tasks.Vision.PoseLandmarker;
 using Mediapipe.Unity;
 using Mediapipe.Unity.Sample;
+using Unity.InferenceEngine;
 using Unity.Loading;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -29,6 +30,24 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
 
     // instance of the config class
     public readonly PoseDetectionConfig config = new PoseDetectionConfig();
+
+    // Pose classifier (Sentis/InferenceEngine)
+    [Header("Pose Classifier")]
+    [SerializeField] private ModelAsset _classifierModelAsset;
+    [SerializeField] private TextAsset _scalerJson;
+    [SerializeField] private TextAsset _labelsJson;
+
+    private PoseClassifier _poseClassifier;
+    // private readonly float[] _landmarkBuffer = new float[66];
+    private volatile string _lastPrediction = "";
+    public string LastPrediction => _lastPrediction;
+
+    public float[] LastClassScores => _poseClassifier?.LastScores;
+    public string[] ClassLabels => _poseClassifier?.LabelNames;
+
+    // Buffer for deferring classification to the main thread
+    private readonly float[] _pendingLandmarks = new float[66];
+    private volatile bool _hasLandmarksPending = false;
 
     // CSV data collection fields
     private StreamWriter _csvWriter;
@@ -56,6 +75,8 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         _textureFramePool?.Dispose();
         _textureFramePool = null;
         CloseCsv();
+        _poseClassifier?.Dispose();
+        _poseClassifier = null;
     }
 
     private void Update()
@@ -92,6 +113,13 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         {
             _currentLabel = 9;
             Debug.Log("[CSV] Label set to 9 — idle");
+        }
+
+        // Run classification on the main thread
+        if (_hasLandmarksPending && _poseClassifier != null)
+        {
+            _hasLandmarksPending = false;
+            _lastPrediction = _poseClassifier.Classify(_pendingLandmarks);
         }
     }
 
@@ -156,6 +184,18 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         // checking if we can use the GPU
         var canUseGpuImage = SystemInfo.graphicsDeviceType == GraphicsDeviceType.OpenGLES3 && GpuManager.GpuResources != null;
         using var glContext = canUseGpuImage ? GpuManager.GetGlContext() : null;
+
+        // Initialise pose classifier
+        if (_classifierModelAsset != null && _scalerJson != null && _labelsJson != null)
+        {
+            _poseClassifier = new PoseClassifier();
+            _poseClassifier.Load(_classifierModelAsset, _scalerJson, _labelsJson);
+        }
+        else
+        {
+            Debug.LogWarning("[PoseDetectionRunner] Classifier assets not assigned — classification disabled.");
+        }
+
 
         // Create a new CSV file for this session
         OpenCsv();
@@ -323,6 +363,28 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
     {
         _hud?.EnqueueResult(result);
         WriteLandmarksToCsv(result);
+
+        // Stages landmarks for classification on the main thread (Classify should not be called from)
+        if (_poseClassifier != null
+            && result.poseLandmarks != null
+            && result.poseLandmarks.Count > 0)
+        {
+            var landmarks = result.poseLandmarks[0].landmarks;
+            if (landmarks != null && landmarks.Count >= 33)
+            {
+                // Extract x,y pairs into flat buffer
+                for (int i = 0; i < 33; i++)
+                {
+                    _pendingLandmarks[i * 2]     = landmarks[i].x;
+                    _pendingLandmarks[i * 2 + 1] = landmarks[i].y;
+                }
+                _hasLandmarksPending = true;
+
+            }
+        }
+
+
+
         _poseLandmarkerResultAnnotationController.DrawLater(result);
         DisposeAllMasks(result);
     }

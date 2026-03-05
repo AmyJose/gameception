@@ -6,6 +6,7 @@ using System.Text;
 using TMPro;
 using UnityEngine;
 
+
 public class PoseLandmarkHUD : MonoBehaviour
 {
     //indices from Mediapipe poselandmarker landmark diagram
@@ -45,6 +46,7 @@ public class PoseLandmarkHUD : MonoBehaviour
     [Header("UI")]
     [SerializeField] private TMP_Text landmarksText;
     [SerializeField] private TMP_Text poseText;
+    [SerializeField] private TMP_Text _predictionText;
 
     [Header("Detection thresholds")]
     [SerializeField] private double angleToleranceDeg = 12.0;
@@ -75,7 +77,7 @@ public class PoseLandmarkHUD : MonoBehaviour
 
     private void Update()
     {
-        if (landmarksText == null && poseText == null) return;
+        if (landmarksText == null && poseText == null && _predictionText == null)  return;
         string lm = null;
         string pose = null;
 
@@ -92,6 +94,42 @@ public class PoseLandmarkHUD : MonoBehaviour
 
         if (lm != null && landmarksText != null) landmarksText.text = lm;
         if (pose != null && poseText != null) poseText.text = pose;
+        UpdatePredictionDisplay();
+    }
+
+    private void UpdatePredictionDisplay()
+    {
+        if (_predictionText == null) return;
+
+        var runner = FindObjectOfType<PoseDetectionRunner>();
+        if (runner == null) return;
+
+        var sb2 = new StringBuilder();
+
+        string prediction = runner.LastPrediction;
+        if (!string.IsNullOrEmpty(prediction))
+        {
+            sb2.AppendLine($"ML Pose: {prediction}");
+            // _predictionText.text = $"ML Pose: {prediction}";
+        }
+        else
+        {
+            sb2.AppendLine("ML Pose: —");
+            // _predictionText.text = "ML Pose: —";
+        }
+
+        // Shows raw class scores below the prediction
+        float[] scores = runner.LastClassScores;
+        string[] labels = runner.ClassLabels;
+        if (scores != null && labels != null && scores.Length == labels.Length)
+        {
+            for (int i = 0; i < scores.Length; i++)
+            {
+                sb2.AppendLine($"  {labels[i]}: {scores[i]:F3}");
+            }
+        }
+
+        _predictionText.text = sb2.ToString();
     }
 
     private (string landmarksTextOut, string poseTextOut) BuildTexts(PoseLandmarkerResult result)
@@ -167,7 +205,7 @@ public class PoseLandmarkHUD : MonoBehaviour
         else detectedPose = ElementPose.None;
 
         _pendingPose = detectedPose;
-        string poseOut = detectedPose.ToString();
+        string poseOut = $"Angle Pose: {detectedPose}";
 
         return (landmarksOut, poseOut);
     }
