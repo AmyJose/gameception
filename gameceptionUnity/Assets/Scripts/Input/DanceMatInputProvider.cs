@@ -9,21 +9,14 @@ namespace InputLayer
     {
         public event Action<HashSet<int>> OnSelectionChanged;
 
-        [Header("Key Mapping")]
-        [Tooltip("Max number of digit keys used for selection. 9 means 1..9 map to planet indices 0..8.")]
         [SerializeField, Range(1, 9)] private int maxDigitSelect = 9;
 
         [SerializeField] private bool zeroClearsSelection = true;
 
-        [Tooltip("If enabled: holding Shift while pressing a digit will SOLO-select that planet (clears others).")]
         [SerializeField] private bool shiftToSoloSelect = true;
 
-        [Tooltip("If enabled: if nothing is selected at start, auto-select planet 0 (if it exists).")]
         [SerializeField] private bool autoSelectFirst = true;
 
-        [Header("Planet Count")]
-        [Tooltip("If > 0, selection is clamped to valid indices [0..planetCount-1]. " +
-                 "If 0, no clamping is performed (useful when planets are spawned dynamically).")]
         [SerializeField] private int planetCount = 0;
 
         private readonly HashSet<int> _selected = new();
