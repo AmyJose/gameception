@@ -543,8 +543,8 @@ MonoBehaviour:
   runningMode: 0
   _poseLandmarkerResultAnnotationController: {fileID: 1572025920}
   _hud: {fileID: 1165996493}
-  _classifierModelAsset: {fileID: 5022602860645237092, guid: fb7143889118b48fa8093afc08cf496e, type: 3}
-  _scalerJson: {fileID: 4900000, guid: 94d865bf9694e445c898a8ab26d616f5, type: 3}
+  _classifierModelAsset: {fileID: 5022602860645237092, guid: a7cc0fbbf1c2f4964a61d2c3f9ca0438, type: 3}
+  _scalerJson: {fileID: 4900000, guid: a46c08e16bba8432a88baa831c6ffdaa, type: 3}
   _labelsJson: {fileID: 4900000, guid: 8b2eb6132ac6e4ccfa63b027d6a79a62, type: 3}
 --- !u!4 &729355246
 Transform:
