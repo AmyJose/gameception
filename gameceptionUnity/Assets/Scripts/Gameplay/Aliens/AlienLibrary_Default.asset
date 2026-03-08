@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87388267482abb845899d720a98f3c56, type: 3}
+  m_Name: AlienLibrary_Default
+  m_EditorClassIdentifier: Assembly-CSharp::AlienLibrary
+  aliens:
+  - {fileID: 11400000, guid: bf92c7222e3734146b61c25079e54ddd, type: 2}
+  - {fileID: 11400000, guid: 003ba5e9bccd60a4f96de90540c8e52b, type: 2}
+  - {fileID: 11400000, guid: 8be77f9e621356840a81678b3e6f7ea5, type: 2}
+  - {fileID: 11400000, guid: ef599b2ea9c73a341a90fa80cf729cdb, type: 2}

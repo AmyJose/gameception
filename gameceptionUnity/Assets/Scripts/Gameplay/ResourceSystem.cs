@@ -16,7 +16,7 @@ namespace Gameplay
                 var planet = planetManager.GetPlanet(idx);
                 if (planet == null) continue;
 
-                planet.ApplyElement(element);
+                planet.ApplyElement(element, amount:10f);
                 Debug.Log("ResourceSystem: applied element to a planet");
             }
         }
