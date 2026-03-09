@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a39cb1a108a6e4f449f51ff49917d345, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Planet
-  definition: {fileID: 11400000, guid: df48226c5da071043b1287a96748b236, type: 2}
+  definition: {fileID: 11400000, guid: 9fadc5a8dfc0cf0448a0a1df04006b52, type: 2}
   difficulty: {fileID: 11400000, guid: b35e8d0df4dcce3479bacb894a29c502, type: 2}
   fire: 0
   water: 0
@@ -58,6 +58,7 @@ MonoBehaviour:
   consumptionPerAlienPerSecond: 0.01
   populationGrowthPerSecond: 1.2
   maxElement: 100
+  spriteRenderer: {fileID: 2934997472566962085}
 --- !u!114 &7791890636379242194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,10 +74,12 @@ MonoBehaviour:
   planet: {fileID: 2421352814427187259}
   container: {fileID: 7096330909747885456}
   alienLibrary: {fileID: 11400000, guid: 75d9f3ad390dc334cbc2a9ee0a055da3, type: 2}
+  planetSpriteRenderer: {fileID: 2934997472566962085}
   populationPerSprite: 5
   maxSprites: 30
-  radius: 1.2
+  edgeOffset: 0
   jitter: 0.2
+  radiusMultiplier: 0.7
 --- !u!1 &2173057697115594395
 GameObject:
   m_ObjectHideFlags: 0
@@ -103,7 +106,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1, y: 1, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4645923925486781507}
@@ -134,8 +137,8 @@ Transform:
   m_GameObject: {fileID: 8713938942086236444}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.5388, y: -5.6928015, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 5, y: 5, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4645923925486781507}

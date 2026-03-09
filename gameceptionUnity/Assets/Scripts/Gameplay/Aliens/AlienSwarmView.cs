@@ -1,6 +1,7 @@
+using Gameplay;
 using NUnit.Framework;
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Rendering;
 
 public class AlienSwarmView : MonoBehaviour

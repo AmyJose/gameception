@@ -78,7 +78,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7791890636379242194, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
       propertyPath: jitter
-      value: 0.005
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7791890636379242194, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
       propertyPath: edgeOffset
