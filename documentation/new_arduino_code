@@ -1,0 +1,77 @@
+#include "usb_keyboard.h"
+
+const int BUTTON_COUNT = 4; 
+const int LED_COUNT = 4;
+
+const int buttonPin[BUTTON_COUNT]= {14,16,17,20};  // the number of the pushbutton pin
+const int ledPin[LED_COUNT] = {2,3,4,5};    // the number of the LED pin
+const int analogInPin[LED_COUNT] = {A0, A2, A3, A6}; // number of analogue LED output
+
+int lastButtonState[BUTTON_COUNT] = {HIGH, HIGH, HIGH, HIGH};
+char keyPresses[BUTTON_COUNT] =   {'1','2','3','4'};
+int buttonStates[BUTTON_COUNT];
+int sensorValue[BUTTON_COUNT] = {0,0,0,0}; 
+
+void setup() {
+
+  Serial.begin(9600);
+  for (int i = 0; i < BUTTON_COUNT; i++){
+    // initialize the pushbutton pin as an input:
+    pinMode(buttonPin[i], INPUT);
+    // initialize the LED pin as an output:
+    pinMode(ledPin[i], OUTPUT);
+
+    // Serial.print("Button");
+    // Serial.print(i);
+    // Serial.print("on pin");
+    // Serial.print(buttonPin[i]);
+  }
+
+  
+}
+
+void loop() {
+  for (int i = 0; i < BUTTON_COUNT; i++){
+    buttonStates[i] = digitalRead(buttonPin[i]);
+
+    sensorValue[i] = analogRead(analogInPin[i]);
+  
+    // print the results to the Serial Monitor:
+    Serial.print("sensor = ");
+    Serial.print(sensorValue[i]);
+
+
+  //   if (buttonStates[i] != lastButtonState[i]){
+  //     if (buttonStates[i] == HIGH){
+  //       digitalWrite(ledPin[i], HIGH);
+        
+  //       //button press
+  //       Keyboard.press(keyPresses[i]);
+  //       delay(50);
+  //       Keyboard.release(keyPresses[i]);
+  //     }
+  //     else{
+  //       digitalWrite(ledPin[i], LOW); 
+  //     }
+      
+  //     lastButtonState[i]= buttonStates[i];
+  //   }
+    
+  // }
+  // delay(10);
+
+    sensorValue[i] = map(sensorValue[i], 100, 1023, 0, 255);
+    analogWrite(ledPin[i], sensorValue[i]);
+  }
+
+  delay(2);
+  
+
+  
+}
+
+
+
+
+
+
