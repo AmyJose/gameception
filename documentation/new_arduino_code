@@ -60,6 +60,7 @@ void loop() {
   // }
   // delay(10);
 
+//TO DO only change the first number here. So in this case the number is 100, meaning signals below 100 will not cause lightbulb to light up
     sensorValue[i] = map(sensorValue[i], 100, 1023, 0, 255);
     analogWrite(ledPin[i], sensorValue[i]);
   }
