@@ -33,6 +33,7 @@ namespace Gameplay
         public float Water => water;
         public float Earth => earth;
         public float Ice => ice;
+        public float MaxElement => maxElement;
 
         public AlienType PlanetAlienType => definition != null ? definition.alienType : AlienType.Earth;
 

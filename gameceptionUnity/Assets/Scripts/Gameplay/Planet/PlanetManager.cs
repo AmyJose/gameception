@@ -1,3 +1,4 @@
+using InputLayer;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,7 +19,9 @@ namespace Gameplay
         [SerializeField] private Vector3 centerPosition = Vector3.zero;
 
         [SerializeField] private DifficultyProfile difficultyProfile;
-        [SerializeField] private InputLayer.DanceMatInputProvider danceMatInputProvider;
+        [SerializeField] private SelectionState selectionState;
+
+        [SerializeField] private DanceMatInputProvider danceMatInputProvider;
 
         private readonly List<Planet> planets = new();
         public int PlanetCount => planets.Count;
@@ -58,8 +61,6 @@ namespace Gameplay
             }
 
             ArrangePlanets();
-            if (danceMatInputProvider != null)
-                danceMatInputProvider.SetPlanetCount(planets.Count);
         }
 
         public Planet SpawnPlanet(PlanetDefinition definitionOverride = null)
@@ -90,8 +91,7 @@ namespace Gameplay
             planets.Add(newPlanet);
             ArrangePlanets();
 
-            if (danceMatInputProvider != null)
-                danceMatInputProvider.SetPlanetCount(planets.Count);
+            danceMatInputProvider.SetPlanetCount(planets.Count);
 
             Debug.Log("Spawned planet at " + newPlanet.transform.position);
 
@@ -106,8 +106,7 @@ namespace Gameplay
             Destroy(planet.gameObject);
             ArrangePlanets();
 
-            if (danceMatInputProvider != null)
-                danceMatInputProvider.SetPlanetCount(planets.Count);
+            danceMatInputProvider.SetPlanetCount(planets.Count);
         }
         public void SetDifficultyForAll(DifficultyProfile profile)
         {
@@ -158,6 +157,28 @@ namespace Gameplay
             }
 
             planets.Clear();
+        }
+
+        private void OnEnable()
+        {
+            if (selectionState != null) selectionState.OnChanged += HandleSelectionChanged;
+        }
+
+        private void OnDisable()
+        {
+            if (selectionState != null) selectionState.OnChanged -= HandleSelectionChanged;
+        }
+
+        private void HandleSelectionChanged(IReadOnlyCollection<int> selected)
+        {
+            for (int i = 0; i < planets.Count; i++)
+            {
+                if (planets[i] == null) continue;
+
+                var view = planets[i].GetComponent<PlanetView>();
+                if (view != null)
+                    view.SetSelected(selectionState.IsSelected(i));
+            }
         }
     }
 }
