@@ -118,3 +118,5 @@ Obj/
 Build/
 Builds/
 Logs/
+
+.vsconfig

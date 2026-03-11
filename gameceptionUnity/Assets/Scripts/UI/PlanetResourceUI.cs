@@ -27,10 +27,20 @@ public class PlanetResourceUI : MonoBehaviour
 
         float maxVal = Mathf.Max(planet.MaxElement, 0.0001f);
 
-        if (fireBar != null) fireBar.SetNormalised(planet.Fire / maxVal);
-        if (waterBar != null) waterBar.SetNormalised(planet.Water / maxVal);
-        if (earthBar != null) earthBar.SetNormalised(planet.Earth / maxVal);
-        if (iceBar != null) iceBar.SetNormalised(planet.Ice / maxVal);
+        float fireCurrent = planet.Fire / maxVal;
+        float waterCurrent = planet.Water / maxVal;
+        float earthCurrent = planet.Earth / maxVal;
+        float iceCurrent = planet.Ice / maxVal;
+
+        float fireTarget = planet.Definition.targetFire / maxVal;
+        float waterTarget = planet.Definition.targetWater / maxVal;
+        float earthTarget = planet.Definition.targetEarth / maxVal;
+        float iceTarget = planet.Definition.targetIce / maxVal;
+
+        if (fireBar != null) fireBar.SetNormalised(fireCurrent, fireTarget);
+        if (waterBar != null) waterBar.SetNormalised(waterCurrent, waterTarget);
+        if (earthBar != null) earthBar.SetNormalised(earthCurrent, earthTarget);
+        if (iceBar != null) iceBar.SetNormalised(iceCurrent, iceTarget);
     }
 
     public void SetVisible(bool visible)
