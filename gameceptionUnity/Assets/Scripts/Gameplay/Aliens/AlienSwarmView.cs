@@ -16,7 +16,7 @@ public class AlienSwarmView : MonoBehaviour
 
     [SerializeField] private float edgeOffset = 0f;
     [SerializeField] private float jitter = 0.05f;
-    [SerializeField] private float radiusMultiplier = 0.7f;
+    [SerializeField] private float radiusMultiplier = 0.1f;
 
     private readonly List<GameObject> _spawned = new();
     private AlienType _currentType;

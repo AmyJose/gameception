@@ -349,7 +349,7 @@ MonoBehaviour:
   maxSprites: 30
   edgeOffset: 0
   jitter: 0.2
-  radiusMultiplier: 0.7
+  radiusMultiplier: 0.575
 --- !u!114 &2314116914613501229
 MonoBehaviour:
   m_ObjectHideFlags: 0
