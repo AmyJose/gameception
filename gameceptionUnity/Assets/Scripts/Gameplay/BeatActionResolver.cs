@@ -15,6 +15,8 @@ namespace Gameplay
         [SerializeField] private ResourceSystem resourceSystem;
         [SerializeField] private ComboSystem comboSystem;
 
+        [SerializeField] private List<Planet> planetObjects;
+
         [Header("Judging")]
         [SerializeField] private float minPoseConfidence = 0.6f;
 
@@ -28,35 +30,44 @@ namespace Gameplay
         }
 
         private void HandleBeat(BeatInfo beat)
-        {
-            Debug.Log("BeatActionResolver: HandleBeat");
-            if (poseState.Confidence < minPoseConfidence || poseState.CurrentPose == ElementPose.None)
-            {
-                // miss
-                //no valid pose at the beat
-                comboSystem.RegisterMiss(beat.beatIndex);
-                Debug.Log("BeatActionResolver: no valid pose at the beat");
-                return;
-            }
-
-            //selected planets
+        {   
+            //selected targets
             var targets = new List<int>(matInput.Selected);
-
-            if (targets.Count == 0)
+            if (targets.Count > 0)
             {
-                //miss
-                //pose was correct but no planet selected
-                comboSystem.RegisterMiss(beat.beatIndex);
-                Debug.Log("BeatActionResolver: valid pose, no planet selected");
-                return;
+               Debug.Log("planets currently selected: " + targets[0]);
+            }
+            else
+            {
+                Debug.Log("no planets currently selected");
             }
 
-            //apply the element to the selected planets
-            Debug.Log("BeatActionResolver: about to apply element to planet");
-            resourceSystem.ApplyElementToPlanets(poseState.CurrentPose, targets, beat.beatIndex);
+            int activeIndex = -1;
+            if (targets.Count > 0)            {
+                activeIndex = targets[targets.Count - 1];
+            }
+            //Visual SYNC: tell all planets to flash/pulse on the beat, regardless of hit or miss, to help player sync up
+            for (int i=0; i < planetObjects.Count; i++)
+            {
+                if (i == activeIndex){
+                    //it's selected, make it bob.
+                    planetObjects[i].TriggerSuccess((float)beat.beatInterval);
+                }
+                else
+                {
+                    //it is not selected. so stop.
+                    planetObjects[i].StopBob(i);
+                }
+            }
 
-            Debug.Log("BeatActionResolver: about to register hit with combo systems");
-            comboSystem.RegisterHit(poseState.CurrentPose, targets, beat.beatIndex);
+            //poseState logic (the actual gameplay hit)            {
+            if (activeIndex != -1 && poseState.Confidence >= minPoseConfidence && poseState.CurrentPose != ElementPose.None)
+            {
+                //Apply the element and register the hit with the combo system. 
+                var singleTarget = new List<int> {activeIndex};
+                resourceSystem.ApplyElementToPlanets(poseState.CurrentPose, singleTarget, beat.beatIndex);
+                comboSystem.RegisterHit(poseState.CurrentPose, singleTarget, beat.beatIndex);
+            }
         }
     }
 }

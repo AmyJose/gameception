@@ -102,23 +102,27 @@ namespace InputLayer
             int idx = digit - 1;
             if (!IsIndexAllowed(idx)) return;
 
-            if (shiftHeld)
-            {
-                SoloSelect(idx);
-                return;
-            }
+            _selected.Clear();
+            _selected.Add(idx);
+            RaiseChanged();
 
-            // Toggle
-            bool changed = !_selected.Add(idx);
-            if (!changed)
-            {
-                RaiseChanged();
-            }
-            else
-            {
-                _selected.Remove(idx);
-                RaiseChanged();
-            }
+            // if (shiftHeld)
+            // {
+            //     SoloSelect(idx);
+            //     return;
+            // }
+
+            // // Toggle
+            // bool changed = !_selected.Add(idx);
+            // if (!changed)
+            // {
+            //     RaiseChanged();
+            // }
+            // else
+            // {
+            //     _selected.Remove(idx);
+            //     RaiseChanged();
+            // }
         }
 
         private bool IsIndexAllowed(int idx)

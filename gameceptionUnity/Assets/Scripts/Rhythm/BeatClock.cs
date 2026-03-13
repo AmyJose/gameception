@@ -16,7 +16,7 @@ namespace Rhythm
         public event Action<BeatInfo> OnBeat;
 
         [SerializeField] private AudioSource musicSource;
-        [SerializeField] private double bpm = 75.0;
+        [SerializeField] private double bpm = 5.0;
         [SerializeField] private double startDelaySeconds = 0.1;
 
         [SerializeField] private double beatOffsetSeconds = 0.0; // for calibration later

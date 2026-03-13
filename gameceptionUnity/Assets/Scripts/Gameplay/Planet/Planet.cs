@@ -59,6 +59,47 @@ public class Planet : MonoBehaviour
         ClampAll();
     }
 
+    [Header("Visuals")]
+    [SerializeField] private Transform alienVisual;
+    // private bool isBobbing = false;
+    [SerializeField] private float bobHeight = 0.5f;
+    public void TriggerSuccess(float beatInterval)
+    {
+        StopAllCoroutines();
+        StartCoroutine(BobRoutine(beatInterval));
+    }
+
+    public void StopBob(int index = 0)
+    {
+        // Debug.Log($"StopBob called on planet {index}");
+        StopAllCoroutines();
+        if (alienVisual != null)
+        {
+            alienVisual.localPosition = Vector3.zero;
+        }
+    }
+
+    private System.Collections.IEnumerator BobRoutine(float duration)
+    {
+        if (alienVisual == null) yield break;
+
+        Vector3 startPos = Vector3.zero; //local start position
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float percent = elapsed / duration;
+
+            float yOffset = Mathf.Sin(percent * Mathf.PI) * bobHeight; // simple sine wave bob
+            alienVisual.localPosition = startPos + new Vector3(0f, yOffset, 0f);
+
+            yield return null;
+        }
+        alienVisual.localPosition = startPos;
+        // isBobbing = false;
+    }
+
     private void ApplyDecay(float dt, float decayRate)
     {
         fire -= decayRate * dt;
