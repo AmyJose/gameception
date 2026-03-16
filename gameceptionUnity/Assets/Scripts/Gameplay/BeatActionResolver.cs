@@ -11,7 +11,7 @@ namespace Gameplay
         [Header("Refs")]
         [SerializeField] private BeatClock beatClock;
         [SerializeField] private PoseState poseState;
-        [SerializeField] private DanceMatInputProvider matInput;
+        [SerializeField] private SelectionState selectionState;
         [SerializeField] private ResourceSystem resourceSystem;
         [SerializeField] private ComboSystem comboSystem;
 
@@ -22,10 +22,12 @@ namespace Gameplay
 
         private void OnEnable()
         {
+            //when the object becomes active, subscribe Handle Beat
             beatClock.OnBeat += HandleBeat;
         }
         private void OnDisable()
         {
+            //when disabled, unsubscribe it
             beatClock.OnBeat -= HandleBeat;
         }
 
