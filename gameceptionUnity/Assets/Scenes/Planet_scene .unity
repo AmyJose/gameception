@@ -811,6 +811,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ad247e2ab2d25dc45a7fb66f4ad4fa8e, type: 2}
   - {fileID: 11400000, guid: 9fadc5a8dfc0cf0448a0a1df04006b52, type: 2}
   - {fileID: 11400000, guid: 2bbba11fa979c1441b1c1f7ff8635d1e, type: 2}
+  - {fileID: 11400000, guid: baee6f9d30526a74ba09e4013a7aa89a, type: 2}
   initialPlanetCount: 2
   spawnOnStart: 1
   randomiseDefinitions: 1
