@@ -30,9 +30,24 @@ public class Planet : MonoBehaviour
 
     public void SetDifficulty(DifficultyProfile profile) => difficulty = profile;
 
+    private bool _frozen = false;
+    private float _freezeTimer = 0f;
+
+    private string _activeEffect = null;
+    private float _effectTimer = 0f;
+    private float _effectTickTimer = 0f;
+    [SerializeField] private float effectTickInterval = 2f;
+
     //call this from PlanetManager each frame
     public void Tick(float dt)
     {
+        if (_frozen)
+        {
+            _freezeTimer -= dt;
+            if (_freezeTimer <= 0f)
+                _frozen = false;
+            return; 
+        }
         //natural element decay
         float decayMult = difficulty != null ? difficulty.elementDecayMultiplier : 1f;
         ApplyDecay(dt, elementDecayPerSecond * decayMult);
@@ -43,11 +58,13 @@ public class Planet : MonoBehaviour
 
         //check habitability and grow pop
         UpdatePopulation(dt);
+        UpdateEffects(dt);
         ClampAll();
     }
 
     public void ApplyElement(ElementPose element, float amount = 10f)
     {
+        if (_frozen) return; //can't apply elements while frozen
         switch (element) 
         {
             case ElementPose.Water: water += amount; break;
@@ -122,4 +139,131 @@ public class Planet : MonoBehaviour
         earth = Mathf.Clamp(earth, 0f, maxElement);
         ice = Mathf.Clamp(ice, 0f, maxElement);
     }
+
+    public void ApplyComboEffect(string recipe_name){
+        switch(recipe_name){
+            case "Permafrost":
+                ice += maxElement * 0.3f;
+                _frozen = true;
+                _freezeTimer = 5f; //freezes decay or input for 5 seconds
+                ClampAll();
+                break;
+            case "Lava":
+                fire += maxElement * 0.3f;
+                _activeEffect = "Lava";
+                _effectTimer = 10f;
+                _effectTickTimer = effectTickInterval;
+                ClampAll();
+                break;
+            case "Ecosystem":
+                earth += maxElement * 0.3f;
+                ClampAll();
+                //TODO: implement animals, population boost, faster element decay, chance of random element spawn
+                //TODO : animals spawned are all common
+                break;
+
+            case "Air":
+                // TODO : implement air that boosts population growth and slightly increases decay for a duration, chance to spawn rare birds that generates air at a rate
+                _activeEffect = "Air";
+                _effectTimer = 8f;
+                _effectTickTimer = effectTickInterval;
+                break;
+
+            case "Flood":
+                water += maxElement * 0.3f;
+                _activeEffect = "Flood";
+                _effectTimer = 10f;
+                _effectTickTimer = effectTickInterval;
+                ClampAll();
+                break;
+
+            case "Snow":
+                ice += maxElement * 0.3f;
+                _activeEffect = "Snow";
+                _effectTimer = 12f;
+                elementDecayPerSecond *= 0.5f;
+                ClampAll();
+                break;
+                // TODO : slow down elementdecay and growth for a duration, chance to spawn rare snowmen
+            default:
+                Debug.LogWarning($"Unknown combo recipe: {recipe_name}");
+                break;
+
+        }
+    }
+
+    private void UpdateEffects(float dt)
+    {
+        if (_activeEffect == null) return;
+
+        _effectTimer -= dt;
+        _effectTickTimer -= dt;
+
+        if (_effectTickTimer <= 0f)
+        {
+            _effectTickTimer = effectTickInterval;
+            OnEffectTick(_activeEffect);
+        }
+
+        if (_effectTimer <= 0f)
+        {
+            if (_activeEffect == "Snow")
+                elementDecayPerSecond /= 0.5f;
+            Debug.Log($"Effect {_activeEffect} ended");
+            _activeEffect = null;
+        }
+    }
+    private void OnEffectTick(string effect)
+    {
+        switch (effect)
+        {
+            case "Lava":
+                // randomly damages one non-fire element
+                float lavaDamage = UnityEngine.Random.Range(5f, 15f);
+                int target = UnityEngine.Random.Range(0, 3);
+                if (target == 0) water -= lavaDamage;
+                else if (target == 1) earth -= lavaDamage;
+                else ice -= lavaDamage;
+                population -= populationGrowthPerSecond * 0.5f; //population hit from volcanic activity
+
+                // rare animal chance
+                if (UnityEngine.Random.value < 0.1f)
+                {
+                    Debug.Log("Rare volcanic creature spawned! Population boost");
+                    population += 50f;
+                }
+                ClampAll();
+                break;
+
+            case "Flood":
+                float floodDamage = UnityEngine.Random.Range(3f, 10f);
+                fire -= floodDamage;
+                earth -= floodDamage;
+                if (UnityEngine.Random.value < 0.1f)
+                {
+                    Debug.Log("Rare construct spawned! Decay halted");
+                    elementDecayPerSecond = 0f;
+                }
+                population -= populationGrowthPerSecond * 0.5f;
+                ClampAll();
+                break;
+
+            case "Air":
+                population += populationGrowthPerSecond * 0.5f;
+                if (UnityEngine.Random.value < 0.1f)
+                {
+                    Debug.Log("Rare bird spawned! Cleaning elements");
+                    fire = Mathf.Max(0f, fire - 10f);
+                    ice = Mathf.Max(0f, ice - 10f);
+                }
+                break;
+
+            case "Snow":
+                // slow tick — handled via decay multiplier, nothing random here
+                break;
+        }
+    }
+    
+
+    
 }

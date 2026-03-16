@@ -456,7 +456,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d2cf953c69c614287568017e283387, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.ComboSystem
-  recipes: []
+  recipes:
+  - name: Fire
+    sequence: 03000000
+  - name: Fire
+    sequence: 0300000003000000
+  - name: Water
+    sequence: 02000000
+  - name: Water
+    sequence: 0200000002000000
+  - name: Ice
+    sequence: 04000000
+  - name: Ice
+    sequence: 0400000004000000
+  - name: Earth
+    sequence: 0100000001000000
+  - name: Earth
+    sequence: 01000000
+  - name: Air
+    sequence: 0300000002000000
+  - name: Air
+    sequence: 0200000003000000
+  - name: Snow
+    sequence: 0400000002000000
+  - name: Snow
+    sequence: 0200000004000000
+  - name: Flood
+    sequence: 0300000004000000
+  - name: Flood
+    sequence: 0400000003000000
+  - name: Permafrost
+    sequence: 0100000004000000
+  - name: Permafrost
+    sequence: 0400000001000000
+  - name: Ecosystem
+    sequence: 0100000002000000
+  - name: Ecosystem
+    sequence: 0200000001000000
+  - name: Lava
+    sequence: 0300000001000000
+  - name: Lava
+    sequence: 0100000003000000
   maxBuffer: 4
 --- !u!1001 &328449554
 PrefabInstance:
@@ -1436,7 +1476,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1695927141
-  m_SortingLayer: -1
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 794ef2d47f1857342982bce6d16328ec, type: 3}
@@ -1606,7 +1646,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1695927141
-  m_SortingLayer: -1
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 5756380681857427472, guid: dd6e30fbef3137b4ea1f7acdb445f07e, type: 3}
@@ -1880,7 +1920,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1695927141
-  m_SortingLayer: -1
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: dd791230a57bc8942901a03ee63aa90f, type: 3}
