@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PlanetDefinition", menuName = "Scriptable Objects/PlanetDefinition")]
 public class PlanetDefinition : ScriptableObject
 {
-    public string displayName = "Planet";
+    public Sprite planetSprite;
 
     //target distribution
     public float targetFire = 70f;
