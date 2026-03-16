@@ -11,7 +11,7 @@ namespace Gameplay
         [Header("Refs")]
         [SerializeField] private BeatClock beatClock;
         [SerializeField] private PoseState poseState;
-        [SerializeField] private DanceMatInputProvider matInput;
+        [SerializeField] private SelectionState selectionState;
         [SerializeField] private ResourceSystem resourceSystem;
         [SerializeField] private ComboSystem comboSystem;
 
@@ -20,42 +20,39 @@ namespace Gameplay
 
         private void OnEnable()
         {
+            //when the object becomes active, subscribe Handle Beat
             beatClock.OnBeat += HandleBeat;
         }
         private void OnDisable()
         {
+            //when disabled, unsubscribe it
             beatClock.OnBeat -= HandleBeat;
         }
 
         private void HandleBeat(BeatInfo beat)
         {
-            Debug.Log("BeatActionResolver: HandleBeat");
             if (poseState.Confidence < minPoseConfidence || poseState.CurrentPose == ElementPose.None)
             {
                 // miss
                 //no valid pose at the beat
                 comboSystem.RegisterMiss(beat.beatIndex);
-                Debug.Log("BeatActionResolver: no valid pose at the beat");
                 return;
             }
 
             //selected planets
-            var targets = new List<int>(matInput.Selected);
+            var targets = new List<int>(selectionState.Selected);
 
             if (targets.Count == 0)
             {
                 //miss
                 //pose was correct but no planet selected
                 comboSystem.RegisterMiss(beat.beatIndex);
-                Debug.Log("BeatActionResolver: valid pose, no planet selected");
                 return;
             }
 
             //apply the element to the selected planets
-            Debug.Log("BeatActionResolver: about to apply element to planet");
             resourceSystem.ApplyElementToPlanets(poseState.CurrentPose, targets, beat.beatIndex);
 
-            Debug.Log("BeatActionResolver: about to register hit with combo systems");
             comboSystem.RegisterHit(poseState.CurrentPose, targets, beat.beatIndex);
         }
     }

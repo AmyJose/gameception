@@ -317,7 +317,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8571076844135231236, guid: 140d1d2c406167c50819d89f86d9092e, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0.00012207
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8571076844135231236, guid: 140d1d2c406167c50819d89f86d9092e, type: 3}
       propertyPath: m_SizeDelta.y
@@ -412,6 +412,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.ResourceSystem
   planetManager: {fileID: 967029054}
+  resourceAmountPerBeat: 10
 --- !u!1 &250756403
 GameObject:
   m_ObjectHideFlags: 0
@@ -655,6 +656,7 @@ Transform:
   - {fileID: 1793061301}
   - {fileID: 735788319}
   - {fileID: 250756404}
+  - {fileID: 2047366720}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &589382562
@@ -704,7 +706,6 @@ MonoBehaviour:
   angleToleranceDeg: 12
   yTolerance: 0.06
   xTolerance: 0.06
---- !u!1001 &682275931
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -821,7 +822,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b637b57f414ed4c31b6528d2f76b798f, type: 3}
---- !u!1 &735788317
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -855,6 +855,7 @@ MonoBehaviour:
   shiftToSoloSelect: 1
   autoSelectFirst: 1
   planetCount: 0
+  selectionState: {fileID: 2047366721}
 --- !u!4 &735788319
 Transform:
   m_ObjectHideFlags: 0
@@ -922,7 +923,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.BeatActionResolver
   beatClock: {fileID: 1130057112}
   poseState: {fileID: 1793061302}
-  matInput: {fileID: 735788318}
+  selectionState: {fileID: 2047366721}
   resourceSystem: {fileID: 180546820}
   comboSystem: {fileID: 250756405}
   minPoseConfidence: 0.6
@@ -970,7 +971,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84e68e7c8c74cac419e82b5fccec6f0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.PlanetManager
-  planets: []
+  planetPrefab: {fileID: 2421352814427187259, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
+  availableDefinitions:
+  - {fileID: 11400000, guid: ad247e2ab2d25dc45a7fb66f4ad4fa8e, type: 2}
+  - {fileID: 11400000, guid: 9fadc5a8dfc0cf0448a0a1df04006b52, type: 2}
+  - {fileID: 11400000, guid: 2bbba11fa979c1441b1c1f7ff8635d1e, type: 2}
+  initialPlanetCount: 2
+  spawnOnStart: 1
+  randomiseDefinitions: 1
+  spacing: 12
+  centerPosition: {x: 0, y: 0, z: 0}
+  difficultyProfile: {fileID: 11400000, guid: b35e8d0df4dcce3479bacb894a29c502, type: 2}
+  selectionState: {fileID: 2047366721}
+  danceMatInputProvider: {fileID: 735788318}
 --- !u!1 &1019512103
 GameObject:
   m_ObjectHideFlags: 0
@@ -1144,7 +1157,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1130057111
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1159,7 +1171,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 887063825}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1130057112
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1914,6 +1925,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2047366719
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2047366720}
+  - component: {fileID: 2047366721}
+  m_Layer: 0
+  m_Name: SelectionState
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2047366720
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2047366719}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 545700348}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2047366721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2047366719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1266ff623039dac409cc793cd893edef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputLayer.SelectionState
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1926,5 +1981,3 @@ SceneRoots:
   - {fileID: 1019512105}
   - {fileID: 545700348}
   - {fileID: 1144103111}
-  - {fileID: 682275931}
-  - {fileID: 1140872880}

@@ -102,7 +102,7 @@ InitTestScene*.unity*
 # Additions
 # Visual Studio / IDE
 .vs/
-.vsCode/
+.vscode/
 *.sln
 *.slnx
 *.csproj
@@ -118,3 +118,5 @@ Obj/
 Build/
 Builds/
 Logs/
+
+.vsconfig
