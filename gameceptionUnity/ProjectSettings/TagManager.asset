@@ -45,11 +45,23 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Planets
-    uniqueID: 4065729445
+  - name: background
+    uniqueID: 594008853
     locked: 0
-  - name: Aliens
-    uniqueID: 1185078731
+  - name: stars1
+    uniqueID: 3909300443
+    locked: 0
+  - name: stars2
+    uniqueID: 3526712973
+    locked: 0
+  - name: spacehship
+    uniqueID: 1128717707
+    locked: 0
+  - name: planet
+    uniqueID: 857426379
+    locked: 0
+  - name: alien
+    uniqueID: 2283412773
     locked: 0
   m_RenderingLayers:
   - Default
