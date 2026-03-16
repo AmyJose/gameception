@@ -13,7 +13,7 @@ public class PoseClassifier : IDisposable
     public float[] LastScores => _lastScores;
 
     // Pre-allocated buffer for preprocessed data
-    private readonly float[] _processed = new float[66];
+    private readonly float[] _processed = new float[70];
 
     public void Load(ModelAsset modelAsset, TextAsset scalerJson, TextAsset labelsJson)
     {
@@ -27,9 +27,9 @@ public class PoseClassifier : IDisposable
         _scalerMean = scaler.mean;
         _scalerStd = scaler.std;
 
-        if (_scalerMean.Length != 66 || _scalerStd.Length != 66)
+        if (_scalerMean.Length != 70 || _scalerStd.Length != 70)
         {
-            Debug.LogError($"[PoseClassifier] Scaler data wrong size: mean={_scalerMean.Length}, std={_scalerStd.Length}. Expected 66.");
+            Debug.LogError($"[PoseClassifier] Scaler data wrong size: mean={_scalerMean.Length}, std={_scalerStd.Length}. Expected 70.");
         }
 
         // Parse labels JSON
@@ -38,9 +38,9 @@ public class PoseClassifier : IDisposable
         Debug.Log($"[PoseClassifier] Loaded. Labels: {string.Join(", ", _labelNames)}");
     }
 
-    // Classify a pose from 66 raw landmark floats (x0,y0,x1,y1,...,x32,y32).
+    // Classify a pose from 70 raw landmark floats (x0,y0,x1,y1,...,x34,y34).
     // Returns the predicted label string (e.g. "earth").
-    public string Classify(float[] input66)
+    public string Classify(float[] input70)
     {
         if (_worker == null)
         {
@@ -49,10 +49,10 @@ public class PoseClassifier : IDisposable
         }
 
         // Preprocess: must match Python pipeline exactly
-        Preprocess(input66);
+        Preprocess(input70);
 
-        // Creates input tensor: shape (1, 66)
-        using var inputTensor = new Tensor<float>(new TensorShape(1, 66), _processed);
+        // Creates input tensor: shape (1, 70)
+        using var inputTensor = new Tensor<float>(new TensorShape(1, 70), _processed);
 
         // Runs the model
         _worker.Schedule(inputTensor);
@@ -87,8 +87,9 @@ public class PoseClassifier : IDisposable
         }
 
         // Confidence threshold - reject low-confidence predictions
-        if (bestScore < 0.9f)
+        if (bestScore <= 0.99f)
             return "none";
+
 
         if (bestIndex >= 0 && bestIndex < _labelNames.Length)
             return _labelNames[bestIndex];
@@ -99,39 +100,37 @@ public class PoseClassifier : IDisposable
 
     private void Preprocess(float[] raw)
     {
-        // Centre on hip midpoint
-        // Landmark 23 = right hip, landmark 24 = left hip
-        // In the flat array: landmark i has x at [i*2], y at [i*2+1]
+        // 1. Centre on hip midpoint (23 & 24)
         float hipCenterX = (raw[23 * 2] + raw[24 * 2]) / 2f;
         float hipCenterY = (raw[23 * 2 + 1] + raw[24 * 2 + 1]) / 2f;
 
-        // Subtract hip centre from every landmark
-        // Store in _processed so we don't modify the original buffer
         for (int i = 0; i < 33; i++)
         {
-            _processed[i * 2]     = raw[i * 2]     - hipCenterX;
+            _processed[i * 2] = raw[i * 2] - hipCenterX;
             _processed[i * 2 + 1] = raw[i * 2 + 1] - hipCenterY;
         }
 
-        // Normalise by torso length
-        // Landmark 11 = right shoulder, landmark 12 = left shoulder
-        // After centering, shoulder midpoint distance from origin = torso length
+        // 2. Normalise by torso length
         float shoulderCenterX = (_processed[11 * 2] + _processed[12 * 2]) / 2f;
         float shoulderCenterY = (_processed[11 * 2 + 1] + _processed[12 * 2 + 1]) / 2f;
         float torsoLength = Mathf.Sqrt(shoulderCenterX * shoulderCenterX + shoulderCenterY * shoulderCenterY);
+        torsoLength = Mathf.Max(torsoLength, 1e-6f);
 
-        // Guard against division by zero (e.g. if shoulders overlap hips exactly)
-        if (torsoLength < 1e-6f)
-            torsoLength = 1e-6f;
+        for (int i = 0; i < 70; i++) { _processed[i] /= torsoLength; }
 
-        for (int i = 0; i < 66; i++)
-        {
-            _processed[i] /= torsoLength;
-        }
+        // 3. Feature Engineering: Angles (Indices 66-69)
+        // Left Elbow: Shoulder(11), Elbow(13), Wrist(15)
+        _processed[66] = GetAngle(GetPos(11), GetPos(13), GetPos(15));
+        // Right Elbow: Shoulder(12), Elbow(14), Wrist(16)
+        _processed[67] = GetAngle(GetPos(12), GetPos(14), GetPos(16));
+        // Left Shoulder: Hip(23), Shoulder(11), Elbow(13)
+        _processed[68] = GetAngle(GetPos(23), GetPos(11), GetPos(13));
+        // Right Shoulder: Hip(24), Shoulder(12), Elbow(14)
+        _processed[69] = GetAngle(GetPos(24), GetPos(12), GetPos(14));
 
-        // Step 3: StandardScaler
-        // Exactly: (value - mean) / std for each of the 66 features
-        for (int i = 0; i < 66; i++)
+
+        // 5. StandardScaler (Now 70 features)
+        for (int i = 0; i < 70; i++)
         {
             _processed[i] = (_processed[i] - _scalerMean[i]) / _scalerStd[i];
         }
@@ -168,6 +167,19 @@ public class PoseClassifier : IDisposable
     {
         public float[] mean;
         public float[] std;
+    }
+
+    private Vector2 GetPos(int index)
+    {
+        return new Vector2(_processed[index * 2], _processed[index * 2 + 1]);
+    }
+
+    private float GetAngle(Vector2 a, Vector2 b, Vector2 c)
+    {
+        float ang = Mathf.Atan2(c.y - b.y, c.x - b.x) - Mathf.Atan2(a.y - b.y, a.x - b.x);
+        ang = Mathf.Abs(ang * Mathf.Rad2Deg);
+        if (ang > 180f) ang = 360f - ang;
+        return ang;
     }
 
 }

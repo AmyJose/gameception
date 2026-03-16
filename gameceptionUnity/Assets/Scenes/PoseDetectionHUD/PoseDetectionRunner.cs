@@ -123,6 +123,18 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         }
     }
 
+    public PoseLandmarkHUD.ElementPose GetCurrentPose()
+    {
+        switch (_lastPrediction)
+        {
+            case "earth": return PoseLandmarkHUD.ElementPose.Earth;
+            case "water": return PoseLandmarkHUD.ElementPose.Water;
+            case "fire": return PoseLandmarkHUD.ElementPose.Fire;
+            case "air": return PoseLandmarkHUD.ElementPose.Air;
+            default: return PoseLandmarkHUD.ElementPose.None;
+        }
+    }
+
     protected override IEnumerator Run()
     {
         //wait on asset being prepared or copied into StreamingAssets if needed
@@ -149,8 +161,9 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         if (imageSource is WebCamSource webCamSource)
         {
             var names = webCamSource.sourceCandidateNames;
-            var usbIndex = Array.FindIndex(names, n => n== "USB Camera");
-            if(usbIndex >= 0){
+            var usbIndex = Array.FindIndex(names, n => n == "USB Camera");
+            if (usbIndex >= 0)
+            {
                 webCamSource.SelectSource(usbIndex);
             }
         }
@@ -375,7 +388,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
                 // Extract x,y pairs into flat buffer
                 for (int i = 0; i < 33; i++)
                 {
-                    _pendingLandmarks[i * 2]     = landmarks[i].x;
+                    _pendingLandmarks[i * 2] = landmarks[i].x;
                     _pendingLandmarks[i * 2 + 1] = landmarks[i].y;
                 }
                 _hasLandmarksPending = true;

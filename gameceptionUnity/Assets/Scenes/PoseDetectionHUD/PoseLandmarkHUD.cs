@@ -60,6 +60,13 @@ public class PoseLandmarkHUD : MonoBehaviour
 
     private readonly StringBuilder sb = new StringBuilder(512);
 
+    private PoseDetectionRunner _runner;
+
+    private void Awake()
+    {
+        _runner = FindObjectOfType<PoseDetectionRunner>();
+    }
+
     /// <summary>
     /// Called from Mediapipe callback thread. Do NOT touch Unity UI here
     /// </summary>
@@ -77,7 +84,7 @@ public class PoseLandmarkHUD : MonoBehaviour
 
     private void Update()
     {
-        if (landmarksText == null && poseText == null && _predictionText == null)  return;
+        if (landmarksText == null && poseText == null && _predictionText == null) return;
         string lm = null;
         string pose = null;
 
@@ -180,7 +187,7 @@ public class PoseLandmarkHUD : MonoBehaviour
 
 
         // get this into a switch statement?
-        if (isEarthPose(lArmAngle, rArmAngle, lArmYDiff, rArmYDiff))
+        /*if (isEarthPose(lArmAngle, rArmAngle, lArmYDiff, rArmYDiff))
         {
             detectedPose = ElementPose.Earth;
             Debug.Log("Earth pose detected");
@@ -202,11 +209,21 @@ public class PoseLandmarkHUD : MonoBehaviour
             Debug.Log("Air pose detected");
 
         }
-        else detectedPose = ElementPose.None;
+        else detectedPose = ElementPose.None;*/
+
+        var runner = _runner;
+
+        if (runner != null)
+        {
+            detectedPose = runner.GetCurrentPose();
+        }
 
         _pendingPose = detectedPose;
-        string poseOut = $"Angle Pose: {detectedPose}";
+        //string poseOut = $"Angle Pose: {detectedPose}";
 
+        //return (landmarksOut, poseOut);
+        _pendingPose = detectedPose;
+        string poseOut = $"ML Pose: {detectedPose}";
         return (landmarksOut, poseOut);
     }
 

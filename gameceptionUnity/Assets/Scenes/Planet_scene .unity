@@ -753,6 +753,9 @@ MonoBehaviour:
   runningMode: 0
   _poseLandmarkerResultAnnotationController: {fileID: 328449560}
   _hud: {fileID: 1357800587}
+  _classifierModelAsset: {fileID: 5022602860645237092, guid: 3c12c714834b04168819dd637cc1b045, type: 3}
+  _scalerJson: {fileID: 4900000, guid: 182f877a6f16d4823b1e954cd6a99031, type: 3}
+  _labelsJson: {fileID: 4900000, guid: 8b2eb6132ac6e4ccfa63b027d6a79a62, type: 3}
 --- !u!4 &1019512105
 Transform:
   m_ObjectHideFlags: 0
@@ -933,7 +936,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -2013546767
-  m_SortingLayer: -3
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 794ef2d47f1857342982bce6d16328ec, type: 3}
@@ -1086,6 +1089,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PoseLandmarkHUD
   landmarksText: {fileID: 1585652649}
   poseText: {fileID: 1563868985}
+  _predictionText: {fileID: 0}
   angleToleranceDeg: 12
   yTolerance: 0.06
   xTolerance: 0.06
@@ -1230,7 +1234,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -2013546767
-  m_SortingLayer: -3
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 5756380681857427472, guid: dd6e30fbef3137b4ea1f7acdb445f07e, type: 3}
@@ -1823,7 +1827,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -2013546767
-  m_SortingLayer: -3
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: dd791230a57bc8942901a03ee63aa90f, type: 3}
