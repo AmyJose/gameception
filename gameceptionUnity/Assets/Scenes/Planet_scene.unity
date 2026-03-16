@@ -457,8 +457,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d2cf953c69c614287568017e283387, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.ComboSystem
-  recipes: []
+  recipes:
+  - name: 'Fire '
+    sequence: 0300000003000000
+  - name: Water
+    sequence: 0200000002000000
+  - name: Earth
+    sequence: 0100000001000000
+  - name: Ice
+    sequence: 0400000004000000
+  - name: Permafrost
+    sequence: 0400000001000000
+  - name: Permafrost
+    sequence: 0100000004000000
+  - name: Snow
+    sequence: 0200000004000000
+  - name: Snow
+    sequence: 0400000002000000
+  - name: Air
+    sequence: 0300000002000000
+  - name: Air
+    sequence: 0200000003000000
+  - name: Lava
+    sequence: 0100000003000000
+  - name: Lava
+    sequence: 0300000001000000
+  - name: Flood
+    sequence: 0300000004000000
+  - name: Flood
+    sequence: 0400000003000000
+  - name: Ecosystem
+    sequence: 0200000001000000
+  - name: Ecosystem
+    sequence: 0100000002000000
+  planetManager: {fileID: 0}
   maxBuffer: 4
+  bufferTimeout: 4
+  comboResolveDelay: 1
+  hitCooldownDuration: 0.5
 --- !u!1001 &328449554
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -104,9 +104,9 @@ namespace Gameplay
         private List<int> _pendingTargets;
         private bool _waitingToResolve;
 
-//cooldown to prevent same hits on multiple beat
-        private float _hitCooldown;
-        [SerializeField] private float hitCooldownDuration = 0.5f;
+// //cooldown to prevent same hits on multiple beat
+//         private float _hitCooldown;
+//         [SerializeField] private float hitCooldownDuration = 0.5f;
 
         private void Update()
         {

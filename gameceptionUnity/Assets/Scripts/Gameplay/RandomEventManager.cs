@@ -1,6 +1,6 @@
  using UnityEngine;
 using System.Collections.Generic;
-using Gameplay;
+using InputLayer;
 
 namespace Gameplay
 {
