@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,6 +6,8 @@ namespace InputLayer
 {
     public class DanceMatInputProvider : MonoBehaviour
     {
+        public event Action<int> OnPadPressed;
+
         [SerializeField, Range(1, 9)] private int maxDigitSelect = 9;
         [SerializeField] private bool zeroClearsSelection = true;
         [SerializeField] private bool shiftToSoloSelect = true;
@@ -66,6 +69,8 @@ namespace InputLayer
 
             int idx = digit - 1;
             if (!IsIndexAllowed(idx)) return;
+
+            OnPadPressed?.Invoke(idx);
 
             if (shiftHeld)
             {
