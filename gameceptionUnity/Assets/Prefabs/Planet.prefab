@@ -410,7 +410,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceBar
   fillTransform: {fileID: 426243593966231288}
-  maxWidth: 1
+  fullWidth: 2.2
+  targetMarker: {fileID: 0}
 --- !u!1 &5965755248056960642
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,7 +458,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceBar
   fillTransform: {fileID: 4117381051845839309}
-  maxWidth: 1
+  fullWidth: 2.2
+  targetMarker: {fileID: 0}
 --- !u!1 &6389598791206176618
 GameObject:
   m_ObjectHideFlags: 0
@@ -558,7 +560,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceBar
   fillTransform: {fileID: 5998737801391610356}
-  maxWidth: 1
+  fullWidth: 2.2
+  targetMarker: {fileID: 0}
 --- !u!1 &7217634240778543481
 GameObject:
   m_ObjectHideFlags: 0
@@ -605,7 +608,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceBar
   fillTransform: {fileID: 1150545861181861489}
-  maxWidth: 1
+  fullWidth: 2.2
+  targetMarker: {fileID: 0}
 --- !u!1001 &1591134356234646488
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -618,6 +622,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Planet
       objectReference: {fileID: 0}
+    - target: {fileID: 2421352814427187259, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
+      propertyPath: alienVisual
+      value: 
+      objectReference: {fileID: 8390174327352100424}
     - target: {fileID: 4645923925486781507, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -727,6 +735,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlanetView
   resourceUI: {fileID: 8137691964406589177}
+  AlienSwarmView: {fileID: 0}
 --- !u!114 &4003286420542856163 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2421352814427187259, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
@@ -746,5 +755,10 @@ SpriteRenderer:
 --- !u!4 &6227769605342492571 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4645923925486781507, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
+  m_PrefabInstance: {fileID: 1591134356234646488}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8390174327352100424 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7096330909747885456, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
   m_PrefabInstance: {fileID: 1591134356234646488}
   m_PrefabAsset: {fileID: 0}

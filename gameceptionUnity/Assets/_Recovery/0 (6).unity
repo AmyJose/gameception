@@ -457,43 +457,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d2cf953c69c614287568017e283387, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.ComboSystem
-  recipes:
-  - name: 'Fire '
-    sequence: 0300000003000000
-  - name: Water
-    sequence: 0200000002000000
-  - name: Earth
-    sequence: 0100000001000000
-  - name: Ice
-    sequence: 0400000004000000
-  - name: Permafrost
-    sequence: 0400000001000000
-  - name: Permafrost
-    sequence: 0100000004000000
-  - name: Snow
-    sequence: 0200000004000000
-  - name: Snow
-    sequence: 0400000002000000
-  - name: Air
-    sequence: 0300000002000000
-  - name: Air
-    sequence: 0200000003000000
-  - name: Lava
-    sequence: 0100000003000000
-  - name: Lava
-    sequence: 0300000001000000
-  - name: Flood
-    sequence: 0300000004000000
-  - name: Flood
-    sequence: 0400000003000000
-  - name: Ecosystem
-    sequence: 0200000001000000
-  - name: Ecosystem
-    sequence: 0100000002000000
-  planetManager: {fileID: 967029054}
+  recipes: []
   maxBuffer: 4
-  bufferTimeout: 4
-  comboResolveDelay: 1
 --- !u!1001 &328449554
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -693,12 +658,7 @@ Transform:
   - {fileID: 2047366720}
   - {fileID: 887063825}
   - {fileID: 1346458578}
-<<<<<<< HEAD:gameceptionUnity/Assets/Scenes/Planet_scene .unity
   - {fileID: 735788319}
-=======
-  - {fileID: 689724797}
-  - {fileID: 1144103111}
->>>>>>> 4d0060fe231380f7d6a563860dedc842929848ac:gameceptionUnity/Assets/Scenes/Planet_scene.unity
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &589382562
@@ -710,7 +670,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 589382563}
-  - component: {fileID: 589382565}
+  - component: {fileID: 589382564}
   m_Layer: 0
   m_Name: PoseClassifier
   m_TagString: Untagged
@@ -733,7 +693,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 545700348}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &589382565
+--- !u!114 &589382564
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -742,20 +702,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 589382562}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9be46ab7c653428ba440ce8e6388d42, type: 3}
+  m_Script: {fileID: 11500000, guid: e2f3758513d854f49b82c89e73170a8b, type: 3}
   m_Name: 
-<<<<<<< HEAD:gameceptionUnity/Assets/Scenes/Planet_scene .unity
   m_EditorClassIdentifier: Assembly-CSharp::InputLayer.HeuristicPoseClassifier
   angleToleranceDeg: 12
   yTolerance: 0.06
   xTolerance: 0.06
 --- !u!1 &735788317
-=======
-  m_EditorClassIdentifier: Assembly-CSharp::InputLayer.MLPPoseClassifier
-  modelAsset: {fileID: 5022602860645237092, guid: 60ae02037034a4da38f4eec383da61d5, type: 3}
-  scalerJson: {fileID: 4900000, guid: e2be859e21ca84097b80b13333a42af9, type: 3}
---- !u!1 &689724796
->>>>>>> 4d0060fe231380f7d6a563860dedc842929848ac:gameceptionUnity/Assets/Scenes/Planet_scene.unity
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -763,23 +716,15 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-<<<<<<< HEAD:gameceptionUnity/Assets/Scenes/Planet_scene .unity
   - component: {fileID: 735788319}
   - component: {fileID: 735788318}
   m_Layer: 0
   m_Name: DanceMatInput
-=======
-  - component: {fileID: 689724797}
-  - component: {fileID: 689724798}
-  m_Layer: 0
-  m_Name: RandomEventManager
->>>>>>> 4d0060fe231380f7d6a563860dedc842929848ac:gameceptionUnity/Assets/Scenes/Planet_scene.unity
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
-<<<<<<< HEAD:gameceptionUnity/Assets/Scenes/Planet_scene .unity
 --- !u!114 &735788318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -799,51 +744,20 @@ MonoBehaviour:
   planetCount: 0
   selectionState: {fileID: 0}
 --- !u!4 &735788319
-=======
---- !u!4 &689724797
->>>>>>> 4d0060fe231380f7d6a563860dedc842929848ac:gameceptionUnity/Assets/Scenes/Planet_scene.unity
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-<<<<<<< HEAD:gameceptionUnity/Assets/Scenes/Planet_scene .unity
   m_GameObject: {fileID: 735788317}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-=======
-  m_GameObject: {fileID: 689724796}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.00002002716, y: 0.57051015, z: 0}
->>>>>>> 4d0060fe231380f7d6a563860dedc842929848ac:gameceptionUnity/Assets/Scenes/Planet_scene.unity
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 545700348}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-<<<<<<< HEAD:gameceptionUnity/Assets/Scenes/Planet_scene .unity
-=======
---- !u!114 &689724798
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 689724796}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a37788496e49272478f628da18778b29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.RandomEventManager
-  resourceSystem: {fileID: 180546820}
-  planetManager: {fileID: 967029054}
-  eventInterval: 5
-  minAmount: 5
-  maxAmount: 20
-  asteroidEffect: {fileID: 1397558271}
->>>>>>> 4d0060fe231380f7d6a563860dedc842929848ac:gameceptionUnity/Assets/Scenes/Planet_scene.unity
 --- !u!224 &799987159 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8571076842338426133, guid: 140d1d2c406167c50819d89f86d9092e, type: 3}
@@ -929,7 +843,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 998a05025a56e114eabbc8b7f3b8dedf, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -1024,9 +938,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 923871189}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 277167e6a1f68f342b26673668e17bba, type: 3}
+  m_Script: {fileID: 11500000, guid: 699c8b09005a5c149b3b1f9fbdb5d212, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BeatMetronome
+  musicSource: {fileID: 923871190}
+  bpm: 75
+  startDelaySeconds: 0.1
+  beatOffsetSeconds: 0
 --- !u!4 &923871192
 Transform:
   m_ObjectHideFlags: 0
@@ -1089,12 +1007,8 @@ MonoBehaviour:
   planetPrefab: {fileID: 2421352814427187259, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
   availableDefinitions:
   - {fileID: 11400000, guid: 2bbba11fa979c1441b1c1f7ff8635d1e, type: 2}
-<<<<<<< HEAD:gameceptionUnity/Assets/Scenes/Planet_scene .unity
   - {fileID: 11400000, guid: 9fadc5a8dfc0cf0448a0a1df04006b52, type: 2}
   - {fileID: 11400000, guid: ad247e2ab2d25dc45a7fb66f4ad4fa8e, type: 2}
-=======
-  - {fileID: 11400000, guid: baee6f9d30526a74ba09e4013a7aa89a, type: 2}
->>>>>>> 4d0060fe231380f7d6a563860dedc842929848ac:gameceptionUnity/Assets/Scenes/Planet_scene.unity
   initialPlanetCount: 2
   spawnOnStart: 1
   randomiseDefinitions: 1
@@ -1102,7 +1016,7 @@ MonoBehaviour:
   centerPosition: {x: 0, y: 0, z: 0}
   difficultyProfile: {fileID: 11400000, guid: b35e8d0df4dcce3479bacb894a29c502, type: 2}
   selectionState: {fileID: 2047366721}
-  danceMatSelectionController: {fileID: 0}
+  danceMatInputProvider: {fileID: 1346458579}
 --- !u!1 &1019512103
 GameObject:
   m_ObjectHideFlags: 0
@@ -1137,7 +1051,7 @@ MonoBehaviour:
   runningMode: 0
   _poseLandmarkerResultAnnotationController: {fileID: 328449560}
   poseState: {fileID: 1793061302}
-  poseClassifierComponent: {fileID: 589382565}
+  poseClassifierComponent: {fileID: 589382564}
 --- !u!4 &1019512105
 Transform:
   m_ObjectHideFlags: 0
@@ -1429,12 +1343,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1144103109}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -8.4803, y: -4.21292, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 545700348}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1292493661
 GameObject:
@@ -1446,7 +1360,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1292493663}
   - component: {fileID: 1292493662}
-  - component: {fileID: 1292493664}
   m_Layer: 3
   m_Name: stars2
   m_TagString: Untagged
@@ -1480,7 +1393,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 51a318df90138a84a8a9fa819607b78f, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1528,19 +1441,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1292493664
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1292493661}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 101b993b29cdbbc4e8c306aeb48b1aa8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BackgroundScroll
-  scrollSpeed: 0.03
 --- !u!1 &1306372121
 GameObject:
   m_ObjectHideFlags: 0
@@ -1665,14 +1565,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputLayer.DanceMatInputProvider
   maxDigitSelect: 9
-<<<<<<< HEAD:gameceptionUnity/Assets/Scenes/Planet_scene .unity
   zeroClearsSelection: 1
   shiftToSoloSelect: 1
   autoSelectFirst: 1
   planetCount: 2
   selectionState: {fileID: 2047366721}
-=======
->>>>>>> 4d0060fe231380f7d6a563860dedc842929848ac:gameceptionUnity/Assets/Scenes/Planet_scene.unity
 --- !u!1 &1556385053
 GameObject:
   m_ObjectHideFlags: 0
@@ -1683,7 +1580,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1556385055}
   - component: {fileID: 1556385054}
-  - component: {fileID: 1556385056}
   m_Layer: 3
   m_Name: Galaxy Background
   m_TagString: Untagged
@@ -1717,7 +1613,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 16c539a5037fdfb4b8a111f6704d77ad, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1765,19 +1661,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1556385056
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1556385053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 101b993b29cdbbc4e8c306aeb48b1aa8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BackgroundScroll
-  scrollSpeed: 0
 --- !u!1 &1793061300
 GameObject:
   m_ObjectHideFlags: 0
@@ -1969,7 +1852,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1990087024}
   - component: {fileID: 1990087023}
-  - component: {fileID: 1990087025}
   m_Layer: 3
   m_Name: Stars Small_1
   m_TagString: Untagged
@@ -2003,7 +1885,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d6d39a0a69da34641a0e3bf6400c5339, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2051,19 +1933,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1990087025
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1990087022}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 101b993b29cdbbc4e8c306aeb48b1aa8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BackgroundScroll
-  scrollSpeed: 0.01
 --- !u!1 &2047366719
 GameObject:
   m_ObjectHideFlags: 0
@@ -2119,9 +1988,5 @@ SceneRoots:
   - {fileID: 1306372124}
   - {fileID: 1019512105}
   - {fileID: 545700348}
-<<<<<<< HEAD:gameceptionUnity/Assets/Scenes/Planet_scene .unity
   - {fileID: 1144103111}
   - {fileID: 923871192}
-=======
-  - {fileID: 1397558272}
->>>>>>> 4d0060fe231380f7d6a563860dedc842929848ac:gameceptionUnity/Assets/Scenes/Planet_scene.unity

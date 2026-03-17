@@ -15,6 +15,8 @@ namespace Gameplay
         [SerializeField] private ResourceSystem resourceSystem;
         [SerializeField] private ComboSystem comboSystem;
 
+        [SerializeField] private List<Planet> planetObjects;
+
         [Header("Judging")]
         [SerializeField] private float minPoseConfidence = 0.6f;
 
@@ -30,30 +32,30 @@ namespace Gameplay
         }
 
         private void HandleBeat(BeatInfo beat)
-        {
-            if (poseState.Confidence < minPoseConfidence || poseState.CurrentPose == ElementPose.None)
-            {
-                // miss
-                //no valid pose at the beat
-                comboSystem.RegisterMiss(beat.beatIndex);
-                return;
-            }
-
-            //selected planets
+        {   
+            if (selectionState == null) return;
+            //selected targets
             var targets = new List<int>(selectionState.Selected);
-
-            if (targets.Count == 0)
+            if (targets.Count > 0)
             {
-                //miss
-                //pose was correct but no planet selected
-                comboSystem.RegisterMiss(beat.beatIndex);
-                return;
+               Debug.Log("planets currently selected: " + targets[0]);
+            }
+            else
+            {
+                Debug.Log("no planets currently selected");
             }
 
-            //apply the element to the selected planets
-            resourceSystem.ApplyElementToPlanets(poseState.CurrentPose, targets, beat.beatIndex);
-
-            comboSystem.RegisterHit(poseState.CurrentPose, targets, beat.beatIndex);
+            int activeIndex = -1;
+            if (targets.Count > 0)            {
+                activeIndex = targets[targets.Count - 1];
+            }
+            if (activeIndex != -1 && poseState.Confidence >= minPoseConfidence && poseState.CurrentPose != ElementPose.None)
+            {
+                //Apply the element and register the hit with the combo system. 
+                var singleTarget = new List<int> {activeIndex};
+                resourceSystem.ApplyElementToPlanets(poseState.CurrentPose, singleTarget, beat.beatIndex);
+                comboSystem.RegisterHit(poseState.CurrentPose, singleTarget, beat.beatIndex);
+            }
         }
     }
 }

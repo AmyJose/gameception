@@ -5,24 +5,24 @@ namespace Gameplay
 {
     public class Planet : MonoBehaviour
     {
-        [Header("Configuration")]
-        [SerializeField] private PlanetDefinition definition;
-        [SerializeField] private DifficultyProfile difficulty;
+    [Header("Configuration")]
+    [SerializeField] private PlanetDefinition definition;
+    [SerializeField] private DifficultyProfile difficulty;
 
-        [Header("Runtime Elements")]
-        [SerializeField] private float fire;
-        [SerializeField] private float water;
-        [SerializeField] private float earth;
-        [SerializeField] private float ice;
+    [Header("Runtime Elements")]
+    [SerializeField] private float fire;
+    [SerializeField] private float water;
+    [SerializeField] private float earth;
+    [SerializeField] private float ice;
 
-        [Header("Runtime Population")]
-        [SerializeField] private float population = 0f;
+    [Header("Runtime Population")]
+    [SerializeField] private float population = 0f;
 
-        [Header("Base Rates")]
-        [SerializeField] private float elementDecayPerSecond = 0.6f;
-        [SerializeField] private float consumptionPerAlienPerSecond = 0.01f;
-        [SerializeField] private float populationGrowthPerSecond = 1.2f;
-        [SerializeField] private float maxElement = 100f;
+    [Header("Base Rates")]
+    [SerializeField] private float elementDecayPerSecond = 0.6f;
+    [SerializeField] private float consumptionPerAlienPerSecond = 0.01f;
+    [SerializeField] private float populationGrowthPerSecond = 1.2f;
+    [SerializeField] private float maxElement = 100f;
 
         [Header("Spawn Animation")]
         [SerializeField] private Transform visualRoot;
@@ -36,8 +36,8 @@ namespace Gameplay
 
         [SerializeField] private SpriteRenderer spriteRenderer;
 
-        public PlanetDefinition Definition => definition;
-        public float Population => population;
+    public PlanetDefinition Definition => definition;
+    public float Population => population;
 
         public float Fire => fire;
         public float Water => water;
@@ -46,7 +46,7 @@ namespace Gameplay
         public float MaxElement => maxElement;
         public bool IsGrowing => isGrowing;
 
-        public AlienType PlanetAlienType => definition != null ? definition.alienType : AlienType.Earth;
+    public AlienType PlanetAlienType => definition != null ? definition.alienType : AlienType.Earth;
 
         private bool _frozen = false;
         private float _freezeTimer = 0f;
@@ -65,6 +65,7 @@ namespace Gameplay
                 growCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
             }
         }
+
 
         public void SetDefinition(PlanetDefinition newDefinition)
         {
@@ -373,5 +374,11 @@ namespace Gameplay
                 isGrowing = false;
             }
         }
-    }
+    
+
+    // [Header("Visuals")]
+    // [SerializeField] private Transform alienVisual;
+    // [SerializeField] private float bobHeight = 0.5f;
+
+}
 }

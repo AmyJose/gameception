@@ -446,6 +446,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   spriteRenderer: {fileID: 2934997472566962085}
+  effectTickInterval: 2
 --- !u!114 &7791890636379242194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -462,11 +463,14 @@ MonoBehaviour:
   container: {fileID: 7096330909747885456}
   alienLibrary: {fileID: 11400000, guid: 75d9f3ad390dc334cbc2a9ee0a055da3, type: 2}
   planetSpriteRenderer: {fileID: 2934997472566962085}
+  beatClock: {fileID: 0}
   populationPerSprite: 5
   maxSprites: 30
   edgeOffset: 0
   jitter: 0.2
   radiusMultiplier: 0.575
+  bobHeight: 1
+  bobDurationBeats: 0.5
 --- !u!114 &2314116914613501229
 MonoBehaviour:
   m_ObjectHideFlags: 0

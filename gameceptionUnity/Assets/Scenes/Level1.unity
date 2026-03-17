@@ -474,7 +474,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.ComboSystem
   recipes: []
+  planetManager: {fileID: 0}
   maxBuffer: 4
+  bufferTimeout: 4
+  comboResolveDelay: 1
 --- !u!1001 &328449554
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -666,8 +669,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1204960138}
   - {fileID: 180546819}
+  - {fileID: 1204960138}
   - {fileID: 589382563}
   - {fileID: 1130057112}
   - {fileID: 1793061301}
@@ -777,6 +780,7 @@ MonoBehaviour:
   selectionState: {fileID: 2047366721}
   resourceSystem: {fileID: 180546820}
   comboSystem: {fileID: 250756405}
+  planetObjects: []
   minPoseConfidence: 0.6
 --- !u!1 &967029052
 GameObject:

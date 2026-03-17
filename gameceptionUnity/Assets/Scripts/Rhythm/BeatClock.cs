@@ -52,6 +52,7 @@ namespace Rhythm
             StartClock();
         }
 
+
         private void Update()
         {
             if (!_running) return;
