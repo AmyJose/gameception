@@ -819,7 +819,7 @@ MonoBehaviour:
   centerPosition: {x: 0, y: 0, z: 0}
   difficultyProfile: {fileID: 11400000, guid: b35e8d0df4dcce3479bacb894a29c502, type: 2}
   selectionState: {fileID: 2047366721}
-  danceMatInputProvider: {fileID: 1346458579}
+  danceMatSelectionController: {fileID: 0}
 --- !u!1 &1019512103
 GameObject:
   m_ObjectHideFlags: 0
@@ -1163,6 +1163,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1292493663}
   - component: {fileID: 1292493662}
+  - component: {fileID: 1292493664}
   m_Layer: 3
   m_Name: stars2
   m_TagString: Untagged
@@ -1196,7 +1197,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 51a318df90138a84a8a9fa819607b78f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1244,6 +1245,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1292493664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1292493661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 101b993b29cdbbc4e8c306aeb48b1aa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BackgroundScroll
+  scrollSpeed: 0.03
 --- !u!1 &1306372121
 GameObject:
   m_ObjectHideFlags: 0
@@ -1368,11 +1382,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputLayer.DanceMatInputProvider
   maxDigitSelect: 9
-  zeroClearsSelection: 1
-  shiftToSoloSelect: 1
-  autoSelectFirst: 1
-  planetCount: 0
-  selectionState: {fileID: 2047366721}
 --- !u!1 &1556385053
 GameObject:
   m_ObjectHideFlags: 0
@@ -1383,6 +1392,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1556385055}
   - component: {fileID: 1556385054}
+  - component: {fileID: 1556385056}
   m_Layer: 3
   m_Name: Galaxy Background
   m_TagString: Untagged
@@ -1416,7 +1426,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 16c539a5037fdfb4b8a111f6704d77ad, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1464,6 +1474,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1556385056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1556385053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 101b993b29cdbbc4e8c306aeb48b1aa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BackgroundScroll
+  scrollSpeed: 0
 --- !u!1 &1793061300
 GameObject:
   m_ObjectHideFlags: 0
@@ -1655,6 +1678,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1990087024}
   - component: {fileID: 1990087023}
+  - component: {fileID: 1990087025}
   m_Layer: 3
   m_Name: Stars Small_1
   m_TagString: Untagged
@@ -1688,7 +1712,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: d6d39a0a69da34641a0e3bf6400c5339, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1736,6 +1760,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1990087025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990087022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 101b993b29cdbbc4e8c306aeb48b1aa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BackgroundScroll
+  scrollSpeed: 0.01
 --- !u!1 &2047366719
 GameObject:
   m_ObjectHideFlags: 0
