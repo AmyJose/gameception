@@ -18,6 +18,7 @@ using UnityEngine.UI;
 public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
 {
     [SerializeField] private PoseLandmarkerResultAnnotationController _poseLandmarkerResultAnnotationController;
+    [SerializeField] private PoseDataCollector dataCollector;
     private Mediapipe.Unity.Experimental.TextureFramePool _textureFramePool;
 
     // instance of the config class
@@ -218,6 +219,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
             _latestTimestamp = timestamp;
             _isNewResultAvailable = true;
         }
+        dataCollector.AddSample(result);
         // 2) UI / annotation
         _poseLandmarkerResultAnnotationController.DrawLater(result);
         DisposeAllMasks(result);
