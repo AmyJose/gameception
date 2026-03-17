@@ -55,6 +55,8 @@ public class PosePromptUI : MonoBehaviour
 
         instructionText.text = "The planet is forming... Thank you.";
         countdownText.text = "";
+        yield return new WaitForSeconds(3f);
+        SceneManager.LoadScene(2);
     }
 
     private IEnumerator ShowDialogue(string message)
@@ -64,11 +66,5 @@ public class PosePromptUI : MonoBehaviour
         yield return new WaitForSeconds(dialogueDelay);
     }
 
-    void Update()
-    {
-        if (Keyboard.current.enterKey.wasPressedThisFrame) // Enter key
-        {
-            SceneManager.LoadScene(2);
-        }
-    }
+
 }
