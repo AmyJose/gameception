@@ -130,14 +130,6 @@ public class LevelOneController : MonoBehaviour
 
         InitialiseStarterPlanet(newPlanet);
 
-        var view = newPlanet.GetComponent<PlanetView>();
-        if (view != null)
-            view.HideResourceUI();
-
-        int newPlanetIndex = planetManager.PlanetCount - 1;
-        if (selectionState != null)
-            selectionState.SoloSelect(newPlanetIndex);
-
         // Wait for growth
         yield return new WaitUntil(() => !newPlanet.IsGrowing);
 
@@ -165,9 +157,6 @@ public class LevelOneController : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.4f);
-
-        if (view != null)
-            view.ShowResourceUI();
     }
 
     private IEnumerator WaitForSpawnPadPress()

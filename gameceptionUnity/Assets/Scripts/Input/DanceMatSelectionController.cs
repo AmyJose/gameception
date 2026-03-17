@@ -12,7 +12,7 @@ namespace InputLayer
         [Header("Selection Rules")]
         [SerializeField] private bool zeroClearsSelection = true;
         [SerializeField] private bool shiftToSoloSelect = true;
-        [SerializeField] private bool autoSelectFirst = true;
+        [SerializeField] private bool autoSelectFirst = false;
         [SerializeField] private int planetCount = 0;
 
         [Header("State")]
