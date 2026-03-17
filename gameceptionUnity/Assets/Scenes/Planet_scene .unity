@@ -669,7 +669,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 589382563}
-  - component: {fileID: 589382564}
+  - component: {fileID: 589382565}
   m_Layer: 0
   m_Name: PoseClassifier
   m_TagString: Untagged
@@ -692,7 +692,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 545700348}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &589382564
+--- !u!114 &589382565
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -701,12 +701,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 589382562}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2f3758513d854f49b82c89e73170a8b, type: 3}
+  m_Script: {fileID: 11500000, guid: fa55376eed5ce4906a7941e925d82fb7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputLayer.HeuristicPoseClassifier
-  angleToleranceDeg: 12
-  yTolerance: 0.06
-  xTolerance: 0.06
+  m_EditorClassIdentifier: Assembly-CSharp::InputLayer.PoseClassifier
+  modelAsset: {fileID: 5022602860645237092, guid: 57525f574b7d146229e512f8afea607a, type: 3}
+  scalerJson: {fileID: 4900000, guid: 470bebf5512104878a7dd197b63581da, type: 3}
 --- !u!224 &799987159 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8571076842338426133, guid: 140d1d2c406167c50819d89f86d9092e, type: 3}
@@ -853,7 +852,7 @@ MonoBehaviour:
   runningMode: 0
   _poseLandmarkerResultAnnotationController: {fileID: 328449560}
   poseState: {fileID: 1793061302}
-  poseClassifierComponent: {fileID: 589382564}
+  poseClassifierComponent: {fileID: 589382565}
 --- !u!4 &1019512105
 Transform:
   m_ObjectHideFlags: 0
