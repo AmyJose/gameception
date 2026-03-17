@@ -21,7 +21,7 @@ namespace Gameplay
         [SerializeField] private DifficultyProfile difficultyProfile;
         [SerializeField] private SelectionState selectionState;
 
-        [SerializeField] private DanceMatInputProvider danceMatInputProvider;
+        [SerializeField] private DanceMatSelectionController danceMatSelectionController;
 
         private readonly List<Planet> planets = new();
         public int PlanetCount => planets.Count;
@@ -91,7 +91,7 @@ namespace Gameplay
             planets.Add(newPlanet);
             ArrangePlanets();
 
-            danceMatInputProvider.SetPlanetCount(planets.Count);
+            if (danceMatSelectionController != null) danceMatSelectionController.SetPlanetCount(planets.Count);
 
             Debug.Log("Spawned planet at " + newPlanet.transform.position);
 
@@ -106,7 +106,7 @@ namespace Gameplay
             Destroy(planet.gameObject);
             ArrangePlanets();
 
-            danceMatInputProvider.SetPlanetCount(planets.Count);
+            if (danceMatSelectionController != null) danceMatSelectionController.SetPlanetCount(planets.Count);
         }
         public void SetDifficultyForAll(DifficultyProfile profile)
         {
@@ -157,6 +157,8 @@ namespace Gameplay
             }
 
             planets.Clear();
+
+            if (danceMatSelectionController != null) danceMatSelectionController.SetPlanetCount(0);
         }
 
         private void OnEnable()

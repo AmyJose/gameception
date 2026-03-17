@@ -1,9 +1,11 @@
 using UnityEngine;
 
-public class GameFlowController
+//runs the current "phase"
+public class GameFlowController : MonoBehaviour
 {
-    //TODO: switching between levels w cut off times
-    //set the current difficulty profile
-    //when spawning a planet : planet.SetDifficulty(activeDifficulty)
-    //when level changes, loop through all existing planets and set the new profile
+    private void HandleSequenceCompleted()
+    {
+        Debug.Log("GameFlowController: spawn sequence completed");
+        // Continue tutorial / level progression here
+    }
 }
