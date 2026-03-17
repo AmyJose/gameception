@@ -9,7 +9,8 @@ namespace Gameplay
     public class PlanetManager : MonoBehaviour
     {
         [SerializeField] private Planet planetPrefab;
-        [SerializeField] private List<PlanetDefinition> availableDefinitions = new();
+        //FOR BETA public
+        [SerializeField] public List<PlanetDefinition> availableDefinitions = new();
 
         [SerializeField] private int initialPlanetCount = 0;
         [SerializeField] private bool spawnOnStart = false;

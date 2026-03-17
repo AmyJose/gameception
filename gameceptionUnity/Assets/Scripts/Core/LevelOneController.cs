@@ -91,7 +91,7 @@ public class LevelOneController : MonoBehaviour
             if (planetManager.PlanetCount >= maxPlanets) continue;
 
             yield return RunPlanetArrivalSequence(
-                "We need another planet. Jump on a pad to create one!"
+                "We want a planet too! Jump on a pad to create one!"
             );
         }
     }
@@ -122,7 +122,8 @@ public class LevelOneController : MonoBehaviour
             currentUFO.HideMessage();
 
         // Spawn planet at chosen location
-        Planet newPlanet = planetManager.SpawnPlanetAt(spawnPoint.position);
+        //FOR BETA: Circle through all definitions
+        Planet newPlanet = planetManager.SpawnPlanetAt(spawnPoint.position, planetManager.availableDefinitions[planetManager.PlanetCount]);
 
         if (newPlanet == null)
             yield break;
