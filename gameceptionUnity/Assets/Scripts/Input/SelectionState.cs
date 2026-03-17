@@ -52,8 +52,6 @@ namespace InputLayer
 
         public void PruneInvalid(int planetCount)
         {
-            if (planetCount <= 0) return;
-
             bool changed = false;
             var copy = new List<int>(_selected);
 

@@ -27,11 +27,41 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
     [SerializeField] private MonoBehaviour poseClassifierComponent; // assign HeuristicPoseClassifier
     private IPoseClassifier poseClassifier;
 
+    [Header("Thread Handoff")]
+    private PoseLandmarkerResult _latestResult;
+    private long _latestTimestamp;
+    private bool _isNewResultAvailable = false;
+    private readonly object _resultLock = new object();
+
     public override void Stop()
     {
         base.Stop();
         _textureFramePool?.Dispose();
         _textureFramePool = null;
+    }
+
+    private void Update()
+    {
+        // 1. Check for a new result from the background thread
+        PoseLandmarkerResult resultToProcess = default;
+        long timestampToProcess = 0;
+        bool shouldProcess = false;
+
+        lock (_resultLock)
+        {
+            if (_isNewResultAvailable)
+            {
+                resultToProcess = _latestResult;
+                timestampToProcess = _latestTimestamp;
+                _isNewResultAvailable = false;
+                shouldProcess = true;
+            }
+        }
+        if (shouldProcess && poseClassifier != null && poseState != null)
+        {
+            var classification = poseClassifier.Classify(resultToProcess);
+            poseState.SetPose(classification.pose, classification.confidence, timestampToProcess);
+        }
     }
 
     protected override IEnumerator Run()
@@ -65,8 +95,9 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         if (imageSource is WebCamSource webCamSource)
         {
             var names = webCamSource.sourceCandidateNames;
-            var usbIndex = Array.FindIndex(names, n => n== "USB Camera");
-            if(usbIndex >= 0){
+            var usbIndex = Array.FindIndex(names, n => n == "USB Camera");
+            if (usbIndex >= 0)
+            {
                 webCamSource.SelectSource(usbIndex);
             }
         }
@@ -181,13 +212,12 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
     private void OnPoseLandmarkDetectionOutput(PoseLandmarkerResult result, Mediapipe.Image image, long timestamp)
     {
         // 1) classify pose (thread-safe: pure math)
-        if (poseClassifier != null && poseState != null)
+        lock (_resultLock)
         {
-            var c = poseClassifier.Classify(result);
-
-            poseState.SetPose(c.pose, c.confidence, timestamp);
+            _latestResult = result;
+            _latestTimestamp = timestamp;
+            _isNewResultAvailable = true;
         }
-
         // 2) UI / annotation
         _poseLandmarkerResultAnnotationController.DrawLater(result);
         DisposeAllMasks(result);

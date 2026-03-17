@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlanetView : MonoBehaviour
@@ -16,4 +17,12 @@ public class PlanetView : MonoBehaviour
 
     }
 
+    public void ShowResourceUI()
+    {
+        if (resourceUI != null) resourceUI.SetVisible(true);
+    }
+    public void HideResourceUI()
+    {
+        if (resourceUI != null) resourceUI.SetVisible(false);
+    }
 }

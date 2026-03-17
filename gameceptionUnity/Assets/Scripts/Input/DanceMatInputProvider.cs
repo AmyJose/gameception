@@ -1,118 +1,37 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace InputLayer
 {
+    //raw pad input only. no state updates
     public class DanceMatInputProvider : MonoBehaviour
     {
+        public event Action<int> OnPadPressed;
+
         [SerializeField, Range(1, 9)] private int maxDigitSelect = 9;
-        [SerializeField] private bool zeroClearsSelection = true;
-        [SerializeField] private bool shiftToSoloSelect = true;
-        [SerializeField] private bool autoSelectFirst = true;
-        [SerializeField] private int planetCount = 0;
-
-        [Header("State")]
-        [SerializeField] private SelectionState selectionState;
-
-        public void SetPlanetCount(int count)
-        {
-            planetCount = Mathf.Max(0, count);
-
-            if (selectionState != null)
-                selectionState.PruneInvalid(planetCount);
-        }
-
-        private void Start()
-        {
-            if (selectionState == null)
-            {
-                Debug.LogError("[DanceMatInputProvider] SelectionState is not assigned.");
-                return;
-            }
-
-            if (autoSelectFirst && planetCount > 0 && selectionState.Selected.Count == 0)
-            {
-                selectionState.SoloSelect(0);
-            }
-        }
 
         private void Update()
         {
             var kb = Keyboard.current;
-            if (kb == null || selectionState == null) return;
+            if (kb == null) return;
 
-            bool shiftHeld = shiftToSoloSelect && (kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed);
-
-            if (zeroClearsSelection && kb.digit0Key.wasPressedThisFrame)
-            {
-                selectionState.Clear();
-                return;
-            }
-
-            if (kb.digit1Key.wasPressedThisFrame) HandleDigit(1, shiftHeld);
-            if (kb.digit2Key.wasPressedThisFrame) HandleDigit(2, shiftHeld);
-            if (kb.digit3Key.wasPressedThisFrame) HandleDigit(3, shiftHeld);
-            if (kb.digit4Key.wasPressedThisFrame) HandleDigit(4, shiftHeld);
-            if (kb.digit5Key.wasPressedThisFrame) HandleDigit(5, shiftHeld);
-            if (kb.digit6Key.wasPressedThisFrame) HandleDigit(6, shiftHeld);
-            if (kb.digit7Key.wasPressedThisFrame) HandleDigit(7, shiftHeld);
-            if (kb.digit8Key.wasPressedThisFrame) HandleDigit(8, shiftHeld);
-            if (kb.digit9Key.wasPressedThisFrame) HandleDigit(9, shiftHeld);
+            if (kb.digit1Key.wasPressedThisFrame) RaisePadPressed(1);
+            if (kb.digit2Key.wasPressedThisFrame) RaisePadPressed(2);
+            if (kb.digit3Key.wasPressedThisFrame) RaisePadPressed(3);
+            if (kb.digit4Key.wasPressedThisFrame) RaisePadPressed(4);
+            if (kb.digit5Key.wasPressedThisFrame) RaisePadPressed(5);
+            if (kb.digit6Key.wasPressedThisFrame) RaisePadPressed(6);
+            if (kb.digit7Key.wasPressedThisFrame) RaisePadPressed(7);
+            if (kb.digit8Key.wasPressedThisFrame) RaisePadPressed(8);
+            if (kb.digit9Key.wasPressedThisFrame) RaisePadPressed(9);
         }
 
-        // private void HandleDigit(int digit, bool shiftHeld)
-        // {
-        //     if (digit < 1 || digit > maxDigitSelect) return;
-
-        //     int idx = digit - 1;
-        //     if (!IsIndexAllowed(idx)) return;
-
-            
-            // _selected.Clear();
-            // _selected.Add(idx);
-            // RaiseChanged();
-
-            // if (shiftHeld)
-            // {
-            //     SoloSelect(idx);
-            //     return;
-            // }
-
-            // // Toggle
-            // bool changed = !_selected.Add(idx);
-            // if (!changed)
-            // {
-            //     RaiseChanged();
-            // }
-            // else
-            // {
-            //     _selected.Remove(idx);
-            //     RaiseChanged();
-            // }
-        //}
-
-        private void HandleDigit(int digit, bool shiftHeld)
+        private void RaisePadPressed(int digit)
         {
             if (digit < 1 || digit > maxDigitSelect) return;
-
             int idx = digit - 1;
-            if (!IsIndexAllowed(idx)) return;
-
-            if (shiftHeld)
-            {
-                selectionState.SoloSelect(idx);
-            }
-            else
-            {
-                selectionState.Toggle(idx);
-            }
-        }
-
-        private bool IsIndexAllowed(int idx)
-        {
-            if (idx < 0) return false;
-            if (planetCount > 0 && idx >= planetCount) return false;
-            return true;
+            OnPadPressed?.Invoke(idx);
         }
     }
 }
