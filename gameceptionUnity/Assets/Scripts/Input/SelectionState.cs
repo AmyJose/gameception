@@ -30,6 +30,18 @@ namespace InputLayer
             OnChanged?.Invoke(_selected);
         }
 
+        public void Select(int index)
+        {
+            if (_selected.Add(index))
+                OnChanged?.Invoke(_selected);
+        }
+
+        public void Deselect(int index)
+        {
+            if (_selected.Remove(index))
+                OnChanged?.Invoke(_selected);
+        }
+
         public void SoloSelect(int index)
         {
             bool changed = _selected.Count != 1 || !_selected.Contains(index);
