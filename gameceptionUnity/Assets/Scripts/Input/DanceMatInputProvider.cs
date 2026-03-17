@@ -8,6 +8,7 @@ namespace InputLayer
     public class DanceMatInputProvider : MonoBehaviour
     {
         public event Action<int> OnPadPressed;
+        public event Action<int> OnPadReleased;
 
         [SerializeField, Range(1, 9)] private int maxDigitSelect = 9;
 
@@ -16,22 +17,24 @@ namespace InputLayer
             var kb = Keyboard.current;
             if (kb == null) return;
 
-            if (kb.digit1Key.wasPressedThisFrame) RaisePadPressed(1);
-            if (kb.digit2Key.wasPressedThisFrame) RaisePadPressed(2);
-            if (kb.digit3Key.wasPressedThisFrame) RaisePadPressed(3);
-            if (kb.digit4Key.wasPressedThisFrame) RaisePadPressed(4);
-            if (kb.digit5Key.wasPressedThisFrame) RaisePadPressed(5);
-            if (kb.digit6Key.wasPressedThisFrame) RaisePadPressed(6);
-            if (kb.digit7Key.wasPressedThisFrame) RaisePadPressed(7);
-            if (kb.digit8Key.wasPressedThisFrame) RaisePadPressed(8);
-            if (kb.digit9Key.wasPressedThisFrame) RaisePadPressed(9);
+            CheckDigit(kb.digit1Key, 1);
+            CheckDigit(kb.digit2Key, 2);
+            CheckDigit(kb.digit3Key, 3);
+            CheckDigit(kb.digit4Key, 4);
+            CheckDigit(kb.digit5Key, 5);
+            CheckDigit(kb.digit6Key, 6);
+            CheckDigit(kb.digit7Key, 7);
+            CheckDigit(kb.digit8Key, 8);
+            CheckDigit(kb.digit9Key, 9);
         }
 
-        private void RaisePadPressed(int digit)
+        private void CheckDigit(UnityEngine.InputSystem.Controls.KeyControl key, int digit)
         {
             if (digit < 1 || digit > maxDigitSelect) return;
             int idx = digit - 1;
-            OnPadPressed?.Invoke(idx);
+            
+            if (key.wasPressedThisFrame) OnPadPressed?.Invoke(idx);
+            if (key.wasReleasedThisFrame) OnPadReleased?.Invoke(idx);
         }
     }
 }

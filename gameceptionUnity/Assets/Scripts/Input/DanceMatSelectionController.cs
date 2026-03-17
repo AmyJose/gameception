@@ -65,13 +65,19 @@ namespace InputLayer
         private void OnEnable()
         {
             if (inputProvider != null)
+            {
                 inputProvider.OnPadPressed += HandlePadPressed;
+                inputProvider.OnPadReleased += HandlePadReleased;
+            }
         }
 
         private void OnDisable()
         {
             if (inputProvider != null)
+            {
                 inputProvider.OnPadPressed -= HandlePadPressed;
+                inputProvider.OnPadReleased -= HandlePadReleased;
+            }
         }
 
         private void Update()
@@ -103,8 +109,17 @@ namespace InputLayer
             }
             else
             {
-                selectionState.Toggle(idx);
+                // Changed from Toggle to Select for "Hold to Select" mechanic
+                selectionState.Select(idx);
             }
+        }
+
+        private void HandlePadReleased(int idx)
+        {
+            if (!selectionEnabled || selectionState == null) return;
+
+            // Remove the planet when the key is released
+            selectionState.Deselect(idx);
         }
 
         private bool IsIndexAllowed(int idx)
