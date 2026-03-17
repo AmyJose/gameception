@@ -11,7 +11,7 @@ public class PlanetDefinition : ScriptableObject
     public float targetEarth = 15f;
     public float targetIce = 0f;
 
-    public float tolerance = 8f;
+    public float tolerance = 12f;
 
     //min pop once habitability is reached
     public float startingPopulation = 1f;

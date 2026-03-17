@@ -9,10 +9,11 @@ namespace Gameplay
     public class PlanetManager : MonoBehaviour
     {
         [SerializeField] private Planet planetPrefab;
-        [SerializeField] private List<PlanetDefinition> availableDefinitions = new();
+        //FOR BETA public
+        [SerializeField] public List<PlanetDefinition> availableDefinitions = new();
 
-        [SerializeField] private int initialPlanetCount = 2;
-        [SerializeField] private bool spawnOnStart = true;
+        [SerializeField] private int initialPlanetCount = 0;
+        [SerializeField] private bool spawnOnStart = false;
         [SerializeField] private bool randomiseDefinitions = true;
 
         [SerializeField] private float spacing =12f;
@@ -21,7 +22,7 @@ namespace Gameplay
         [SerializeField] private DifficultyProfile difficultyProfile;
         [SerializeField] private SelectionState selectionState;
 
-        [SerializeField] private DanceMatInputProvider danceMatInputProvider;
+        [SerializeField] private DanceMatSelectionController danceMatSelectionController;
 
         private readonly List<Planet> planets = new();
         public int PlanetCount => planets.Count;
@@ -63,16 +64,15 @@ namespace Gameplay
             ArrangePlanets();
         }
 
-        public Planet SpawnPlanet(PlanetDefinition definitionOverride = null)
+        public Planet SpawnPlanetAt(Vector3 worldPosition, PlanetDefinition definitionOverride = null)
         {
-
             if (planetPrefab == null)
             {
                 Debug.LogError("[PlanetManager] Planet prefab is not assigned");
                 return null;
             }
 
-            Planet newPlanet = Instantiate(planetPrefab, transform);
+            Planet newPlanet = Instantiate(planetPrefab, worldPosition, Quaternion.identity, transform);
             newPlanet.name = $"Planet_{planets.Count}";
 
             PlanetDefinition chosenDefinition = definitionOverride != null
@@ -83,19 +83,25 @@ namespace Gameplay
             {
                 newPlanet.SetDefinition(chosenDefinition);
             }
-            if(difficultyProfile != null)
+            if (difficultyProfile != null)
             {
                 newPlanet.SetDifficulty(difficultyProfile);
             }
 
             planets.Add(newPlanet);
-            ArrangePlanets();
 
-            danceMatInputProvider.SetPlanetCount(planets.Count);
+            newPlanet.BeginSpawnAnimation();
+
+            if (danceMatSelectionController != null) danceMatSelectionController.SetPlanetCount(planets.Count);
 
             Debug.Log("Spawned planet at " + newPlanet.transform.position);
 
             return newPlanet;
+        }
+
+        public Planet SpawnPlanet(PlanetDefinition definitionOverride = null)
+        {
+            return SpawnPlanetAt(centerPosition, definitionOverride);
         }
         
         public void RemovePlanet(Planet planet)
@@ -106,7 +112,7 @@ namespace Gameplay
             Destroy(planet.gameObject);
             ArrangePlanets();
 
-            danceMatInputProvider.SetPlanetCount(planets.Count);
+            if (danceMatSelectionController != null) danceMatSelectionController.SetPlanetCount(planets.Count);
         }
         public void SetDifficultyForAll(DifficultyProfile profile)
         {
@@ -157,6 +163,8 @@ namespace Gameplay
             }
 
             planets.Clear();
+
+            if (danceMatSelectionController != null) danceMatSelectionController.SetPlanetCount(0);
         }
 
         private void OnEnable()
