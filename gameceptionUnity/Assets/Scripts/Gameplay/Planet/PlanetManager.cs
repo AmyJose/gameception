@@ -11,8 +11,8 @@ namespace Gameplay
         [SerializeField] private Planet planetPrefab;
         [SerializeField] private List<PlanetDefinition> availableDefinitions = new();
 
-        [SerializeField] private int initialPlanetCount = 2;
-        [SerializeField] private bool spawnOnStart = true;
+        [SerializeField] private int initialPlanetCount = 0;
+        [SerializeField] private bool spawnOnStart = false;
         [SerializeField] private bool randomiseDefinitions = true;
 
         [SerializeField] private float spacing =12f;
@@ -90,6 +90,8 @@ namespace Gameplay
 
             planets.Add(newPlanet);
             ArrangePlanets();
+
+            newPlanet.BeginSpawnAnimation();
 
             if (danceMatSelectionController != null) danceMatSelectionController.SetPlanetCount(planets.Count);
 

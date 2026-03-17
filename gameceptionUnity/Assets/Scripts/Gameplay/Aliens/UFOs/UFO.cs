@@ -6,17 +6,12 @@ public class UFO : MonoBehaviour
     [Header("References")]
     [SerializeField] private SpeechBubble speechBubble;
     [SerializeField] private Transform visualRoot;
-
-    [Header("Entrance")]
-    [SerializeField] private float flyInDuration = 1.2f;
-    [SerializeField] private Vector3 spawnOffset = new Vector3(0f, 3f, 0f);
     [SerializeField] private float pauseBeforeMessage = 0.4f;
 
     [Header("Idle Bob")]
-    [SerializeField] private float bobAmplitude = 0.12f;
-    [SerializeField] private float bobFrequency = 0.8f;
+    [SerializeField] private float bobAmplitude = 0.1f;
+    [SerializeField] private float bobFrequency = 0.7f;
 
-    private Vector3 baseWorldPosition;
     private Vector3 visualBaseLocalPosition;
     private bool bobbing;
 
@@ -25,13 +20,13 @@ public class UFO : MonoBehaviour
         if (visualRoot == null)
             visualRoot = transform;
 
-        baseWorldPosition = transform.position;
         visualBaseLocalPosition = visualRoot.localPosition;
     }
 
-    public IEnumerator PlayEntranceSequence(string message)
+    public IEnumerator PlayEntranceSequence(Vector3 introWorldPosition, string message, float flyInDuration = 1.2f, float tiltAmount = 15f)
     {
-        yield return FlyIntoPosition();
+        yield return FlyTo(introWorldPosition, flyInDuration, tiltAmount);
+
         StartBobbing();
 
         yield return new WaitForSeconds(pauseBeforeMessage);
@@ -40,27 +35,33 @@ public class UFO : MonoBehaviour
             yield return speechBubble.ShowTyped(message);
     }
 
-    public IEnumerator FlyIntoPosition()
+    public IEnumerator FlyTo(Vector3 targetPosition, float duration = 1f, float tiltAmount = 15f)
     {
-        Vector3 target = transform.position;
-        Vector3 start = target + spawnOffset;
+        StopBobbing();
 
-        transform.position = start;
+        Vector3 startPos = transform.position;
+        Quaternion startRot = transform.rotation;
 
-        float elapsed = 0f;
+        Vector3 direction = (targetPosition - startPos).normalized;
+        float tiltZ = -direction.x * tiltAmount;
+        Quaternion targetTilt = Quaternion.Euler(0f, 0f, tiltZ);
 
-        while (elapsed < flyInDuration)
+        float t = 0f;
+
+        while (t < duration)
         {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / flyInDuration);
-            float eased = 1f - Mathf.Pow(1f - t, 3f);
+            t += Time.deltaTime;
+            float normalized = Mathf.Clamp01(t / duration);
+            float eased = Mathf.SmoothStep(0f, 1f, normalized);
 
-            transform.position = Vector3.Lerp(start, target, eased);
+            transform.position = Vector3.Lerp(startPos, targetPosition, eased);
+            transform.rotation = Quaternion.Slerp(startRot, targetTilt, eased);
+
             yield return null;
         }
 
-        transform.position = target;
-        baseWorldPosition = target;
+        transform.position = targetPosition;
+        transform.rotation = Quaternion.identity;
     }
 
     public void StartBobbing()

@@ -24,6 +24,16 @@ namespace Gameplay
         [SerializeField] private float populationGrowthPerSecond = 1.2f;
         [SerializeField] private float maxElement = 100f;
 
+        [Header("Spawn Animation")]
+        [SerializeField] private Transform visualRoot;
+        [SerializeField] private float growDuration = 0.5f;
+        [SerializeField] private AnimationCurve growCurve = null;
+        //[SerializeField] private float spinSpeed = 180f;
+
+        private Vector3 targetScale;
+        private float growTimer;
+        private bool isGrowing;
+
         [SerializeField] private SpriteRenderer spriteRenderer;
 
         public PlanetDefinition Definition => definition;
@@ -34,8 +44,19 @@ namespace Gameplay
         public float Earth => earth;
         public float Ice => ice;
         public float MaxElement => maxElement;
+        public bool IsGrowing => isGrowing;
 
         public AlienType PlanetAlienType => definition != null ? definition.alienType : AlienType.Earth;
+
+        private void Awake()
+        {
+            targetScale = visualRoot.localScale;
+
+            if(growCurve == null || growCurve.length == 0)
+            {
+                growCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+            }
+        }
 
         public void SetDefinition(PlanetDefinition newDefinition)
         {
@@ -47,6 +68,16 @@ namespace Gameplay
             }
         }
 
+        public void BeginSpawnAnimation()
+        {
+            targetScale = visualRoot.localScale;
+            visualRoot.localScale = Vector3.zero;
+            visualRoot.localRotation = Quaternion.identity;
+
+            growTimer = 0f;
+            isGrowing = true;
+        }
+
         public void SetDifficulty(DifficultyProfile profile)
         {
             difficulty = profile;
@@ -54,6 +85,8 @@ namespace Gameplay
 
         public void Tick(float dt)
         {
+            HandleGrowth(dt);
+
             float decayMult = difficulty != null ? difficulty.elementDecayMultiplier : 1f;
             ApplyDecay(dt, elementDecayPerSecond * decayMult);
 
@@ -98,6 +131,11 @@ namespace Gameplay
             earth = earthAmount;
             ice = iceAmount;
             ClampAll();
+        }
+
+        public void AddPopulation(float pop)
+        {
+            population = pop + 5;
         }
 
         private void ApplyDecay(float dt, float decayRate)
@@ -162,6 +200,22 @@ namespace Gameplay
             water = Mathf.Clamp(water, 0f, maxElement);
             earth = Mathf.Clamp(earth, 0f, maxElement);
             ice = Mathf.Clamp(ice, 0f, maxElement);
+        }
+        private void HandleGrowth(float dt)
+        {
+            if (!isGrowing) return;
+
+            growTimer += dt;
+            float t = Mathf.Clamp01(growTimer / growDuration);
+
+            visualRoot.localScale = Vector3.Lerp(Vector3.zero, targetScale, t);
+
+            if (t >= 1f)
+            {
+                visualRoot.localScale = targetScale;
+                visualRoot.localRotation = Quaternion.identity;
+                isGrowing = false;
+            }
         }
     }
 }
