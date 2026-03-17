@@ -17,8 +17,14 @@ public class LevelOneController : MonoBehaviour
     [SerializeField] private Transform ufoIntroPoint;
     [SerializeField] private Transform ufoExitPoint;
 
+    [Header("Planet Spawn Points")]
+    [SerializeField] private Transform[] planetSpawnPoints;
+    [SerializeField] private int maxPlanets = 4;
+    [SerializeField] private float repeatSpawnDelay = 15f;
+
     [Header("Planet Setup")]
     [SerializeField] private float starterElementAmount = 50f;
+    [SerializeField] private int starterPopulationAmount = 10;
 
     private bool waitingForSpawnPad;
     private bool spawnPadPressed;
@@ -39,7 +45,7 @@ public class LevelOneController : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(RunLevelOneSequence());
+        StartCoroutine(RunLevelFlow());
     }
 
     private void HandlePadPressed(int idx)
@@ -50,26 +56,121 @@ public class LevelOneController : MonoBehaviour
         spawnPadIndex = idx;
     }
 
-    private IEnumerator RunLevelOneSequence()
+    private IEnumerator RunLevelFlow()
     {
-        // Disable normal selection while we are in the intro sequence.
         if (danceMatSelectionController != null)
             danceMatSelectionController.SetSelectionEnabled(false);
 
         if (selectionState != null)
             selectionState.Clear();
 
-        // Empty galaxy at start
         yield return new WaitForSeconds(2f);
 
-        // UFO appears
+        // First guided tutorial spawn
+        yield return RunPlanetArrivalSequence(
+            "Please make us a planet. Jump on a pad to spawn it!"
+        );
+
+        // Enable normal gameplay after first spawn
+        if (danceMatSelectionController != null)
+            danceMatSelectionController.SetSelectionEnabled(true);
+
+        BeginGameplayPhase();
+
+        // Repeating spawns
+        StartCoroutine(RecurringPlanetSpawnLoop());
+    }
+
+    private IEnumerator RecurringPlanetSpawnLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(repeatSpawnDelay);
+
+            if (planetManager == null) continue;
+            if (planetManager.PlanetCount >= maxPlanets) continue;
+
+            yield return RunPlanetArrivalSequence(
+                "We need another planet. Jump on a pad to create one!"
+            );
+        }
+    }
+
+    private IEnumerator RunPlanetArrivalSequence(string ufoMessage)
+    {
+        if (planetManager == null || planetManager.PlanetCount >= maxPlanets)
+            yield break;
+
+        Transform spawnPoint = GetNextPlanetSpawnPoint();
+        if (spawnPoint == null)
+        {
+            Debug.LogWarning("[LevelOneController] No free planet spawn point available.");
+            yield break;
+        }
+
+        // Spawn UFO and do intro fly-in
         if (ufoPrefab != null && ufoSpawnPoint != null && ufoIntroPoint != null)
         {
             currentUFO = Instantiate(ufoPrefab, ufoSpawnPoint.position, Quaternion.identity);
-            yield return currentUFO.PlayEntranceSequence(ufoIntroPoint.position, "Please make us a planet. Jump on a pad to spawn it!");
+            yield return currentUFO.PlayEntranceSequence(ufoIntroPoint.position, ufoMessage);
         }
 
-        // Wait for any pad press
+        // Wait for pad press
+        yield return WaitForSpawnPadPress();
+
+        if (currentUFO != null)
+            currentUFO.HideMessage();
+
+        // Spawn planet at chosen location
+        Planet newPlanet = planetManager.SpawnPlanetAt(spawnPoint.position);
+
+        if (newPlanet == null)
+            yield break;
+
+        InitialiseStarterPlanet(newPlanet);
+
+        var view = newPlanet.GetComponent<PlanetView>();
+        if (view != null)
+            view.HideResourceUI();
+
+        int newPlanetIndex = planetManager.PlanetCount - 1;
+        if (selectionState != null)
+            selectionState.SoloSelect(newPlanetIndex);
+
+        // Wait for growth
+        yield return new WaitUntil(() => !newPlanet.IsGrowing);
+
+        // UFO moves to planet
+        if (currentUFO != null)
+        {
+            Vector3 ufoTarget = newPlanet.transform.position + new Vector3(0f, 3f, 0f);
+            yield return currentUFO.FlyTo(ufoTarget, 1.2f, 20f);
+            currentUFO.StartBobbing();
+        }
+
+        yield return new WaitForSeconds(0.4f);
+
+        AddStarterPopulation(newPlanet);
+
+        yield return new WaitForSeconds(0.3f);
+
+        // UFO exits
+        if (currentUFO != null && ufoExitPoint != null)
+        {
+            currentUFO.HideMessage();
+            yield return currentUFO.FlyTo(ufoExitPoint.position, 1f, 25f);
+            Destroy(currentUFO.gameObject);
+            currentUFO = null;
+        }
+
+        yield return new WaitForSeconds(0.4f);
+
+        if (view != null)
+            view.ShowResourceUI();
+    }
+
+    private IEnumerator WaitForSpawnPadPress()
+    {
         waitingForSpawnPad = true;
         spawnPadPressed = false;
         spawnPadIndex = -1;
@@ -77,82 +178,43 @@ public class LevelOneController : MonoBehaviour
         yield return new WaitUntil(() => spawnPadPressed);
 
         waitingForSpawnPad = false;
-        currentUFO.HideMessage();
+    }
 
-        // Spawn planet
-        Planet newPlanet = planetManager.SpawnPlanet();
+    private Transform GetNextPlanetSpawnPoint()
+    {
+        if (planetSpawnPoints == null || planetSpawnPoints.Length == 0)
+            return null;
 
-        if (newPlanet != null)
-        {
-            InitialiseStarterPlanet(newPlanet);
+        int index = planetManager.PlanetCount;
 
-            var view = newPlanet.GetComponent<PlanetView>();
-            if (view != null)
-                view.HideResourceUI();
+        if (index < 0 || index >= planetSpawnPoints.Length)
+            return null;
 
-            int newPlanetIndex = planetManager.PlanetCount - 1;
-
-            if (selectionState != null)
-                selectionState.SoloSelect(newPlanetIndex);
-
-            yield return new WaitUntil(() => !newPlanet.IsGrowing);
-
-            if (currentUFO != null)
-            {
-                Vector3 ufoTarget = newPlanet.transform.position + new Vector3(0f, 3f, 0f);
-                yield return currentUFO.FlyTo(ufoTarget, 1.2f, 20f);
-            }
-
-            yield return new WaitForSeconds(0.4f);
-            AddStarterPopulation(newPlanet);
-
-            yield return new WaitForSeconds(0.3f);
-
-            if (currentUFO != null && ufoExitPoint != null)
-            {
-                currentUFO.HideMessage();
-                yield return currentUFO.FlyTo(ufoExitPoint.position, 1f, 25f);
-                Destroy(currentUFO.gameObject);
-                currentUFO = null;
-            }
-
-            yield return new WaitForSeconds(0.4f);
-
-            var newPlanetView = newPlanet.GetComponent<PlanetView>();
-            if (newPlanetView != null)
-                newPlanetView.ShowResourceUI();
-        }
-
-        // Re-enable normal selection/gameplay
-        if (danceMatSelectionController != null)
-            danceMatSelectionController.SetSelectionEnabled(true);
-
-        BeginGameplayPhase();
+        return planetSpawnPoints[index];
     }
 
     private void InitialiseStarterPlanet(Planet planet)
     {
         if (planet == null) return;
 
-        planet.SetElements(starterElementAmount, starterElementAmount, starterElementAmount, starterElementAmount);
+        planet.SetElements(
+            starterElementAmount,
+            starterElementAmount,
+            starterElementAmount,
+            starterElementAmount
+        );
     }
 
     private void AddStarterPopulation(Planet planet)
     {
         if (planet == null) return;
 
-        planet.AddPopulation(10);
-
+        planet.AddPopulation(starterPopulationAmount);
         Debug.Log("[LevelOneController] Added starter population to planet.");
     }
 
     private void BeginGameplayPhase()
     {
         Debug.Log("[LevelOneController] Intro finished. Normal gameplay begins.");
-
-        // Later this will trigger:
-        // - beat pose gameplay
-        // - objective tracking
-        // - timed second planet arrival
     }
 }

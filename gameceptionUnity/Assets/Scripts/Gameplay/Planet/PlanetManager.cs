@@ -63,16 +63,15 @@ namespace Gameplay
             ArrangePlanets();
         }
 
-        public Planet SpawnPlanet(PlanetDefinition definitionOverride = null)
+        public Planet SpawnPlanetAt(Vector3 worldPosition, PlanetDefinition definitionOverride = null)
         {
-
             if (planetPrefab == null)
             {
                 Debug.LogError("[PlanetManager] Planet prefab is not assigned");
                 return null;
             }
 
-            Planet newPlanet = Instantiate(planetPrefab, transform);
+            Planet newPlanet = Instantiate(planetPrefab, worldPosition, Quaternion.identity, transform);
             newPlanet.name = $"Planet_{planets.Count}";
 
             PlanetDefinition chosenDefinition = definitionOverride != null
@@ -83,13 +82,12 @@ namespace Gameplay
             {
                 newPlanet.SetDefinition(chosenDefinition);
             }
-            if(difficultyProfile != null)
+            if (difficultyProfile != null)
             {
                 newPlanet.SetDifficulty(difficultyProfile);
             }
 
             planets.Add(newPlanet);
-            ArrangePlanets();
 
             newPlanet.BeginSpawnAnimation();
 
@@ -98,6 +96,11 @@ namespace Gameplay
             Debug.Log("Spawned planet at " + newPlanet.transform.position);
 
             return newPlanet;
+        }
+
+        public Planet SpawnPlanet(PlanetDefinition definitionOverride = null)
+        {
+            return SpawnPlanetAt(centerPosition, definitionOverride);
         }
         
         public void RemovePlanet(Planet planet)
