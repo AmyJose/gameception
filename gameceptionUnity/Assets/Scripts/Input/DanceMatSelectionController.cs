@@ -10,8 +10,8 @@ namespace InputLayer
         [SerializeField] private SelectionState selectionState;
 
         [Header("Selection Rules")]
-        [SerializeField] private bool zeroClearsSelection = true;
-        [SerializeField] private bool shiftToSoloSelect = true;
+        [SerializeField] private bool zeroClearsSelection = false;
+        [SerializeField] private bool shiftToSoloSelect = false;
         [SerializeField] private bool autoSelectFirst = false;
         [SerializeField] private int planetCount = 0;
 

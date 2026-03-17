@@ -474,7 +474,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.ComboSystem
   recipes: []
-  planetManager: {fileID: 0}
+  planetManager: {fileID: 967029054}
   maxBuffer: 4
   bufferTimeout: 4
   comboResolveDelay: 1
@@ -649,7 +649,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 411293887}
-  - component: {fileID: 411293889}
   - component: {fileID: 411293888}
   m_Layer: 0
   m_Name: DataCollector
@@ -682,22 +681,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 411293886}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66373b6bff4f04fffb5fa84aaa07a23f, type: 3}
+  m_Script: {fileID: 11500000, guid: 34a45f96a5f8bab45b04c28814077fb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PoseDataCollector
   statusText: {fileID: 0}
---- !u!114 &411293889
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 411293886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9085c4a6eb33b4649a46fabfd77518f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PoseDataCollector
 --- !u!1 &545700347
 GameObject:
   m_ObjectHideFlags: 0
@@ -782,8 +769,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2fc0a4cda9812246849a8a770090f31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputLayer.MLPPoseClassifier
-  modelAsset: {fileID: 0}
-  scalerJson: {fileID: 0}
+  modelAsset: {fileID: 5022602860645237092, guid: 60ae02037034a4da38f4eec383da61d5, type: 3}
+  scalerJson: {fileID: 4900000, guid: e2be859e21ca84097b80b13333a42af9, type: 3}
 --- !u!224 &799987159 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8571076842338426133, guid: 140d1d2c406167c50819d89f86d9092e, type: 3}
@@ -1699,9 +1686,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InputLayer.DanceMatSelectionController
   inputProvider: {fileID: 1346458579}
   selectionState: {fileID: 2047366721}
-  zeroClearsSelection: 1
-  shiftToSoloSelect: 1
-  autoSelectFirst: 1
+  zeroClearsSelection: 0
+  shiftToSoloSelect: 0
+  autoSelectFirst: 0
   planetCount: 0
   selectionEnabled: 1
 --- !u!1 &1556385053

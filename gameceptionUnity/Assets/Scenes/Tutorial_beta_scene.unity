@@ -168,7 +168,7 @@ MonoBehaviour:
   screen: {fileID: 786291222}
   runningMode: 0
   _poseLandmarkerResultAnnotationController: {fileID: 887219561}
-  dataCollector: {fileID: 893619849}
+  dataCollector: {fileID: 893619848}
   poseState: {fileID: 1825261778}
   poseClassifierComponent: {fileID: 1918999158}
 --- !u!4 &184578139
@@ -1138,7 +1138,6 @@ GameObject:
   m_Component:
   - component: {fileID: 893619847}
   - component: {fileID: 893619848}
-  - component: {fileID: 893619849}
   m_Layer: 0
   m_Name: DataCollector
   m_TagString: Untagged
@@ -1170,19 +1169,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 893619846}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9085c4a6eb33b4649a46fabfd77518f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PoseDataCollector
---- !u!114 &893619849
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 893619846}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66373b6bff4f04fffb5fa84aaa07a23f, type: 3}
+  m_Script: {fileID: 11500000, guid: 34a45f96a5f8bab45b04c28814077fb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PoseDataCollector
   statusText: {fileID: 0}
