@@ -60,16 +60,17 @@ namespace InputLayer
             if (kb.digit9Key.wasPressedThisFrame) HandleDigit(9, shiftHeld);
         }
 
-        private void HandleDigit(int digit, bool shiftHeld)
-        {
-            if (digit < 1 || digit > maxDigitSelect) return;
+        // private void HandleDigit(int digit, bool shiftHeld)
+        // {
+        //     if (digit < 1 || digit > maxDigitSelect) return;
 
-            int idx = digit - 1;
-            if (!IsIndexAllowed(idx)) return;
+        //     int idx = digit - 1;
+        //     if (!IsIndexAllowed(idx)) return;
 
-            _selected.Clear();
-            _selected.Add(idx);
-            RaiseChanged();
+            
+            // _selected.Clear();
+            // _selected.Add(idx);
+            // RaiseChanged();
 
             // if (shiftHeld)
             // {
@@ -88,6 +89,23 @@ namespace InputLayer
             //     _selected.Remove(idx);
             //     RaiseChanged();
             // }
+        //}
+
+        private void HandleDigit(int digit, bool shiftHeld)
+        {
+            if (digit < 1 || digit > maxDigitSelect) return;
+
+            int idx = digit - 1;
+            if (!IsIndexAllowed(idx)) return;
+
+            if (shiftHeld)
+            {
+                selectionState.SoloSelect(idx);
+            }
+            else
+            {
+                selectionState.Toggle(idx);
+            }
         }
 
         private bool IsIndexAllowed(int idx)

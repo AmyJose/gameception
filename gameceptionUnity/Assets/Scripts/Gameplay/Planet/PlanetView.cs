@@ -13,5 +13,7 @@ public class PlanetView : MonoBehaviour
         {
             resourceUI.SetVisible(selected);
         }
+
     }
+
 }

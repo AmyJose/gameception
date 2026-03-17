@@ -33,8 +33,9 @@ namespace Gameplay
 
         private void HandleBeat(BeatInfo beat)
         {   
+            if (selectionState == null) return;
             //selected targets
-            var targets = new List<int>(matInput.Selected);
+            var targets = new List<int>(selectionState.Selected);
             if (targets.Count > 0)
             {
                Debug.Log("planets currently selected: " + targets[0]);
@@ -48,21 +49,6 @@ namespace Gameplay
             if (targets.Count > 0)            {
                 activeIndex = targets[targets.Count - 1];
             }
-            //Visual SYNC: tell all planets to flash/pulse on the beat, regardless of hit or miss, to help player sync up
-            for (int i=0; i < planetObjects.Count; i++)
-            {
-                if (i == activeIndex){
-                    //it's selected, make it bob.
-                    planetObjects[i].TriggerSuccess((float)beat.beatInterval);
-                }
-                else
-                {
-                    //it is not selected. so stop.
-                    planetObjects[i].StopBob(i);
-                }
-            }
-
-            //poseState logic (the actual gameplay hit)            {
             if (activeIndex != -1 && poseState.Confidence >= minPoseConfidence && poseState.CurrentPose != ElementPose.None)
             {
                 //Apply the element and register the hit with the combo system. 

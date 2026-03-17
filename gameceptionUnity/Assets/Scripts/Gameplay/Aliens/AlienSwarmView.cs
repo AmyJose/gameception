@@ -1,5 +1,6 @@
 using Gameplay;
 using NUnit.Framework;
+using Rhythm;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -10,17 +11,20 @@ public class AlienSwarmView : MonoBehaviour
     [SerializeField] private Transform container;
     [SerializeField] private AlienLibrary alienLibrary;
     [SerializeField] private SpriteRenderer planetSpriteRenderer;
-
+    [SerializeField] private BeatClock beatClock;
     [SerializeField] private int populationPerSprite = 5;
     [SerializeField] private int maxSprites = 30;
 
-    [SerializeField] private float edgeOffset = 0f;
+    [SerializeField] private float edgeOffset = 0.5f;
     [SerializeField] private float jitter = 0.05f;
     [SerializeField] private float radiusMultiplier = 0.1f;
+    [SerializeField] private float bobHeight = 1;
+    [SerializeField] private float bobDurationBeats = 0.5f;
 
     private readonly List<GameObject> _spawned = new();
     private AlienType _currentType;
     private int _currentCount = -1;
+    private bool isBobbingEnabled = false;
 
     private void Awake()
     {
@@ -34,9 +38,19 @@ public class AlienSwarmView : MonoBehaviour
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void OnEnable()
     {
-        
+        if (beatClock == null)
+        {
+            beatClock = FindObjectOfType<Rhythm.BeatClock>();
+        }
+        if (beatClock != null)
+        {
+            beatClock.OnBeat += HandleBeat;
+        }
+        // else {
+        //     Debug.LogWarning("No BeatClock found in scene for AlienSwarmView to subscribe to.");
+        // }
     }
 
     void Update()
@@ -59,6 +73,35 @@ public class AlienSwarmView : MonoBehaviour
         if (desired != _currentCount)
         {
             Resize(desired);
+        }
+    }
+
+    public void SetBobbingEnabled(bool enabled){
+        isBobbingEnabled = enabled;
+    }
+    private void HandleBeat(BeatInfo beatInfo)
+    {
+        if (!isBobbingEnabled) return;
+
+        float bobDuration = (float)beatInfo.beatInterval * bobDurationBeats;  
+
+        foreach (var go in _spawned)
+        {
+        if (go == null) continue;
+
+        var walker = go.GetComponent<AlienWalker>();
+        if (walker == null) continue;
+
+        float variedHeight = bobHeight * Random.Range(0.9f, 1.1f);
+        float variedDuration = bobDuration * Random.Range(0.95f, 1.05f);
+
+        walker.TriggerBeatBob(variedHeight, variedDuration);
+        }
+    }
+    public void SetSwarmVisible(bool visible)
+    {
+        if (container != null){
+            container.gameObject.SetActive(visible);
         }
     }
     private void Rebuild(int desired)
