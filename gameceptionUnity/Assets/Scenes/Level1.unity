@@ -640,6 +640,64 @@ MonoBehaviour:
   m_EditorClassIdentifier: Mediapipe.Runtime::Mediapipe.Unity.PoseLandmarkerResultAnnotationController
   annotation: {fileID: 1119485327}
   _visualizeZ: 0
+--- !u!1 &411293886
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 411293887}
+  - component: {fileID: 411293889}
+  - component: {fileID: 411293888}
+  m_Layer: 0
+  m_Name: DataCollector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &411293887
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411293886}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.18181, y: -3.4245, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 545700348}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &411293888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411293886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66373b6bff4f04fffb5fa84aaa07a23f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoseDataCollector
+  statusText: {fileID: 0}
+--- !u!114 &411293889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411293886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085c4a6eb33b4649a46fabfd77518f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoseDataCollector
 --- !u!1 &545700347
 GameObject:
   m_ObjectHideFlags: 0
@@ -677,6 +735,7 @@ Transform:
   - {fileID: 250756404}
   - {fileID: 887063825}
   - {fileID: 1414206231}
+  - {fileID: 411293887}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &589382562
@@ -720,12 +779,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 589382562}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2f3758513d854f49b82c89e73170a8b, type: 3}
+  m_Script: {fileID: 11500000, guid: f2fc0a4cda9812246849a8a770090f31, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputLayer.HeuristicPoseClassifier
-  angleToleranceDeg: 12
-  yTolerance: 0.06
-  xTolerance: 0.06
+  m_EditorClassIdentifier: Assembly-CSharp::InputLayer.MLPPoseClassifier
+  modelAsset: {fileID: 0}
+  scalerJson: {fileID: 0}
 --- !u!224 &799987159 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8571076842338426133, guid: 140d1d2c406167c50819d89f86d9092e, type: 3}
@@ -904,6 +962,7 @@ MonoBehaviour:
   screen: {fileID: 328449559}
   runningMode: 0
   _poseLandmarkerResultAnnotationController: {fileID: 328449560}
+  dataCollector: {fileID: 411293888}
   poseState: {fileID: 1793061302}
   poseClassifierComponent: {fileID: 589382564}
 --- !u!4 &1019512105
