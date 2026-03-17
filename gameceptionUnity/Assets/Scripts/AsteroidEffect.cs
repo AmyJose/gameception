@@ -17,9 +17,13 @@ namespace Gameplay
 
         private IEnumerator AsteroidFly(Vector3 target)
         {
+
+            Debug.Log("AsteroidFly started, target: " + target);
             // spawn from a random direction offscreen
             Vector3 randomDir = Random.insideUnitCircle.normalized;
             Vector3 spawnPos = target + randomDir * spawnDistance;
+
+            spawnPos.z = 0f;
 
             GameObject asteroid = Instantiate(asteroidPrefab, spawnPos, Quaternion.identity);
 

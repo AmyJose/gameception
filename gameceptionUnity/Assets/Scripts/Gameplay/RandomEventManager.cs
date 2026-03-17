@@ -86,7 +86,7 @@ namespace Gameplay
             int count = planetManager.PlanetCount;
             for (int i = 0; i < count; i++)
             {
-                if (Random.value < 0.7f) continue;
+                if (Random.value < 0.1f) continue;
                 Planet p = planetManager.GetPlanet(i);
                 if (p == null) continue;
                 asteroidEffect.StrikeAt(p.transform.position);
@@ -101,3 +101,19 @@ namespace Gameplay
         }
     }
 }
+
+
+//Ideas for future events:
+// Ice Age - freeze all planets for few seconds, preventing any changes
+// Solar Flare/ SuperNova - Insane spikes in fire element/ earth
+// Asteroid Impact (DONE)
+// Alien Invasion - randomly swap elements between planets (Potential Boss - DIFFICULT)
+// Eclipse - temporarily turn screen black, also lose all fire and gain ice
+// Comet Shower - Allows user to do one "wish" - "Wish" implementation could be done like roguelikes 
+// Black Hole - drain elements from all planet, increased decay rate (Potential Boss - DIFFICULT)
+// Golden Age - boost population, unlock some stuff maybe, lower to no decay rate
+// Galactic Pandemic - population down, random element drained, increased decay rate (Potential Boss - EASY)
+// Harvest Moon - Population up, earth boost
+// Stardust - Element regen instead of decay
+
+

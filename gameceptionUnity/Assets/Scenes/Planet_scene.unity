@@ -490,7 +490,7 @@ MonoBehaviour:
     sequence: 0200000001000000
   - name: Ecosystem
     sequence: 0100000002000000
-  planetManager: {fileID: 0}
+  planetManager: {fileID: 967029054}
   maxBuffer: 4
   bufferTimeout: 4
   comboResolveDelay: 1
@@ -694,6 +694,7 @@ Transform:
   - {fileID: 887063825}
   - {fileID: 1346458578}
   - {fileID: 689724797}
+  - {fileID: 1144103111}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &589382562
@@ -792,7 +793,7 @@ MonoBehaviour:
   eventInterval: 5
   minAmount: 5
   maxAmount: 20
-  asteroidEffect: {fileID: 0}
+  asteroidEffect: {fileID: 1397558271}
 --- !u!224 &799987159 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8571076842338426133, guid: 140d1d2c406167c50819d89f86d9092e, type: 3}
@@ -1231,12 +1232,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1144103109}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.4803, y: -4.21292, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 545700348}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1292493661
 GameObject:
@@ -1487,10 +1488,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3a55bae087bebc4fbb18aff60c443e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.AsteroidEffect
-  asteroidPrefab: {fileID: 0}
-  impactPrefab: {fileID: 0}
-  speed: 3
-  spawnDistance: 10
+  asteroidPrefab: {fileID: 2649261390330912761, guid: e614860542a241c43916fc8c5569d40e, type: 3}
+  impactPrefab: {fileID: 1213378698943791378, guid: 91b6ea482796cde4f8f6750ea62bbd8c, type: 3}
+  speed: 1
+  spawnDistance: 3
 --- !u!4 &1397558272
 Transform:
   m_ObjectHideFlags: 0
@@ -1924,5 +1925,4 @@ SceneRoots:
   - {fileID: 1306372124}
   - {fileID: 1019512105}
   - {fileID: 545700348}
-  - {fileID: 1144103111}
   - {fileID: 1397558272}
