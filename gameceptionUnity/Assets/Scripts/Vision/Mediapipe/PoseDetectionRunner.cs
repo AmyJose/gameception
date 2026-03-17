@@ -219,11 +219,18 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
             _latestTimestamp = timestamp;
             _isNewResultAvailable = true;
         }
-        dataCollector.AddSample(result);
+
+        // Added Null Check to prevent background thread crashing
+        if (dataCollector != null)
+        {
+            dataCollector.AddSample(result);
+        }
+
         // 2) UI / annotation
         _poseLandmarkerResultAnnotationController.DrawLater(result);
         DisposeAllMasks(result);
     }
+    
     private void DisposeAllMasks(PoseLandmarkerResult result)
     {
         if (result.segmentationMasks != null)
