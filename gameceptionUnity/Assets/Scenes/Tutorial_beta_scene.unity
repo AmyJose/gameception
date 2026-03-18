@@ -1111,8 +1111,8 @@ MonoBehaviour:
   instructionText: {fileID: 194342750}
   countdownText: {fileID: 392163010}
   countdownSeconds: 5
-  getReadyDelay: 2
-  dialogueDelay: 3
+  getReadyDelay: 2.5
+  dialogueDelay: 3.5
 --- !u!4 &890221611
 Transform:
   m_ObjectHideFlags: 0

@@ -1294,6 +1294,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1204960138}
   - component: {fileID: 1204960139}
+  - component: {fileID: 1204960140}
   m_Layer: 0
   m_Name: Level1Controller
   m_TagString: Untagged
@@ -1347,6 +1348,19 @@ MonoBehaviour:
   repeatSpawnDelay: 15
   starterElementAmount: 50
   starterPopulationAmount: 10
+--- !u!114 &1204960140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204960137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff80efe0caab91e4d9253bc29c241694, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneLoader
+  sceneName: Level2
 --- !u!1 &1230970975
 GameObject:
   m_ObjectHideFlags: 0
