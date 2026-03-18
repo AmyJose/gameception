@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c984ffe1db5e8bd4a865fb83686b4356, type: 3}
+  m_Name: AlienDef_Water
+  m_EditorClassIdentifier: Assembly-CSharp::AlienDefinition
+  type: 1
+  alienPrefab: {fileID: 2796915676633814437, guid: fa14e828f4fc5054d95595558a5507c3, type: 3}
