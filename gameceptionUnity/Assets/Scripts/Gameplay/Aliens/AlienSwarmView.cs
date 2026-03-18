@@ -42,7 +42,7 @@ public class AlienSwarmView : MonoBehaviour
     {
         if (beatClock == null)
         {
-            beatClock = FindObjectOfType<Rhythm.BeatClock>();
+            beatClock = FindFirstObjectByType<Rhythm.BeatClock>();
         }
         if (beatClock != null)
         {

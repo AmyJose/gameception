@@ -79,6 +79,7 @@ namespace Gameplay
 
         public void BeginSpawnAnimation()
         {
+            Debug.Log($"[Planet] BeginSpawnAnimation called");
             targetScale = visualRoot.localScale;
             visualRoot.localScale = Vector3.zero;
             visualRoot.localRotation = Quaternion.identity;
@@ -94,6 +95,10 @@ namespace Gameplay
 
         public void Tick(float dt)
         {
+            HandleGrowth(dt);
+
+            if (isGrowing) return;
+
             if (_frozen)
             {
                 _freezeTimer -= dt;
@@ -101,8 +106,6 @@ namespace Gameplay
                     _frozen = false;
                 return;
             }
-
-            HandleGrowth(dt);
 
             float decayMult = difficulty != null ? difficulty.elementDecayMultiplier : 1f;
             ApplyDecay(dt, elementDecayPerSecond * decayMult);
@@ -365,6 +368,8 @@ namespace Gameplay
             growTimer += dt;
             float t = Mathf.Clamp01(growTimer / growDuration);
 
+            Debug.Log($"[Planet] Growing... dt={dt}, timer = {growTimer}, t= {t}");
+
             visualRoot.localScale = Vector3.Lerp(Vector3.zero, targetScale, t);
 
             if (t >= 1f)
@@ -372,6 +377,7 @@ namespace Gameplay
                 visualRoot.localScale = targetScale;
                 visualRoot.localRotation = Quaternion.identity;
                 isGrowing = false;
+                Debug.Log("[Planet] Growth complete");
             }
         }
     

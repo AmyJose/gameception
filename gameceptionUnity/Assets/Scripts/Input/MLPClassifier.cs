@@ -53,8 +53,6 @@ namespace InputLayer
 
             // Parse labels JSON
             //_labelNames = ParseLabelJson(labelsJson.text);
-
-            Debug.Log($"[PoseClassifier] Loaded. Labels: {string.Join(", ", _labelNames)}");
         }
 
         // Classify a pose from 70 raw landmark floats (x0,y0,x1,y1,...,x34,y34).
