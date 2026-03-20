@@ -198,7 +198,7 @@ namespace Gameplay
             {
                 Planet p = planetManager.GetPlanet(planetIndex);
                 if (p == null) continue;
-                p.ApplyComboEffect(recipe.name);
+                //p.ApplyComboEffect(recipe.name);
             }
         }
     }

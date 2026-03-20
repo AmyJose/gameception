@@ -217,12 +217,12 @@ public class LevelOneController : MonoBehaviour
     {
         if (planet == null) return;
 
-        planet.SetElements(
+        /*planet.SetElements(
             starterElementAmount,
             starterElementAmount,
             starterElementAmount,
             starterElementAmount
-        );
+        );*/
     }
 
     private void AddStarterPopulation(Planet planet)

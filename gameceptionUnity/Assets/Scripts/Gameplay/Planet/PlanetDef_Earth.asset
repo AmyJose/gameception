@@ -13,11 +13,7 @@ MonoBehaviour:
   m_Name: PlanetDef_Earth
   m_EditorClassIdentifier: Assembly-CSharp::PlanetDefinition
   planetSprite: {fileID: 21300000, guid: 16b718a6c47225d43b7ea0ef46ea9f9c, type: 3}
-  targetFire: 0
-  targetWater: 20
-  targetEarth: 70
-  targetIce: 15
-  tolerance: 8
-  startingPopulation: 1
+  startingPopulation: 5
   populationCap: 100
   alienType: 2
+  requiredNeeds: 010000000200000003000000

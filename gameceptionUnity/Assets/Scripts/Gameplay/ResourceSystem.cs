@@ -16,7 +16,7 @@ namespace Gameplay
                 var planet = planetManager.GetPlanet(idx);
                 if (planet == null) continue;
 
-                planet.ApplyElement(element, resourceAmountPerBeat);
+                //planet.ApplyElement(element, resourceAmountPerBeat);
                 Debug.Log($"ResourceSystem: applied {element} to planet {idx} on beat {beatIndex}");
             }
         }

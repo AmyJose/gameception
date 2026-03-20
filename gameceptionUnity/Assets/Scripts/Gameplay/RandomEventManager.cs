@@ -53,7 +53,7 @@ namespace Gameplay
             {
                 Planet p = planetManager.GetPlanet(i);
                 if (p == null) continue;
-                p.ApplyElement(element, amount);
+                //p.ApplyElement(element, amount);
             }
         }
 
@@ -73,7 +73,7 @@ namespace Gameplay
                 if (p == null) continue;
 
                 ElementPose element = GetRandomElement();
-                p.ApplyElement(element, -amount); // negative = drain
+                //p.ApplyElement(element, -amount); // negative = drain
                 Debug.Log($"RandomEventManager: Drained {element} on planet {i}");
             }
         }
@@ -90,7 +90,7 @@ namespace Gameplay
                 Planet p = planetManager.GetPlanet(i);
                 if (p == null) continue;
                 asteroidEffect.StrikeAt(p.transform.position);
-                p.SetElements(0f, 0f, 0f, 0f);
+                //p.SetElements(0f, 0f, 0f, 0f);
             }
         }
 
