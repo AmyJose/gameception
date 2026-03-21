@@ -7,7 +7,6 @@ namespace Gameplay
     {
         [Header("Renderers")]
         [SerializeField] private SpriteRenderer iconRenderer;
-        [SerializeField] private SpriteRenderer backgroundRenderer;
 
         [Header("Element Sprites")]
         [SerializeField] private Sprite fireSprite;
@@ -26,11 +25,6 @@ namespace Gameplay
             {
                 iconRenderer.sprite = GetSprite(element);
                 iconRenderer.color = GetColor(state);
-            }
-
-            if (backgroundRenderer != null)
-            {
-                backgroundRenderer.color = GetBackgroundColor(state);
             }
         }
 
