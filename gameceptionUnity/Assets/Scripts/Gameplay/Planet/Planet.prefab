@@ -186,8 +186,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlanetNeeds
   slots: []
   baseDecayInterval: 5
-  startFilled: 0
-  showDebugLogs: 0
+  startFilled: 1
+  showDebugLogs: 1
 --- !u!1 &8713938942086236444
 GameObject:
   m_ObjectHideFlags: 0
