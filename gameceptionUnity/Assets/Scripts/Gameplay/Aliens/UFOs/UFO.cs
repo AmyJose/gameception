@@ -37,8 +37,6 @@ public class UFO : MonoBehaviour
 
     public IEnumerator FlyTo(Vector3 targetPosition, float duration = 1f, float tiltAmount = 15f)
     {
-        Debug.Log($"[UFO] FlyTo start. From {transform.position} to {targetPosition}, duration={duration}");
-
         StopBobbing();
 
         Vector3 startPos = transform.position;
@@ -49,25 +47,11 @@ public class UFO : MonoBehaviour
         Quaternion targetTilt = Quaternion.Euler(0f, 0f, tiltZ);
 
         float t = 0f;
-        float watchdog = 0f;
 
         while (t < duration)
         {
             float dt = Time.deltaTime;
             t += dt;
-            watchdog += Time.unscaledDeltaTime;
-
-            if (Mathf.FloorToInt(watchdog * 10f) % 10 == 0)
-            {
-                Debug.Log($"[UFO] FlyTo looping. dt={dt}, t={t}, duration={duration}, pos={transform.position}");
-            }
-
-            // safety escape so it can't hang forever
-            if (watchdog > 5f)
-            {
-                Debug.LogError("[UFO] FlyTo watchdog triggered. Breaking out.");
-                break;
-            }
 
             float normalized = Mathf.Clamp01(t / duration);
             float eased = Mathf.SmoothStep(0f, 1f, normalized);
@@ -81,15 +65,11 @@ public class UFO : MonoBehaviour
         transform.position = targetPosition;
         transform.rotation = Quaternion.identity;
 
-        Debug.Log("[UFO] FlyTo complete");
     }
 
     public void StartBobbing()
     {
-        Debug.Log("[UFO] in bobbing");
-        if (!bobbing)
-            StartCoroutine(BobRoutine());
-        Debug.Log("[UFO] after bob");
+        if (!bobbing) StartCoroutine(BobRoutine());
     }
 
     public void StopBobbing()
