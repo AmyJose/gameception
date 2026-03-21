@@ -77,31 +77,30 @@ public class PlanetNeeds : MonoBehaviour
     }
 
     //restores one slot matching the given element.
-    //gives priority to an empty matching slot, then a fading one
     public bool RestoreNeed(ElementPose element)
     {
         //two seperate for loops for this prioritisation
         for (int i = 0; i <slots.Count; i++)
-        {
-            if (slots[i].element == element && slots[i].state == NeedState.Empty)
-            {
-                slots[i].state = NeedState.Filled;
-
-                if (showDebugLogs) Debug.Log($"[PlanetNeeds] restored EMPTY {element} slot to FILLED");
-            }
-            NotifyChanged();
-            return true;
-        }
-        for (int i = 0; i < slots.Count; i++)
         {
             if (slots[i].element == element && slots[i].state == NeedState.Fading)
             {
                 slots[i].state = NeedState.Filled;
 
                 if (showDebugLogs) Debug.Log($"[PlanetNeeds] restored FADING {element} slot to FILLED");
+                NotifyChanged();
+                return true;
             }
-            NotifyChanged();
-            return true;
+        }
+        for (int i = 0; i < slots.Count; i++)
+        {
+            if (slots[i].element == element && slots[i].state == NeedState.Empty)
+            {
+                slots[i].state = NeedState.Filled;
+
+                if (showDebugLogs) Debug.Log($"[PlanetNeeds] restored EMPTY {element} slot to FILLED");
+                NotifyChanged();
+                return true;
+            }
         }
         if (showDebugLogs) Debug.Log($"[PlanetNeeds] No restorable slot found for {element}");
         return false;
@@ -116,9 +115,9 @@ public class PlanetNeeds : MonoBehaviour
                 slots[i].state = NeedState.Fading;
 
                 if (showDebugLogs) Debug.Log($"[PlanetNeeds] Decayed {slots[i].element} from FILLED to FADING");
+                NotifyChanged();
+                return;
             }
-            NotifyChanged();
-            return;
         }
         for (int i = 0; i < slots.Count; i++)
         {
@@ -127,9 +126,9 @@ public class PlanetNeeds : MonoBehaviour
                 slots[i].state = NeedState.Empty;
 
                 if (showDebugLogs) Debug.Log($"[PlanetNeeds] Decayed {slots[i].element} from FADING to EMPTY");
+                NotifyChanged();
+                return;
             }
-            NotifyChanged();
-            return;
         }
         if (showDebugLogs) Debug.Log($"[PlanetNeeds] All slots already empty. No decay");
     }
