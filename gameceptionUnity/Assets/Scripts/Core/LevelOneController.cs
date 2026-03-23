@@ -23,7 +23,6 @@ public class LevelOneController : MonoBehaviour
     [SerializeField] private float repeatSpawnDelay = 15f;
 
     [Header("Planet Setup")]
-    [SerializeField] private float starterElementAmount = 50f;
     [SerializeField] private int starterPopulationAmount = 10;
 
     private bool waitingForSpawnPad;
@@ -131,8 +130,6 @@ public class LevelOneController : MonoBehaviour
             yield break;
         }
 
-        InitialiseStarterPlanet(newPlanet);
-
         // Wait for growth
         yield return new WaitUntil(() => !newPlanet.IsGrowing);
 
@@ -186,22 +183,10 @@ public class LevelOneController : MonoBehaviour
         return planetSpawnPoints[index];
     }
 
-    private void InitialiseStarterPlanet(Planet planet)
-    {
-        if (planet == null) return;
-
-        /*planet.SetElements(
-            starterElementAmount,
-            starterElementAmount,
-            starterElementAmount,
-            starterElementAmount
-        );*/
-    }
-
     private void AddStarterPopulation(Planet planet)
     {
         if (planet == null) return;
-        planet.AddPopulation(starterPopulationAmount);
+        planet.AddStarterPopulation(starterPopulationAmount);
     }
 
     private void BeginGameplayPhase()

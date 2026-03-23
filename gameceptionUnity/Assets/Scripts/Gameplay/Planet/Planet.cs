@@ -2,6 +2,7 @@ using UnityEngine;
 using InputLayer;
 using System;
 using System.Collections.Generic;
+using UnityEditor.Build;
 
 namespace Gameplay
 {
@@ -18,7 +19,7 @@ namespace Gameplay
 
         [Header("Runtime Population")]
         [SerializeField] private float population = 0f;
-        [SerializeField] private float populationGrowthPerSecond = 1.2f;
+        [SerializeField] private float populationGrowthPerSecond = 0.75f;
         [SerializeField] private float populationDeclinePerSecond = 0.5f;
 
         [Header("Stability Thresholds")]
@@ -36,11 +37,13 @@ namespace Gameplay
         private Vector3 _targetScale;
         private float _growTimer;
         private bool _isGrowing;
+        private bool _starterPop;
 
         public PlanetDefinition Definition => definition;
         public float Population => population;
         public bool IsGrowing => _isGrowing;
         public PlanetNeeds Needs => needs;
+        public bool StarterPop => _starterPop;
 
         public AlienType PlanetAlienType => definition != null ? definition.alienType : AlienType.Earth;
 
@@ -149,13 +152,14 @@ namespace Gameplay
             return GetStabilityRatio() < unstableThreshold;
         }
 
-        public void AddPopulation(float amount)
+        public void AddStarterPopulation(float amount)
         {
             if (definition == null)
                 return;
 
             population += amount;
             population = Mathf.Clamp(population, 0f, definition.populationCap);
+            _starterPop = true;
         }
         public void SetPopulation(float amount)
         {

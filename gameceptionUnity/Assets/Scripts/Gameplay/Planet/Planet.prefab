@@ -55,7 +55,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 2934997472566962085}
   visualRoot: {fileID: 1120777604323684103}
   population: 0
-  populationGrowthPerSecond: 1.2
+  populationGrowthPerSecond: 0.75
   populationDeclinePerSecond: 0.5
   healthyThreshold: 0.75
   unstableThreshold: 0.4

@@ -56,6 +56,8 @@ public class AlienSwarmView : MonoBehaviour
     void Update()
     {
         if (planet == null || alienLibrary == null) return;
+        if (planet.IsGrowing) return;
+        if (!planet.StarterPop) return;
 
         AlienType type = planet.PlanetAlienType;
         int desired = Mathf.Clamp(
@@ -87,15 +89,15 @@ public class AlienSwarmView : MonoBehaviour
 
         foreach (var go in _spawned)
         {
-        if (go == null) continue;
+            if (go == null) continue;
 
-        var walker = go.GetComponent<AlienWalker>();
-        if (walker == null) continue;
+            var walker = go.GetComponent<AlienWalker>();
+            if (walker == null) continue;
 
-        float variedHeight = bobHeight * Random.Range(0.9f, 1.1f);
-        float variedDuration = bobDuration * Random.Range(0.95f, 1.05f);
+            float variedHeight = bobHeight * Random.Range(0.9f, 1.1f);
+            float variedDuration = bobDuration * Random.Range(0.95f, 1.05f);
 
-        walker.TriggerBeatBob(variedHeight, variedDuration);
+            walker.TriggerBeatBob(variedHeight, variedDuration);
         }
     }
     public void SetSwarmVisible(bool visible)
