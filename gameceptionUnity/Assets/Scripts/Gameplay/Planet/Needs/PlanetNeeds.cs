@@ -2,6 +2,7 @@ using InputLayer;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 public enum NeedState
 {
     Empty,
@@ -21,10 +22,17 @@ public class PlanetNeeds : MonoBehaviour
     [SerializeField] private float baseDecayInterval = 5f;
     [SerializeField] private bool startFilled = false;
 
+    [Header("Decay Weights")]
+    [SerializeField] private float filledDecayWeight = 1f;
+    [SerializeField] private float fadingDecayWeight = 0.7f;
+    [SerializeField] private float lastDecayedPenaltyMultiplier = 0.25f;
+    [SerializeField] private bool avoidRepeatingLastDecay = true;
+
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = false;
 
     private float _decayTimer = 0f;
+    private int _lastDecayedIndex = -1;
     public IReadOnlyList<NeedSlot> Slots => slots;
     public event Action OnNeedsChanged;
 
@@ -108,29 +116,81 @@ public class PlanetNeeds : MonoBehaviour
     //decays a slot by one step
     public void DecayOneStep()
     {
+        int index = ChooseWeightedDecaySlot();
+
+        if (index < 0 || index >= slots.Count)
+        {
+            if (showDebugLogs) Debug.Log("[PlanetNeeds] No valid slot available for decay");
+            return;
+        }
+
+        switch (slots[index].state)
+        {
+            case NeedState.Filled:
+                slots[index].state = NeedState.Fading;
+                break;
+
+            case NeedState.Fading:
+                slots[index].state = NeedState.Empty;
+                break;
+
+            case NeedState.Empty:
+                return;
+        }
+
+        _lastDecayedIndex = index;
+
+        if (showDebugLogs) Debug.Log($"[PlanetNeeds] Decayed slot {index} ({slots[index].element}). New state = {slots[index].state}");
+
+        NotifyChanged();
+    }
+    private int ChooseWeightedDecaySlot()
+    {
+        if (slots.Count == 0) return -1;
+
+        float totalWeight = 0f;
+        float[] weights = new float[slots.Count];
+
         for (int i = 0; i < slots.Count; i++)
         {
-            if (slots[i].state == NeedState.Filled)
-            {
-                slots[i].state = NeedState.Fading;
+            float weight = 0f;
 
-                if (showDebugLogs) Debug.Log($"[PlanetNeeds] Decayed {slots[i].element} from FILLED to FADING");
-                NotifyChanged();
-                return;
+            switch (slots[i].state)
+            {
+                case NeedState.Filled:
+                    weight = filledDecayWeight;
+                    break;
+                case NeedState.Fading:
+                    weight = fadingDecayWeight;
+                    break;
+                case NeedState.Empty:
+                    weight = 0f;
+                    break;
             }
+
+            if (avoidRepeatingLastDecay && i == _lastDecayedIndex)
+            {
+                weight *= lastDecayedPenaltyMultiplier;
+            }
+
+            //tiny bit of random jsut sprinkled in there for fun.
+            weight *= UnityEngine.Random.Range(0.9f, 1.1f);
+
+            weights[i] = weight;
+            totalWeight += weight;
         }
-        for (int i = 0; i < slots.Count; i++)
+
+        if (totalWeight <= 0f) return -1;
+
+        float pick = UnityEngine.Random.Range(0, totalWeight);
+        float running = 0f;
+
+        for (int i = 0; i < weights.Length; i++)
         {
-            if (slots[i].state == NeedState.Fading)
-            {
-                slots[i].state = NeedState.Empty;
-
-                if (showDebugLogs) Debug.Log($"[PlanetNeeds] Decayed {slots[i].element} from FADING to EMPTY");
-                NotifyChanged();
-                return;
-            }
+            running += weights[i];
+            if (pick <= running) return i;
         }
-        if (showDebugLogs) Debug.Log($"[PlanetNeeds] All slots already empty. No decay");
+        return weights.Length -1;
     }
     public float GetStabilityRatio()
     {
