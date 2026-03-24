@@ -5,9 +5,14 @@ public class PlanetVisuals : MonoBehaviour
 {
     private Vector3 _baseScale;
     private Coroutine _currentEffect;
-    
-    private void Start() => _baseScale = transform.localScale;
 
+    void Start() 
+    {
+        _baseScale = transform.localScale;
+    }
+
+
+    
     public void TriggerSuccess(float duration)
     {
         if (_currentEffect != null) StopCoroutine(_currentEffect);

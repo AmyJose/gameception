@@ -1,13 +1,16 @@
 fileFormatVersion: 2
-guid: d2ce719cd26a40b48941b73351482d17
+guid: 2ed3b88926512f244be8dfc0d7b0a292
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8038460745620348017
-    second: export202603201408460630_0
+      213: -8179124791591863326
+    second: planetwater_0
   - first:
-      213: 1679449643175690445
-    second: export202603201408460630_1
+      213: 414471752664552930
+    second: planetwater_1
+  - first:
+      213: -2594205976322797399
+    second: planetwater_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -49,7 +52,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -100,6 +103,19 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -116,13 +132,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: export202603201408460630_0
+      name: planetwater_0
       rect:
         serializedVersion: 2
-        x: 309
-        y: 618
-        width: 11
-        height: 17
+        x: 436
+        y: 762
+        width: 179
+        height: 189
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,20 +147,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 17c5f9365795e8f60800000000000000
-      internalID: 8038460745620348017
+      spriteID: 2eb739f3659ed7e80800000000000000
+      internalID: -8179124791591863326
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: export202603201408460630_1
+      name: planetwater_1
       rect:
         serializedVersion: 2
         x: 567
-        y: 141
-        width: 787
-        height: 908
+        y: 111
+        width: 938
+        height: 939
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,8 +169,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: dc0c4a76d8a9e4710800000000000000
-      internalID: 1679449643175690445
+      spriteID: 2e51103fcdf70c500800000000000000
+      internalID: 414471752664552930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: planetwater_2
+      rect:
+        serializedVersion: 2
+        x: 306
+        y: 560
+        width: 242
+        height: 158
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a09513c8678ffbd0800000000000000
+      internalID: -2594205976322797399
       vertices: []
       indices: 
       edges: []
@@ -163,7 +201,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -173,8 +211,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      export202603201408460630_0: 8038460745620348017
-      export202603201408460630_1: 1679449643175690445
+      planetwater_0: -8179124791591863326
+      planetwater_1: 414471752664552930
+      planetwater_2: -2594205976322797399
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
