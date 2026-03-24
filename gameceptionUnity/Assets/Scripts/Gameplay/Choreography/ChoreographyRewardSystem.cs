@@ -57,7 +57,6 @@ namespace Gameplay
                 if (planet != null)
                 {
                     planet.RestoreNeed(result.detectedPose);
-                    planet.AddPopulation(reward);
                     
                     Debug.Log($"[ChoreographyReward] Planet {result.selectedPad} gained {reward} " +
                              $"population for {result.quality} {result.detectedPose}");
