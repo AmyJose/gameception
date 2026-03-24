@@ -100,6 +100,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4202446692577710260}
+  - component: {fileID: 1908493467441237037}
   m_Layer: 0
   m_Name: WaterAlien
   m_TagString: Untagged
@@ -123,3 +124,18 @@ Transform:
   - {fileID: 5899088977631350122}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1908493467441237037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2796915676633814437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48bfcfe9f9ee57a44b21901a51217b80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.AlienView
+  spriteRenderer: {fileID: 4791229247320740761}
+  happySprite: {fileID: 21300000, guid: 2d18a1a2a9621e1468eb58028806a4b9, type: 3}
+  angrySprite: {fileID: 21300000, guid: 6de16be2dcd15714e9a71181417bf420, type: 3}

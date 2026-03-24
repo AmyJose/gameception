@@ -16,6 +16,7 @@ namespace Gameplay
         [SerializeField] private PlanetNeeds needs;
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private Transform visualRoot;
+        [SerializeField] private AlienSwarmView alienSwarmView;
 
         [Header("Runtime Population")]
         [SerializeField] private float population = 0f;
@@ -38,6 +39,7 @@ namespace Gameplay
         private float _growTimer;
         private bool _isGrowing;
         private bool _starterPop;
+        private bool _aliensCurrentlyAngry = false;
 
         public PlanetDefinition Definition => definition;
         public float Population => population;
@@ -74,6 +76,11 @@ namespace Gameplay
             if (definition != null)
             {
                 ApplyDefinition();
+            }
+
+            if(alienSwarmView == null)
+            {
+                alienSwarmView = GetComponentInChildren<AlienSwarmView>();
             }
 
             UpdateVisualState();
@@ -230,6 +237,13 @@ namespace Gameplay
 
             float stability = GetStabilityRatio();
             spriteRenderer.color = Color.Lerp(dyingColor, healthyColor, stability);
+
+            bool shouldBeAngry = stability < healthyThreshold;
+            if(alienSwarmView != null && shouldBeAngry != _aliensCurrentlyAngry)
+            {
+                _aliensCurrentlyAngry = shouldBeAngry;
+                alienSwarmView.SetAliensAngry(shouldBeAngry);
+            }
         }
 
         private void HandleGrowth(float dt)

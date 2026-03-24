@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8795378138549517440}
+  - component: {fileID: 322064470972751814}
   m_Layer: 0
   m_Name: FireAlien
   m_TagString: Untagged
@@ -32,6 +33,21 @@ Transform:
   - {fileID: 6351877101079466698}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &322064470972751814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3671467559992442822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48bfcfe9f9ee57a44b21901a51217b80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.AlienView
+  spriteRenderer: {fileID: 7106998296627658346}
+  happySprite: {fileID: 21300000, guid: c1538247a3de92c439e398807d6f9c26, type: 3}
+  angrySprite: {fileID: 21300000, guid: 2b302f7f1b4de15468fbf7be7353c7d5, type: 3}
 --- !u!1 &4966864432669026963
 GameObject:
   m_ObjectHideFlags: 0

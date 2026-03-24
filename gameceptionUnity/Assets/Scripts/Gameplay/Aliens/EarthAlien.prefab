@@ -100,6 +100,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4111035877808864124}
+  - component: {fileID: 6374066753315959601}
   m_Layer: 0
   m_Name: EarthAlien
   m_TagString: Untagged
@@ -123,3 +124,18 @@ Transform:
   - {fileID: 4656240581063301527}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6374066753315959601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8786698043573250615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48bfcfe9f9ee57a44b21901a51217b80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.AlienView
+  spriteRenderer: {fileID: 5074316970079376103}
+  happySprite: {fileID: 21300000, guid: b432f809c9e66ee4590f454bdb093003, type: 3}
+  angrySprite: {fileID: 21300000, guid: 87f54d08e5c8c5a4a838938099610e74, type: 3}

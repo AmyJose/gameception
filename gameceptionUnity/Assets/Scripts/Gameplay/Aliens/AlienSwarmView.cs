@@ -1,9 +1,7 @@
 using Gameplay;
-using NUnit.Framework;
 using Rhythm;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class AlienSwarmView : MonoBehaviour
 {
@@ -25,6 +23,7 @@ public class AlienSwarmView : MonoBehaviour
     private AlienType _currentType;
     private int _currentCount = -1;
     private bool isBobbingEnabled = false;
+    private bool _aliensAreAngry = false;
 
     private void Awake()
     {
@@ -81,6 +80,17 @@ public class AlienSwarmView : MonoBehaviour
     public void SetBobbingEnabled(bool enabled){
         isBobbingEnabled = enabled;
     }
+
+    public void SetAliensAngry(bool angry)
+    {
+        _aliensAreAngry = angry;
+        foreach(var go in _spawned)
+        {
+            if (go == null) continue;
+            var mood = go.GetComponent<AlienView>();
+            if (mood != null) mood.SetMood(angry);
+        }
+    }
     private void HandleBeat(BeatInfo beatInfo)
     {
         if (!isBobbingEnabled) return;
@@ -136,6 +146,9 @@ public class AlienSwarmView : MonoBehaviour
         if (walker == null) walker = go.AddComponent<AlienWalker>();
 
         walker.Initialise(container, startAngle, orbitRadius, walkSpeed, -90f);
+
+        var mood = go.GetComponent<AlienView>();
+        if (mood != null) mood.SetMood(_aliensAreAngry);
 
         _spawned.Add(go);
     }

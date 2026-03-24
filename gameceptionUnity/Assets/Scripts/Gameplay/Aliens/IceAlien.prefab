@@ -100,6 +100,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6039130778008172908}
+  - component: {fileID: 6735864182886422163}
   m_Layer: 0
   m_Name: IceAlien
   m_TagString: Untagged
@@ -123,3 +124,18 @@ Transform:
   - {fileID: 5329240809396904619}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6735864182886422163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9140607740039358385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48bfcfe9f9ee57a44b21901a51217b80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.AlienView
+  spriteRenderer: {fileID: 3281775748975068745}
+  happySprite: {fileID: 21300000, guid: 75683467edc9e094bbe990eb2a576aac, type: 3}
+  angrySprite: {fileID: 21300000, guid: e334ad43bc1213340bdbf0326cd8f129, type: 3}
