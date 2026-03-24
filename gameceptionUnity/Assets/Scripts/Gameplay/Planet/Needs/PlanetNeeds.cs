@@ -27,19 +27,26 @@ public class PlanetNeeds : MonoBehaviour
     [SerializeField] private float fadingDecayWeight = 0.7f;
     [SerializeField] private float lastDecayedPenaltyMultiplier = 0.25f;
     [SerializeField] private bool avoidRepeatingLastDecay = true;
+    [SerializeField] private float averageDecayInterval = 4.5f;
+    [SerializeField] private float decayJitter = 1.5f;
 
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = false;
 
-    private float _decayTimer = 0f;
     private int _lastDecayedIndex = -1;
+    private float _timeUntilNextDecay = 0f;
     public IReadOnlyList<NeedSlot> Slots => slots;
     public event Action OnNeedsChanged;
+
+    private float GetRandomDecayInterval()
+    {
+        return Mathf.Max(0.75f, averageDecayInterval + UnityEngine.Random.Range(-decayJitter, decayJitter));
+    }
 
     public void InitialiseFromDefinition(PlanetDefinition definition)
     {
         slots.Clear();
-        _decayTimer = 0f;
+        _timeUntilNextDecay = GetRandomDecayInterval();
         if (definition == null)
         {
             Debug.LogWarning("[PlanetNeeds] InitialiseFromDefinition called with null definition");
@@ -73,14 +80,13 @@ public class PlanetNeeds : MonoBehaviour
         if (slots.Count == 0) return;
 
         float safeMultipler = Mathf.Max(0.01f, decayMultiplier);
-        float currentDecayInterval = baseDecayInterval / safeMultipler;
 
-        _decayTimer += dt;
+        _timeUntilNextDecay -= dt * safeMultipler;
 
-        if(_decayTimer >= currentDecayInterval)
+        if(_timeUntilNextDecay <=0f)
         {
-            _decayTimer = 0f;
             DecayOneStep();
+            _timeUntilNextDecay = GetRandomDecayInterval();
         }
     }
 
@@ -95,6 +101,7 @@ public class PlanetNeeds : MonoBehaviour
                 slots[i].state = NeedState.Filled;
 
                 if (showDebugLogs) Debug.Log($"[PlanetNeeds] restored FADING {element} slot to FILLED");
+                _timeUntilNextDecay += 0.2f;
                 NotifyChanged();
                 return true;
             }
@@ -106,6 +113,7 @@ public class PlanetNeeds : MonoBehaviour
                 slots[i].state = NeedState.Filled;
 
                 if (showDebugLogs) Debug.Log($"[PlanetNeeds] restored EMPTY {element} slot to FILLED");
+                _timeUntilNextDecay += 0.3f;
                 NotifyChanged();
                 return true;
             }
