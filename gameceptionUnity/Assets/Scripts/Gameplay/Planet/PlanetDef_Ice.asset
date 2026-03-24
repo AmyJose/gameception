@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlanetDef_Ice
   m_EditorClassIdentifier: Assembly-CSharp::PlanetDefinition
   planetSprite: {fileID: 21300000, guid: 8ad81b43d66909b49b25c481484cd98f, type: 3}
-  startingPopulation: 5
+  startingPopulation: 0
   populationCap: 100
   alienType: 3
-  requiredNeeds: 040000000200000001000000
+  requiredNeeds: 010000000200000004000000

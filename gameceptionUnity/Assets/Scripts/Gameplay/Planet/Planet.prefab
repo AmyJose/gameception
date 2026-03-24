@@ -237,7 +237,7 @@ MonoBehaviour:
   targetNeeds: {fileID: 973496664835851503}
   slotPrefab: {fileID: 7457207415687974300, guid: 3649d28cec3d9b24d8738ef3e2a5ff31, type: 3}
   spacing: 2.2
-  offset: {x: 0, y: -5, z: 0}
+  offset: {x: -6, y: 0, z: 0}
 --- !u!1 &7386094661875923653
 GameObject:
   m_ObjectHideFlags: 0

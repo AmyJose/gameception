@@ -12,7 +12,7 @@ namespace Gameplay
 
         [Header("Layout")]
         [SerializeField] private float spacing = 2.2f;
-        [SerializeField] private Vector3 offset = new Vector3(0f, -5f, 0f);
+        [SerializeField] private Vector3 offset = new Vector3(-7f, 0f, 0f);
 
         private readonly List<NeedSlotSprite> _slotInstances = new();
 
@@ -98,7 +98,7 @@ namespace Gameplay
 
             for (int i = 0; i < count; i++)
             {
-                Vector3 localPos = offset + new Vector3(startX + i * spacing, 0f, 0f);
+                Vector3 localPos = offset + new Vector3(0, startX + i * spacing, 0f);
                 _slotInstances[i].transform.localPosition = localPos;
             }
         }

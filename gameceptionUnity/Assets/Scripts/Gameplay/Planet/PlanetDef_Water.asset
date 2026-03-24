@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlanetDef_Water
   m_EditorClassIdentifier: Assembly-CSharp::PlanetDefinition
   planetSprite: {fileID: 21300000, guid: 2ed3b88926512f244be8dfc0d7b0a292, type: 3}
-  startingPopulation: 5
+  startingPopulation: 0
   populationCap: 100
   alienType: 1
-  requiredNeeds: 020000000200000004000000
+  requiredNeeds: 040000000200000002000000
