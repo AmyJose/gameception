@@ -1,15 +1,15 @@
 using Unity.VisualScripting;
+using System.Linq;
 using UnityEngine;
-
+using InputLayer;
 public class PlanetView : MonoBehaviour
 {
-    //[SerializeField] private GameObject selectionRing;
     [SerializeField] private PlanetResourceUI resourceUI;
 
     //glowing
     [SerializeField] private SpriteRenderer planetRenderer;
     [SerializeField] private Sprite planet;
-    [SerializeField] private Sprite planetglowing;
+    [SerializeField] private Sprite planetGlowing;
 
     public void SetSelected(bool selected)
     { 
@@ -20,11 +20,10 @@ public class PlanetView : MonoBehaviour
         }
 
         //glowing, sprite swap
-        if (planetRenderer != null && planet != null && planetglowing != null)
+        if (planetRenderer != null && planet != null && planetGlowing != null)
         {
-            planetRenderer.sprite = selected ? planetglowing : planet;
+            planetRenderer.sprite = selected ? planetGlowing : planet;
         }
-
     }
 
     public void ShowResourceUI()

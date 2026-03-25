@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4645923925486781507}
   - component: {fileID: 2421352814427187259}
   - component: {fileID: 7791890636379242194}
+  - component: {fileID: 7568736135621607141}
   m_Layer: 0
   m_Name: Planet
   m_TagString: Untagged
@@ -111,6 +112,23 @@ MonoBehaviour:
   radiusMultiplier: 0.575
   bobHeight: 1
   bobDurationBeats: 0.5
+--- !u!114 &7568736135621607141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1971155481452933183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ded045c37e8b9374289cef30b80279b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlanetView
+  selectionState: {fileID: 0}
+  planetIndex: 0
+  resourceUI: {fileID: 0}
+  planetRenderer: {fileID: 2934997472566962085}
+  planetDefinition: {fileID: 0}
 --- !u!1 &2173057697115594395
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,7 +205,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlanetNeeds
   slots: []
-  baseDecayInterval: 5
   startFilled: 1
   filledDecayWeight: 1
   fadingDecayWeight: 0.7

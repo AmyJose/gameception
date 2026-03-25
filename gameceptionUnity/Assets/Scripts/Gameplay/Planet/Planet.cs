@@ -12,7 +12,12 @@ namespace Gameplay
         [SerializeField] private PlanetDefinition definition;
         [SerializeField] private DifficultyProfile difficulty;
 
+        [Header("Selection")]
+        [SerializeField] private SelectionState selectionState;
+        public int planetIndex;
+
         [Header("References")]
+        [SerializeField] private PlanetResourceUI resourceUI;
         [SerializeField] private PlanetNeeds needs;
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private Transform visualRoot;
@@ -50,23 +55,43 @@ namespace Gameplay
         public AlienType PlanetAlienType => definition != null ? definition.alienType : AlienType.Earth;
 
         private void Awake()
-        {
+        {   
+            if (spriteRenderer == null)
+            {
+                spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            }
+
+            if (selectionState == null)
+            {
+                selectionState = UnityEngine.Object.FindFirstObjectByType<SelectionState>();
+            }
+
             if (visualRoot == null)
             {
                 visualRoot = transform;
             }
+            _targetScale = visualRoot.localScale;
 
             if (needs == null)
             {
                 needs = GetComponent<PlanetNeeds>();
             }
 
-            if (spriteRenderer == null)
+            if(alienSwarmView == null)
             {
-                spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+                alienSwarmView = GetComponentInChildren<AlienSwarmView>();
             }
-
-            _targetScale = visualRoot.localScale;
+            
+            Planet[] allPlanets = UnityEngine.Object.FindObjectsByType<Planet>(FindObjectsSortMode.InstanceID);
+            // System.Array.Sort(allPlanets, (a, b) => a.GetInstanceID().CompareTo(b.GetInstanceID()));
+            for (int i = 0; i < allPlanets.Length; i++)
+            {
+                if (allPlanets[i] == this)
+                {
+                    planetIndex = i;
+                    break;
+                }
+            }
 
             if (growCurve == null || growCurve.length == 0)
             {
@@ -78,13 +103,48 @@ namespace Gameplay
                 ApplyDefinition();
             }
 
-            if(alienSwarmView == null)
-            {
-                alienSwarmView = GetComponentInChildren<AlienSwarmView>();
-            }
-
             UpdateVisualState();
         }
+
+        private void OnEnable()
+        {
+            if (selectionState == null){
+                selectionState = UnityEngine.Object.FindFirstObjectByType<SelectionState>();
+            }
+            if (selectionState != null){
+                selectionState.OnChanged += HandleSelectionChanged;
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (selectionState != null)
+                selectionState.OnChanged -= HandleSelectionChanged;
+        }
+
+        // private void HandleSelectionChanged(IReadOnlyCollection<int> selectedIndices)
+        // {
+        //     // UpdateSelectionVisuals();
+        //     bool isSelected = selectionState.IsSelected(planetIndex);
+        //     if (spriteRenderer != null && definition != null)
+        //     {
+        //         spriteRenderer.sprite = isSelected ? definition.selectedPlanetSprite : definition.planetSprite;
+        //     }
+        // }
+
+        // private void UpdateSelectionVisuals()
+        private void HandleSelectionChanged(IReadOnlyCollection<int> selectedIndices)
+        {
+            if (spriteRenderer == null || definition == null || selectionState == null) return;
+
+            bool isSelected = selectionState.IsSelected(planetIndex);
+            spriteRenderer.sprite = isSelected ? definition.selectedPlanetSprite : definition.planetSprite;
+            if (resourceUI != null)
+            {
+                resourceUI.SetVisible(isSelected);
+            }
+        }
+
         public void SetDefinition(PlanetDefinition newDefinition)
         {
             definition = newDefinition;
@@ -262,6 +322,6 @@ namespace Gameplay
                 _isGrowing = false;
                 Debug.Log("[Planet] Growth complete");
             }
-        }
+        } 
     }
 }

@@ -79,5 +79,15 @@ namespace InputLayer
             if (changed)
                 OnChanged?.Invoke(_selected);
         }
+
+        public int GetSingleSelected()
+        {
+            foreach (var i in _selected)
+            {
+                return i;
+            }
+            return -1;
+
+        }
     }
 }

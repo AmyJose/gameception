@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class PlanetDefinition : ScriptableObject
 {
     public Sprite planetSprite;
+    public Sprite selectedPlanetSprite;
 
     public float startingPopulation = 5f;
     public float populationCap = 100f;
