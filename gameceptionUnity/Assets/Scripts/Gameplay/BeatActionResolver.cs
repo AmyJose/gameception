@@ -40,10 +40,6 @@ namespace Gameplay
             {
                Debug.Log("planets currently selected: " + targets[0]);
             }
-            else
-            {
-                Debug.Log("no planets currently selected");
-            }
 
             int activeIndex = -1;
             if (targets.Count > 0)            {

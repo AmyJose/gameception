@@ -16,4 +16,4 @@ MonoBehaviour:
   startingPopulation: 0
   populationCap: 100
   alienType: 1
-  requiredNeeds: 0200000002000000
+  requiredNeeds: 040000000200000002000000
