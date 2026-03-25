@@ -28,6 +28,7 @@ namespace Gameplay.Choreography.UI
         [Header("Dependencies")]
         [SerializeField] private ChoreographyQueueState queueState;
         [SerializeField] private Rhythm.BeatClock beatClock;
+        [SerializeField] private ChoreographyJudge judge;
 
         private readonly List<PromptIndicator> _activePrompts = new();
         private float _scrollOffset = 0f;
@@ -46,6 +47,9 @@ namespace Gameplay.Choreography.UI
             if (beatClock != null)
                 beatClock.OnBeat += HandleBeat;
 
+            if (judge != null)
+                judge.OnPromptJudged += HandlePromptJudged;
+
             InitializeHitMarker();
         }
 
@@ -59,6 +63,9 @@ namespace Gameplay.Choreography.UI
 
             if (beatClock != null)
                 beatClock.OnBeat -= HandleBeat;
+            
+            if (judge != null)
+                judge.OnPromptJudged -= HandlePromptJudged;
         }
 
         // Called when a new choreography sequence starts
@@ -144,6 +151,41 @@ namespace Gameplay.Choreography.UI
                 }
             }
         }
+
+        //Called when ChoreographyJudge evaluates a prompt
+        private void HandlePromptJudged(ChoreographyJudge.JudgementResult result)
+        {
+            // Find the visual prompt indicator for this ID
+            var prompt = _activePrompts.Find(p => p.GetPromptId() == result.promptId);
+            if (prompt == null)
+            {
+                Debug.LogWarning($"[ChoreographyQueueUI] No prompt indicator found for ID {result.promptId}");
+                return;
+            }
+
+            // Determine if judgment was a success or failure
+            bool isSuccess = result.quality == ChoreographyJudge.HitQuality.Perfect ||
+                            result.quality == ChoreographyJudge.HitQuality.Good;
+
+            if (isSuccess)
+            {
+                prompt.SetSucceeded();
+
+
+                Debug.Log($"✅ [ChoreographyQueueUI] Prompt {result.promptId} SUCCEEDED " +
+                         $"(Quality: {result.quality}, Pose: {result.detectedPose})");
+            }
+            else
+            {
+                //Turn red and let it continue scrolling
+                prompt.SetMissed();
+
+                Debug.Log($"❌ [ChoreographyQueueUI] Prompt {result.promptId} FAILED " +
+                         $"(Quality: {result.quality}, Detected: {result.detectedPose}, Pad: {result.selectedPad})");
+            }
+        }
+
+
 
         // Initialize the hit marker visual
         private void InitializeHitMarker()

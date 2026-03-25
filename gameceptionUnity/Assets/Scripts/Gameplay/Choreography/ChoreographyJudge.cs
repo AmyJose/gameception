@@ -89,13 +89,13 @@ namespace Gameplay.Choreography
 
         private HitQuality EvaluateHit(ChoreographyQueueState.PromptData prompt)
         {
-            // Check if a pad is selected
-            if (selectionState?.Selected.Count == 0)
-                return HitQuality.NoInput;
+            // // Check if a pad is selected
+            // if (selectionState?.Selected.Count == 0)
+            //     return HitQuality.NoInput;
 
-            // Check pose confidence
-            if (poseState.Confidence < minPoseConfidence)
-                return HitQuality.NoInput;
+            // // Check pose confidence
+            // if (poseState.Confidence < minPoseConfidence)
+            //     return HitQuality.NoInput;
 
             // Check if pose is stable ie (held for minimum duration)
             long timeSincePoseChange = GetCurrentTimestampMs() - poseState.LastTimestampMs;

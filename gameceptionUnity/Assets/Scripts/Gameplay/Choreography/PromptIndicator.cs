@@ -16,7 +16,9 @@ namespace Gameplay.Choreography.UI
         [Header("Visual Feedback")]
         [SerializeField] private SpriteRenderer backgroundRenderer;
         [SerializeField] private Color normalColor = new Color(1f, 1f, 1f, 0.7f);
-        [SerializeField] private Color hitZoneColor = new Color(0f, 1f, 0f, 0.9f); //becomes green when in hit zone
+        [SerializeField] private Color hitZoneColor = new Color(1f, 1f, 1f, 0.7f); //becomes green when in hit zone
+        [SerializeField] private Color missColor = new Color(1f, 0f, 0f, 0.9f);
+        [SerializeField] private Color successColor = new Color(0f, 1f, 1f, 0.9f);
 
         [Header("Visual Polish")]
         [SerializeField] private float scaleInHitZone = 1.15f; // grows when in hit zone
@@ -26,6 +28,8 @@ namespace Gameplay.Choreography.UI
         private ElementPose _pose;
         private float _initialYPosition;
         private bool _isInHitZone = false;
+        private bool _missed = false;
+        private bool _succeeded = false;
 
         private void Awake()
         {
@@ -83,6 +87,29 @@ namespace Gameplay.Choreography.UI
             // Update scale for emphasis
             UpdateScale();
         }
+
+        public void SetMissed()
+        {
+            if (_missed || _succeeded) return;
+            
+            _missed = true;
+            backgroundRenderer.color = missColor;
+            transform.localScale = Vector3.one * normalScale;
+            
+            Debug.Log($"❌ [PromptIndicator {_promptId}] MISS:red");
+        }
+
+        public void SetSucceeded()
+        {
+            if (_succeeded || _missed) return;
+            
+            _succeeded = true;
+            backgroundRenderer.color = successColor;
+            
+            Debug.Log($"[PromptIndicator {_promptId}] SUCCESS: green");
+        }
+
+
 
         public float GetInitialYPosition() => _initialYPosition;
 
