@@ -316,6 +316,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: planetfire
       objectReference: {fileID: 0}
+    - target: {fileID: 4003286420542856163, guid: a424fcda22283e142a7241732af2882f, type: 3}
+      propertyPath: definition
+      value: 
+      objectReference: {fileID: 11400000, guid: 731c48bf164f33d4893e22c70cc4b8e7, type: 2}
     - target: {fileID: 6227769605342492571, guid: a424fcda22283e142a7241732af2882f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.3
