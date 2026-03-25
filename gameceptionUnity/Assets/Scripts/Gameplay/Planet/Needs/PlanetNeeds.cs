@@ -19,7 +19,6 @@ public class PlanetNeeds : MonoBehaviour
 {
     [Header("Needs config")]
     [SerializeField] private List<NeedSlot> slots = new();
-    [SerializeField] private float baseDecayInterval = 5f;
     [SerializeField] private bool startFilled = false;
 
     [Header("Decay Weights")]

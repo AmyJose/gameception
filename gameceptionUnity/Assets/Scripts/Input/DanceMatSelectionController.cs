@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,6 +15,7 @@ namespace InputLayer
         [SerializeField] private bool shiftToSoloSelect = false;
         [SerializeField] private bool autoSelectFirst = false;
         [SerializeField] private int planetCount = 0;
+        [SerializeField] private bool latchSelectionForTesting = false;
 
         [Header("State")]
         [SerializeField] private bool selectionEnabled = true;
@@ -102,6 +104,19 @@ namespace InputLayer
             bool shiftHeld = shiftToSoloSelect &&
                              kb != null &&
                              (kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed);
+            if (latchSelectionForTesting)
+            {
+                if (shiftHeld)
+                {
+                    selectionState.SoloSelect(idx);
+                }
+                else
+                {
+                    if (selectionState.Selected.Contains(idx)) selectionState.Deselect(idx);
+                    else selectionState.Select(idx);
+                }
+                return;
+            }
 
             if (shiftHeld)
             {
@@ -117,6 +132,8 @@ namespace InputLayer
         private void HandlePadReleased(int idx)
         {
             if (!selectionEnabled || selectionState == null) return;
+
+            if (latchSelectionForTesting) return;
 
             // Remove the planet when the key is released
             selectionState.Deselect(idx);

@@ -428,7 +428,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.ResourceSystem
   planetManager: {fileID: 967029054}
-  resourceAmountPerBeat: 5
 --- !u!1 &250756403
 GameObject:
   m_ObjectHideFlags: 0
@@ -1346,7 +1345,6 @@ MonoBehaviour:
   - {fileID: 997610265}
   maxPlanets: 4
   repeatSpawnDelay: 15
-  starterElementAmount: 50
   starterPopulationAmount: 10
 --- !u!114 &1204960140
 MonoBehaviour:
@@ -1704,6 +1702,7 @@ MonoBehaviour:
   shiftToSoloSelect: 0
   autoSelectFirst: 0
   planetCount: 0
+  latchSelectionForTesting: 1
   selectionEnabled: 1
 --- !u!1 &1556385053
 GameObject:
