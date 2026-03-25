@@ -714,10 +714,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlanetResourceUI
   planet: {fileID: 4003286420542856163}
-  fireBar: {fileID: 415459671960270521}
-  waterBar: {fileID: 3227660462279061927}
-  earthBar: {fileID: 7077638079396591572}
-  iceBar: {fileID: 9081777822446518810}
   root: {fileID: 6389598791206176618}
 --- !u!1 &6416050459127940672
 GameObject:
@@ -933,6 +929,10 @@ PrefabInstance:
       value: planetwater
       objectReference: {fileID: 0}
     - target: {fileID: 2421352814427187259, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
+      propertyPath: definition
+      value: 
+      objectReference: {fileID: 11400000, guid: ad247e2ab2d25dc45a7fb66f4ad4fa8e, type: 2}
+    - target: {fileID: 2421352814427187259, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
       propertyPath: alienVisual
       value: 
       objectReference: {fileID: 8390174327352100424}
@@ -1064,6 +1064,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlanetView
   resourceUI: {fileID: 8137691964406589177}
+  planetRenderer: {fileID: 0}
+  planet: {fileID: 0}
+  planetglowing: {fileID: 0}
 --- !u!114 &5382691606485584534
 MonoBehaviour:
   m_ObjectHideFlags: 0

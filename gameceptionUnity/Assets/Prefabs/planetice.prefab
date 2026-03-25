@@ -509,10 +509,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlanetResourceUI
   planet: {fileID: 4003286420542856163}
-  fireBar: {fileID: 415459671960270521}
-  waterBar: {fileID: 3227660462279061927}
-  earthBar: {fileID: 7077638079396591572}
-  iceBar: {fileID: 9081777822446518810}
   root: {fileID: 6389598791206176618}
 --- !u!1 &6416050459127940672
 GameObject:
@@ -622,6 +618,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: planetice
       objectReference: {fileID: 0}
+    - target: {fileID: 2421352814427187259, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
+      propertyPath: definition
+      value: 
+      objectReference: {fileID: 11400000, guid: baee6f9d30526a74ba09e4013a7aa89a, type: 2}
     - target: {fileID: 2421352814427187259, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
       propertyPath: alienVisual
       value: 

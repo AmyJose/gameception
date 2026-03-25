@@ -623,10 +623,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlanetResourceUI
   planet: {fileID: 4003286420542856163}
-  fireBar: {fileID: 415459671960270521}
-  waterBar: {fileID: 3227660462279061927}
-  earthBar: {fileID: 7077638079396591572}
-  iceBar: {fileID: 9081777822446518810}
   root: {fileID: 6389598791206176618}
 --- !u!1 &6416050459127940672
 GameObject:
@@ -855,9 +851,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4517089410512901245}
     - target: {fileID: 2421352814427187259, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
+      propertyPath: definition
+      value: 
+      objectReference: {fileID: 11400000, guid: 731c48bf164f33d4893e22c70cc4b8e7, type: 2}
+    - target: {fileID: 2421352814427187259, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
       propertyPath: alienVisual
       value: 
       objectReference: {fileID: 8390174327352100424}
+    - target: {fileID: 2934997472566962085, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
+      propertyPath: m_Size.x
+      value: 8.66
+      objectReference: {fileID: 0}
+    - target: {fileID: 2934997472566962085, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
+      propertyPath: m_Size.y
+      value: 8.52
+      objectReference: {fileID: 0}
     - target: {fileID: 2934997472566962085, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
       propertyPath: m_Sprite
       value: 

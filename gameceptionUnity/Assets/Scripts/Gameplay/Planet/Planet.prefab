@@ -54,6 +54,7 @@ MonoBehaviour:
   needs: {fileID: 973496664835851503}
   spriteRenderer: {fileID: 2934997472566962085}
   visualRoot: {fileID: 1120777604323684103}
+  alienSwarmView: {fileID: 0}
   population: 0
   populationGrowthPerSecond: 0.75
   populationDeclinePerSecond: 0.5
@@ -188,6 +189,12 @@ MonoBehaviour:
   slots: []
   baseDecayInterval: 5
   startFilled: 1
+  filledDecayWeight: 1
+  fadingDecayWeight: 0.7
+  lastDecayedPenaltyMultiplier: 0.25
+  avoidRepeatingLastDecay: 1
+  averageDecayInterval: 4.5
+  decayJitter: 1.5
   showDebugLogs: 1
 --- !u!1 &3259785269783132253
 GameObject:
