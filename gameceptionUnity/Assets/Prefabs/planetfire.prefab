@@ -860,16 +860,20 @@ PrefabInstance:
       objectReference: {fileID: 8390174327352100424}
     - target: {fileID: 2934997472566962085, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
       propertyPath: m_Size.x
-      value: 8.66
+      value: 19.2
       objectReference: {fileID: 0}
     - target: {fileID: 2934997472566962085, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
       propertyPath: m_Size.y
-      value: 8.52
+      value: 10.8
       objectReference: {fileID: 0}
     - target: {fileID: 2934997472566962085, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -2239913123084018816, guid: 4200590f1c3debd438bc9ae122369c06, type: 3}
+      objectReference: {fileID: 21300000, guid: 4200590f1c3debd438bc9ae122369c06, type: 3}
+    - target: {fileID: 2934997472566962085, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4645923925486781507, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -993,8 +997,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlanetView
   resourceUI: {fileID: 8137691964406589177}
   planetRenderer: {fileID: 4517089410512901245}
-  planet: {fileID: -2239913123084018816, guid: 4200590f1c3debd438bc9ae122369c06, type: 3}
-  planetglowing: {fileID: 1860703157485439149, guid: 6a8ccfc31c261994e8923517b7aedfbe, type: 3}
+  planet: {fileID: 21300000, guid: 4200590f1c3debd438bc9ae122369c06, type: 3}
+  planetglowing: {fileID: 21300000, guid: 6a8ccfc31c261994e8923517b7aedfbe, type: 3}
 --- !u!95 &5391303763589002659
 Animator:
   serializedVersion: 7

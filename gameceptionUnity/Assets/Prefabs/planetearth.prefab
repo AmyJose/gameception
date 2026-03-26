@@ -728,14 +728,38 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4645923925486781507, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4714682745253247447}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1971155481452933183, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5690871798704205739}
   m_SourcePrefab: {fileID: 100100000, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
+--- !u!1 &958751269531010023 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1971155481452933183, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
+  m_PrefabInstance: {fileID: 1591134356234646488}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5690871798704205739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958751269531010023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ded045c37e8b9374289cef30b80279b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlanetView
+  resourceUI: {fileID: 8137691964406589177}
+  planetRenderer: {fileID: 4517089410512901245}
+  planet: {fileID: 21300000, guid: 16b718a6c47225d43b7ea0ef46ea9f9c, type: 3}
+  planetglowing: {fileID: 21300000, guid: e53668e61c9420342bd4b073b5be03a4, type: 3}
 --- !u!114 &4003286420542856163 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2421352814427187259, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
   m_PrefabInstance: {fileID: 1591134356234646488}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 958751269531010023}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a39cb1a108a6e4f449f51ff49917d345, type: 3}

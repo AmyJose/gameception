@@ -139,7 +139,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Choreography.UI.PromptIndicator
   iconRenderer: {fileID: 9215154517909459216}
   earthSprite: {fileID: 21300000, guid: 09bb7a07cb7c7e340b3041fd93c1a176, type: 3}
-  waterSprite: {fileID: 21300000, guid: 82a431dfbfd96bd40a78f9542b3b6cdb, type: 3}
+  waterSprite: {fileID: -109745191358635211, guid: 98d673921f18df041a16a3b4953fd650, type: 3}
   fireSprite: {fileID: 21300000, guid: 86f2ef379c3a6654f9ecb0ebafed6f65, type: 3}
   iceSprite: {fileID: 21300000, guid: 2bcd956c1b5e3b94291d1c08fd5c0606, type: 3}
   backgroundRenderer: {fileID: 6723285944216071819}

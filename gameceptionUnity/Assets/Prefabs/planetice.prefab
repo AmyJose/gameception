@@ -742,7 +742,7 @@ MonoBehaviour:
   resourceUI: {fileID: 8137691964406589177}
   planetRenderer: {fileID: 4517089410512901245}
   planet: {fileID: 21300000, guid: 8ad81b43d66909b49b25c481484cd98f, type: 3}
-  planetglowing: {fileID: 4015678616528379315, guid: 7d31d0bb1a081f74d9db69a144f600fc, type: 3}
+  planetglowing: {fileID: 21300000, guid: 7d31d0bb1a081f74d9db69a144f600fc, type: 3}
 --- !u!114 &4003286420542856163 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2421352814427187259, guid: 8186ce5c9dfa458438da3758362bf2a4, type: 3}
