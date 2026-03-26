@@ -866,6 +866,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb9737818b2b4fbd9c41a0ad139d167, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Choreography.PromptQueue
+  promptJudge: {fileID: 64651961}
   hitZoneY: 0
   hitZoneThreshold: 0.5
   promptPrefab: {fileID: 926613821937977704, guid: 49cfaf71d55284b3fb6c1b8a300f4003, type: 3}

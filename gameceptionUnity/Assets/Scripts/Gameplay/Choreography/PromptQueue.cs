@@ -9,7 +9,9 @@ namespace Gameplay.Choreography
     // Spawns prompts at cascading positions from spawnOffset
 
     public class PromptQueue : MonoBehaviour
-    {
+    {   
+        [Header("Dependencies")]
+        [SerializeField] private PromptJudge promptJudge;
         [Header("Queue Layout")]
         [SerializeField] private float hitZoneY = 0f;
         [SerializeField] private float hitZoneThreshold = 0.5f;
@@ -92,6 +94,10 @@ namespace Gameplay.Choreography
             }
 
             Debug.Log($"[PromptQueue] Sequence {sequenceId}: spawned {promptsPerSequence} prompts");
+            if (promptJudge != null)
+            {
+                promptJudge.RegisterSequence(sequenceId, promptsPerSequence);
+            }
         }
 
         private void SpawnPrompt(ElementPose pose, int sequenceId, int indexInSequence)
