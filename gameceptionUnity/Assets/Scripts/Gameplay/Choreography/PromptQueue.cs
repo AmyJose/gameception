@@ -6,14 +6,13 @@ using Rhythm;
 
 namespace Gameplay.Choreography
 {
-    // Spawns prompts at top and moves them down at each beat at fixed speed
-    // Judge checks at hit zone: specified y position
+    // Spawns prompts at cascading positions from spawnOffset
 
     public class PromptQueue : MonoBehaviour
     {
         [Header("Queue Layout")]
-        [SerializeField] private float hitZoneY = 0f;          // y pos where prompts are judged
-        [SerializeField] private float hitZoneThreshold = 0.5f; // Tolerance
+        [SerializeField] private float hitZoneY = 0f;
+        [SerializeField] private float hitZoneThreshold = 0.5f;
 
         [Header("Spawn")]
         [SerializeField] private PromptIndicator promptPrefab;
@@ -21,7 +20,7 @@ namespace Gameplay.Choreography
         [SerializeField] private Vector3 spawnOffset = Vector3.zero;
 
         [Header("Scroll")]
-        [SerializeField] private float unitsPerBeat = 2.5f;     // impacts scroll smoothness.
+        [SerializeField] private float unitsPerBeat = 2.5f;
         [SerializeField] private BeatClock beatClock;
 
         [Header("Generation")]
@@ -35,15 +34,26 @@ namespace Gameplay.Choreography
         public struct PromptData
         {
             public int id;
+            public int sequenceId;
             public ElementPose requiredPose;
         }
 
+        private struct PromptInfo
+        {
+            public int id;
+            public int sequenceId;
+            public float initialY;
+            public float spawnTime;
+        }
+
         private List<PromptIndicator> _activePrompts = new();
-        private Dictionary<int, float> _promptInitialY = new();
+        private Dictionary<int, PromptInfo> _promptInfo = new();
+        private HashSet<int> _promptsInZone = new();
+
         private float _totalScrollDistance = 0f;
         private int _nextPromptId = 0;
+        private int _nextSequenceId = 0;
         private int _lastGeneratedBeat = -999;
-        private HashSet<int> _promptsInZone = new(); // Track which prompts fired OnEntered
 
         private void OnEnable()
         {
@@ -59,43 +69,53 @@ namespace Gameplay.Choreography
 
         private void HandleBeat(BeatInfo beat)
         {
-            // Generates new sequence if interval reached
+            // Generate new sequence if interval reached
             if (beat.beatIndex >= _lastGeneratedBeat + generationIntervalBeats)
             {
                 GenerateSequence();
                 _lastGeneratedBeat = beat.beatIndex;
+                Debug.Log($"[PromptQueue] Beat {beat.beatIndex}: Generated sequence {_nextSequenceId - 1}");
             }
 
-            // Scrolls prompts down
+            // Scroll all prompts down
             _totalScrollDistance += unitsPerBeat;
-
-            // Updates all prompts and check zone crossing
             UpdatePrompts();
         }
 
         private void GenerateSequence()
         {
+            int sequenceId = _nextSequenceId++;
+
             for (int i = 0; i < promptsPerSequence; i++)
             {
-                SpawnPrompt(GetRandomPose());
+                SpawnPrompt(GetRandomPose(), sequenceId, i);
             }
 
-            Debug.Log($"[PromptQueue] Generated {promptsPerSequence} prompts");
+            Debug.Log($"[PromptQueue] Sequence {sequenceId}: spawned {promptsPerSequence} prompts");
         }
 
-        private void SpawnPrompt(ElementPose pose)
+        private void SpawnPrompt(ElementPose pose, int sequenceId, int indexInSequence)
         {
             if (promptPrefab == null) return;
 
             var indicator = Instantiate(promptPrefab, transform);
             indicator.Initialize(pose, _nextPromptId);
 
-            // Position at top
-            float initialY = (_activePrompts.Count) * promptSpacing + spawnOffset.y;
-            indicator.SetYPosition(initialY);
+            // Calculate spawn position
+            float initialY = spawnOffset.y + (indexInSequence * promptSpacing);
+            indicator.transform.localPosition = new Vector3(spawnOffset.x, initialY, 0);
 
-            _promptInitialY[_nextPromptId] = initialY;
+            _promptInfo[_nextPromptId] = new PromptInfo
+            {
+                id = _nextPromptId,
+                sequenceId = sequenceId,
+                initialY = initialY,
+                spawnTime = _totalScrollDistance
+            };
+
             _activePrompts.Add(indicator);
+
+            Debug.Log($"[PromptQueue] Spawned prompt {_nextPromptId} (seq {sequenceId}, idx {indexInSequence}) at Y={initialY:F2}");
 
             _nextPromptId++;
         }
@@ -105,18 +125,23 @@ namespace Gameplay.Choreography
             for (int i = _activePrompts.Count - 1; i >= 0; i--)
             {
                 var prompt = _activePrompts[i];
-                if (prompt == null) 
+                if (prompt == null)
                 {
                     _activePrompts.RemoveAt(i);
                     continue;
                 }
-                int id = prompt.GetPromptId();
 
-                // Calculates scrolled y
-                float scrolledY = _promptInitialY[id] - _totalScrollDistance;
+                int id = prompt.GetPromptId();
+                if (!_promptInfo.TryGetValue(id, out var info))
+                    continue;
+
+                //Uses stored initialY and scroll amount
+                float scrollAmount = _totalScrollDistance - info.spawnTime;
+                float scrolledY = info.initialY - scrollAmount;
+                
                 prompt.SetYPosition(scrolledY);
 
-                // Check if entered zone
+                // Zone detection
                 if (!_promptsInZone.Contains(id))
                 {
                     float distance = Mathf.Abs(scrolledY - hitZoneY);
@@ -124,26 +149,35 @@ namespace Gameplay.Choreography
                     {
                         _promptsInZone.Add(id);
                         prompt.SetInHitZone(true);
-                        OnPromptEnteredZone?.Invoke(new PromptData { id = id, requiredPose = prompt.GetRequiredPose() });
+                        OnPromptEnteredZone?.Invoke(new PromptData
+                        {
+                            id = id,
+                            sequenceId = info.sequenceId,
+                            requiredPose = prompt.GetRequiredPose()
+                        });
                     }
                 }
                 else
                 {
-                    // In zone, checks if still in zone
                     float distance = Mathf.Abs(scrolledY - hitZoneY);
                     if (distance > hitZoneThreshold)
                     {
                         _promptsInZone.Remove(id);
                         prompt.SetInHitZone(false);
-                        OnPromptExitedZone?.Invoke(new PromptData { id = id, requiredPose = prompt.GetRequiredPose() });
+                        OnPromptExitedZone?.Invoke(new PromptData
+                        {
+                            id = id,
+                            sequenceId = info.sequenceId,
+                            requiredPose = prompt.GetRequiredPose()
+                        });
                     }
                 }
 
-                // Removes if scrolled past bottom
-                if (scrolledY < hitZoneY - 30f)
+                // Remove if scrolledpast bottom
+                if (scrolledY < hitZoneY - 10f)
                 {
                     _activePrompts.RemoveAt(i);
-                    _promptInitialY.Remove(id);
+                    _promptInfo.Remove(id);
                     Destroy(prompt.gameObject);
                 }
             }
@@ -160,15 +194,28 @@ namespace Gameplay.Choreography
             foreach (var p in _activePrompts)
                 if (p != null) Destroy(p.gameObject);
             _activePrompts.Clear();
-            _promptInitialY.Clear();
+            _promptInfo.Clear();
             _promptsInZone.Clear();
         }
 
         private void OnDrawGizmos()
         {
+            Vector3 center = transform.TransformPoint(new Vector3(0, hitZoneY, 0));
+            Vector3 top = transform.TransformPoint(new Vector3(0, hitZoneY + hitZoneThreshold, 0));
+            Vector3 bottom = transform.TransformPoint(new Vector3(0, hitZoneY - hitZoneThreshold, 0));
+
+            float width = 5f;
+
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(top - transform.right * width, top + transform.right * width);
+            Gizmos.DrawLine(bottom - transform.right * width, bottom + transform.right * width);
+
             Gizmos.color = Color.green;
-            Vector3 center = transform.position + Vector3.up * hitZoneY;
-            Gizmos.DrawLine(center - Vector3.right * 3, center + Vector3.right * 3);
+            Gizmos.DrawLine(center - transform.right * width, center + transform.right * width);
+
+            Gizmos.color = new Color(0f, 1f, 0f, 0.2f);
+            float scaledHeight = hitZoneThreshold * 2f * transform.lossyScale.y;
+            Gizmos.DrawCube(center, new Vector3(width * 2, scaledHeight, 0.1f));
         }
     }
 }

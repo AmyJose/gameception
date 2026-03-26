@@ -849,7 +849,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.05, y: 0.05, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 545700348}
@@ -866,14 +866,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb9737818b2b4fbd9c41a0ad139d167, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Choreography.PromptQueue
-  hitZoneY: -10
+  hitZoneY: 0
   hitZoneThreshold: 0.5
   promptPrefab: {fileID: 926613821937977704, guid: 49cfaf71d55284b3fb6c1b8a300f4003, type: 3}
-  promptSpacing: 25
-  spawnOffset: {x: 0, y: 40, z: 0}
-  unitsPerBeat: 2.5
+  promptSpacing: 2
+  spawnOffset: {x: -6, y: 8, z: 0}
+  unitsPerBeat: 1
   beatClock: {fileID: 1130057111}
-  generationIntervalBeats: 60
+  generationIntervalBeats: 10
   promptsPerSequence: 4
 --- !u!224 &799987159 stripped
 RectTransform:
