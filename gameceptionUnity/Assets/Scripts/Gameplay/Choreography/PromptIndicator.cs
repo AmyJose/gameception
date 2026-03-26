@@ -1,7 +1,7 @@
 using InputLayer;
 using UnityEngine;
 
-namespace Gameplay.Choreography.UI
+namespace Gameplay.Choreography
 {
     // Visual representation of a single choreography prompt in world space
     public class PromptIndicator : MonoBehaviour
@@ -18,7 +18,7 @@ namespace Gameplay.Choreography.UI
         [SerializeField] private Color normalColor = new Color(1f, 1f, 1f, 0.7f);
         [SerializeField] private Color hitZoneColor = new Color(1f, 1f, 1f, 0.7f); //becomes green when in hit zone
         [SerializeField] private Color missColor = new Color(1f, 0f, 0f, 0.9f);
-        [SerializeField] private Color successColor = new Color(0f, 1f, 1f, 0.9f);
+        [SerializeField] private Color successColor = new Color(1f, 1f, 1f, 0.7f);
 
         [Header("Visual Polish")]
         [SerializeField] private float scaleInHitZone = 1.15f; // grows when in hit zone
@@ -78,11 +78,11 @@ namespace Gameplay.Choreography.UI
 
             _isInHitZone = inZone;
 
-            // Update colors
-            if (backgroundRenderer != null)
-            {
-                backgroundRenderer.color = inZone ? hitZoneColor : normalColor;
-            }
+            // // Update colors
+            // if (backgroundRenderer != null)
+            // {
+            //     backgroundRenderer.color = inZone ? hitZoneColor : normalColor;
+            // }
 
             // Update scale for emphasis
             UpdateScale();
@@ -90,7 +90,7 @@ namespace Gameplay.Choreography.UI
 
         public void SetMissed()
         {
-            if (_missed || _succeeded) return;
+            // if (_missed || _succeeded) return;
             
             _missed = true;
             backgroundRenderer.color = missColor;
@@ -101,12 +101,25 @@ namespace Gameplay.Choreography.UI
 
         public void SetSucceeded()
         {
-            if (_succeeded || _missed) return;
+            // if (_succeeded || _missed) return;
             
             _succeeded = true;
             backgroundRenderer.color = successColor;
             
             Debug.Log($"[PromptIndicator {_promptId}] SUCCESS: green");
+        }
+
+
+        public void SetSuccess()
+        {
+            if (backgroundRenderer != null)
+                backgroundRenderer.color = new Color(0f, 1f, 0f, 1f); // green
+        }
+
+        public void SetFail()
+        {
+            if (backgroundRenderer != null)
+                backgroundRenderer.color = new Color(1f, 0f, 0f, 1f); // Red
         }
 
 
