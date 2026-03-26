@@ -29,6 +29,19 @@ namespace Rhythm
         public double BPM => bpm;
         public double BeatInterval => _beatInterval;
 
+        public float CurrentBeat
+        {
+            get
+            {
+                if (!_running || _beatInterval <= 0) return 0f;
+                
+                double songTime = AudioSettings.dspTime - _dspStart + beatOffsetSeconds;
+                if (songTime < 0) return 0f; // Song hasn't started yet
+                
+                return (float)(songTime / _beatInterval);
+            }
+        }
+
         public void StartClock()
         {
             _beatInterval = 60.0 / bpm;

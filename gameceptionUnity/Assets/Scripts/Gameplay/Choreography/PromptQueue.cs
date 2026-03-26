@@ -18,11 +18,12 @@ namespace Gameplay.Choreography
 
         [Header("Spawn")]
         [SerializeField] private PromptIndicator promptPrefab;
-        [SerializeField] private float promptSpacing = 2.5f;
+        [SerializeField] private float promptSpacing = 2f;
         [SerializeField] private Vector3 spawnOffset = Vector3.zero;
 
         [Header("Scroll")]
-        [SerializeField] private float unitsPerBeat = 2.5f;
+        [SerializeField] private float unitsPerBeat = 1f;
+        [SerializeField] private float beatSpeedMultiplier = 1f;
         [SerializeField] private BeatClock beatClock;
 
         [Header("Generation")]
@@ -80,7 +81,18 @@ namespace Gameplay.Choreography
             }
 
             // Scroll all prompts down
-            _totalScrollDistance += unitsPerBeat;
+            // _totalScrollDistance += unitsPerBeat;
+            // UpdatePrompts();
+        }
+        private void Update()
+        {
+            if (beatClock == null) return;
+
+            // Calculate the exact distance based on the smooth floating-point beat.
+            // If multiplier is 2, it multiplies the final distance, keeping it perfectly smooth.
+            _totalScrollDistance = beatClock.CurrentBeat * unitsPerBeat * beatSpeedMultiplier;
+
+            // Move the prompts every single frame
             UpdatePrompts();
         }
 
