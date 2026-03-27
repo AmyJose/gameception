@@ -36,10 +36,6 @@ namespace Gameplay
             if (selectionState == null) return;
             //selected targets
             var targets = new List<int>(selectionState.Selected);
-            if (targets.Count > 0)
-            {
-               Debug.Log("planets currently selected: " + targets[0]);
-            }
 
             int activeIndex = -1;
             if (targets.Count > 0)            {

@@ -460,6 +460,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 138454641056790559, guid: ef124ce3fade69340875d8924c494a05, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 138454641056790559, guid: ef124ce3fade69340875d8924c494a05, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 138454641056790559, guid: ef124ce3fade69340875d8924c494a05, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 138454641056790559, guid: ef124ce3fade69340875d8924c494a05, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3
+      objectReference: {fileID: 0}
     - target: {fileID: 958751269531010023, guid: ef124ce3fade69340875d8924c494a05, type: 3}
       propertyPath: m_Name
       value: planetwater
@@ -502,6 +518,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6227769605342492571, guid: ef124ce3fade69340875d8924c494a05, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6237769561178616125, guid: ef124ce3fade69340875d8924c494a05, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6237769561178616125, guid: ef124ce3fade69340875d8924c494a05, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6237769561178616125, guid: ef124ce3fade69340875d8924c494a05, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6237769561178616125, guid: ef124ce3fade69340875d8924c494a05, type: 3}
+      propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

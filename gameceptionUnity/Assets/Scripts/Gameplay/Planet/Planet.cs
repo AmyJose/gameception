@@ -81,17 +81,6 @@ namespace Gameplay
             {
                 alienSwarmView = GetComponentInChildren<AlienSwarmView>();
             }
-            
-            Planet[] allPlanets = UnityEngine.Object.FindObjectsByType<Planet>(FindObjectsSortMode.InstanceID);
-            // System.Array.Sort(allPlanets, (a, b) => a.GetInstanceID().CompareTo(b.GetInstanceID()));
-            for (int i = 0; i < allPlanets.Length; i++)
-            {
-                if (allPlanets[i] == this)
-                {
-                    planetIndex = i;
-                    break;
-                }
-            }
 
             if (growCurve == null || growCurve.length == 0)
             {
@@ -113,6 +102,7 @@ namespace Gameplay
             }
             if (selectionState != null){
                 selectionState.OnChanged += HandleSelectionChanged;
+                UpdateSelectionVisuals();
             }
         }
 
@@ -122,27 +112,14 @@ namespace Gameplay
                 selectionState.OnChanged -= HandleSelectionChanged;
         }
 
-        // private void HandleSelectionChanged(IReadOnlyCollection<int> selectedIndices)
-        // {
-        //     // UpdateSelectionVisuals();
-        //     bool isSelected = selectionState.IsSelected(planetIndex);
-        //     if (spriteRenderer != null && definition != null)
-        //     {
-        //         spriteRenderer.sprite = isSelected ? definition.selectedPlanetSprite : definition.planetSprite;
-        //     }
-        // }
-
-        // private void UpdateSelectionVisuals()
         private void HandleSelectionChanged(IReadOnlyCollection<int> selectedIndices)
         {
-            if (spriteRenderer == null || definition == null || selectionState == null) return;
-
-            bool isSelected = selectionState.IsSelected(planetIndex);
-            spriteRenderer.sprite = isSelected ? definition.selectedPlanetSprite : definition.planetSprite;
-            if (resourceUI != null)
-            {
-                resourceUI.SetVisible(isSelected);
-            }
+            UpdateSelectionVisuals();
+        }
+        public void SetPlanetIndex(int index)
+        {
+            planetIndex = index;
+            UpdateSelectionVisuals();
         }
 
         public void SetDefinition(PlanetDefinition newDefinition)
@@ -258,6 +235,7 @@ namespace Gameplay
 
             population = Mathf.Clamp(definition.startingPopulation, 0f, definition.populationCap);
 
+            UpdateSelectionVisuals();
             UpdateVisualState();
         }
 
@@ -303,6 +281,24 @@ namespace Gameplay
             {
                 _aliensCurrentlyAngry = shouldBeAngry;
                 alienSwarmView.SetAliensAngry(shouldBeAngry);
+            }
+        }
+
+        private void UpdateSelectionVisuals()
+        {
+            if (spriteRenderer == null || definition == null || selectionState == null) return;
+
+            bool isSelected = selectionState.IsSelected(planetIndex);
+
+            Sprite targetSprite = isSelected && definition.selectedPlanetSprite != null
+                ? definition.selectedPlanetSprite
+                : definition.planetSprite;
+
+            spriteRenderer.sprite = targetSprite;
+
+            if (resourceUI != null)
+            {
+                resourceUI.SetVisible(isSelected);
             }
         }
 

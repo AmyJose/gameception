@@ -13,13 +13,13 @@ namespace Gameplay.Choreography
         [Header("Dependencies")]
         [SerializeField] private PromptJudge promptJudge;
         [Header("Queue Layout")]
-        [SerializeField] private float hitZoneY = 0f;
-        [SerializeField] private float hitZoneThreshold = 0.5f;
+        [SerializeField] public float hitZoneY = 0f;
+        [SerializeField] public float hitZoneThreshold = 0.5f;
 
         [Header("Spawn")]
         [SerializeField] private PromptIndicator promptPrefab;
         [SerializeField] private float promptSpacing = 2f;
-        [SerializeField] private Vector3 spawnOffset = Vector3.zero;
+        [SerializeField] public Vector3 spawnOffset = Vector3.zero;
 
         [Header("Scroll")]
         [SerializeField] private float unitsPerBeat = 1f;
@@ -27,7 +27,7 @@ namespace Gameplay.Choreography
         [SerializeField] private BeatClock beatClock;
 
         [Header("Generation")]
-        [SerializeField] private int generationIntervalBeats = 60;
+        [SerializeField] private int generationIntervalBeats = 10;
         [SerializeField] private int promptsPerSequence = 4;
 
         // Events
