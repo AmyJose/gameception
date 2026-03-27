@@ -61,6 +61,7 @@ namespace Gameplay
                 SpawnPlanet();
             }
 
+            RefreshPlanetIndices();
             ArrangePlanets();
         }
 
@@ -89,7 +90,7 @@ namespace Gameplay
             }
 
             planets.Add(newPlanet);
-
+            RefreshPlanetIndices();
             newPlanet.BeginSpawnAnimation();
 
             if (danceMatSelectionController != null) danceMatSelectionController.SetPlanetCount(planets.Count);
@@ -97,6 +98,16 @@ namespace Gameplay
             Debug.Log("Spawned planet at " + newPlanet.transform.position);
 
             return newPlanet;
+        }
+        private void RefreshPlanetIndices()
+        {
+            for (int i=0; i<planets.Count; i++)
+            {
+                if (planets[i] != null)
+                {
+                    planets[i].SetPlanetIndex(i);
+                }
+            }
         }
 
         public Planet SpawnPlanet(PlanetDefinition definitionOverride = null)
@@ -111,6 +122,7 @@ namespace Gameplay
 
             Destroy(planet.gameObject);
             ArrangePlanets();
+            RefreshPlanetIndices();
 
             if (danceMatSelectionController != null) danceMatSelectionController.SetPlanetCount(planets.Count);
         }
@@ -165,28 +177,6 @@ namespace Gameplay
             planets.Clear();
 
             if (danceMatSelectionController != null) danceMatSelectionController.SetPlanetCount(0);
-        }
-
-        private void OnEnable()
-        {
-            if (selectionState != null) selectionState.OnChanged += HandleSelectionChanged;
-        }
-
-        private void OnDisable()
-        {
-            if (selectionState != null) selectionState.OnChanged -= HandleSelectionChanged;
-        }
-
-        private void HandleSelectionChanged(IReadOnlyCollection<int> selected)
-        {
-            for (int i = 0; i < planets.Count; i++)
-            {
-                if (planets[i] == null) continue;
-
-                var view = planets[i].GetComponent<PlanetView>();
-                if (view != null)
-                    view.SetSelected(selectionState.IsSelected(i));
-            }
         }
     }
 }
