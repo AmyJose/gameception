@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 306316729085909935}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.4, y: 2.4, z: 0}
+  m_LocalPosition: {x: 0.1, y: 2.6, z: 0}
   m_LocalScale: {x: 4.842034, y: 4.842034, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -838,7 +838,7 @@ Transform:
   m_GameObject: {fileID: 7727576950730315848}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.963, y: 0.5450001, z: 0}
+  m_LocalPosition: {x: 2.1, y: -0.10000008, z: 0}
   m_LocalScale: {x: 3.4993508, y: 3.4993508, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1075,10 +1075,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ded045c37e8b9374289cef30b80279b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlanetView
-  resourceUI: {fileID: 8137691964406589177}
   planetRenderer: {fileID: 0}
   planet: {fileID: 0}
-  planetglowing: {fileID: 0}
+  planetGlowing: {fileID: 0}
 --- !u!114 &5382691606485584534
 MonoBehaviour:
   m_ObjectHideFlags: 0
