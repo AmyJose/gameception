@@ -323,5 +323,20 @@ namespace Gameplay
                 Debug.Log("[Planet] Growth complete");
             }
         } 
+
+        public void AddPopulation(float amount)
+        {
+            if (definition == null) return;
+
+            population += amount;
+            population = Mathf.Clamp(population, 0f, definition.populationCap);
+            UpdateVisualState();
+        }
+
+        public void ApplySequenceReward(float populationBonus, ElementPose pose)
+        {
+            AddPopulation(populationBonus);  
+            RestoreNeed(pose);              
+        }
     }
 }

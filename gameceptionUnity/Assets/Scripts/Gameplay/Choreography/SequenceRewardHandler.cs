@@ -9,6 +9,7 @@ namespace Gameplay.Choreography
     public class SequenceRewardHandler : MonoBehaviour
     {
         [SerializeField] private PromptJudge judge;
+        [SerializeField] private PlanetManager planetManager;
 
         private void OnEnable()
         {
@@ -32,6 +33,14 @@ namespace Gameplay.Choreography
             int basePoints = 100;
             int bonusPoints = Mathf.RoundToInt(result.accuracy * 50);
             int totalPoints = basePoints + bonusPoints;
+
+            Planet planet = planetManager?.GetPlanet(result.selectedPad);
+            if (planet != null)
+            {
+                planet.ApplySequenceReward(totalPoints, result.detectedPose);
+            }
+
+
 
             Debug.Log($"   🏆 Awarded {totalPoints} points!");
 
