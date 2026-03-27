@@ -34,11 +34,11 @@ namespace Gameplay.Choreography
             int bonusPoints = Mathf.RoundToInt(result.accuracy * 50);
             int totalPoints = basePoints + bonusPoints;
 
-            Planet planet = planetManager?.GetPlanet(result.selectedPad);
-            if (planet != null)
-            {
-                planet.ApplySequenceReward(totalPoints, result.detectedPose);
-            }
+            // Planet planet = planetManager?.GetPlanet(result.);
+            // if (planet != null)
+            // {
+            //     planet.ApplySequenceReward(totalPoints, result.detectedPose);
+            // }
 
 
 
