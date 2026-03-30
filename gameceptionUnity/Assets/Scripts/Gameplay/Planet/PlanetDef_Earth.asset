@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlanetDef_Earth
   m_EditorClassIdentifier: Assembly-CSharp::PlanetDefinition
   planetSprite: {fileID: 21300000, guid: 16b718a6c47225d43b7ea0ef46ea9f9c, type: 3}
-  selectedPlanetSprite: {fileID: 21300000, guid: e53668e61c9420342bd4b073b5be03a4, type: 3}
+  selectedPlanetSprite: {fileID: 21300000, guid: f845f5a5f5094d245b91f023b0d9c030, type: 3}
   startingPopulation: 0
   populationCap: 100
   alienType: 2
