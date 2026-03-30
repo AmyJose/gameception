@@ -152,6 +152,7 @@ MonoBehaviour:
   selectionState: {fileID: 2047366721}
   promptQueue: {fileID: 733875701}
   minPoseConfidence: 0.7
+  maxPoseConfidence: 0.98
   stabilityMs: 200
 --- !u!4 &64651962
 Transform:
@@ -556,6 +557,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Choreography.SequenceRewardHandler
   judge: {fileID: 64651961}
+  planetManager: {fileID: 0}
 --- !u!4 &284896780
 Transform:
   m_ObjectHideFlags: 0
@@ -919,6 +921,7 @@ MonoBehaviour:
   promptPrefab: {fileID: 926613821937977704, guid: 49cfaf71d55284b3fb6c1b8a300f4003, type: 3}
   promptSpacing: 2
   spawnOffset: {x: -6, y: 8, z: 0}
+  autoStartGeneration: 1
   unitsPerBeat: 1
   beatSpeedMultiplier: 1
   beatClock: {fileID: 1130057111}
@@ -1677,7 +1680,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 2
-  m_Size: {x: 90, y: 1}
+  m_Size: {x: 50, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

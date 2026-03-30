@@ -20,6 +20,7 @@ namespace Gameplay.Choreography
         [SerializeField] private PromptIndicator promptPrefab;
         [SerializeField] private float promptSpacing = 2f;
         [SerializeField] public Vector3 spawnOffset = Vector3.zero;
+        [SerializeField] private bool autoStartGeneration = false;
 
         [Header("Scroll")]
         [SerializeField] private float unitsPerBeat = 1f;
@@ -58,10 +59,13 @@ namespace Gameplay.Choreography
         private int _nextSequenceId = 0;
         private int _lastGeneratedBeat = -999;
 
+        private bool _isGenerating = false;
+
         private void OnEnable()
         {
             if (beatClock != null)
                 beatClock.OnBeat += HandleBeat;
+            _isGenerating = autoStartGeneration;
         }
 
         private void OnDisable()
@@ -72,6 +76,8 @@ namespace Gameplay.Choreography
 
         private void HandleBeat(BeatInfo beat)
         {
+            if (!_isGenerating) return;
+
             // Generate new sequence if interval reached
             if (beat.beatIndex >= _lastGeneratedBeat + generationIntervalBeats)
             {
@@ -234,6 +240,19 @@ namespace Gameplay.Choreography
             Gizmos.color = new Color(0f, 1f, 0f, 0.2f);
             float scaledHeight = hitZoneThreshold * 2f * transform.lossyScale.y;
             Gizmos.DrawCube(center, new Vector3(width * 2, scaledHeight, 0.1f));
+        }
+
+        //helper functions to controll when generation begins
+        public void BeginGeneration()
+        {
+            _isGenerating = true;
+            _lastGeneratedBeat = -999;
+            Debug.Log("[PromptQueue] Generation started");
+        }
+        public void StopGeneration()
+        {
+            _isGenerating = false;
+            Debug.Log("[PromptQueue] Generation stopped");
         }
     }
 }

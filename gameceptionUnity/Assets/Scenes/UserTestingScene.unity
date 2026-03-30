@@ -152,6 +152,7 @@ MonoBehaviour:
   selectionState: {fileID: 2047366721}
   promptQueue: {fileID: 733875701}
   minPoseConfidence: 0.7
+  maxPoseConfidence: 0.98
   stabilityMs: 200
 --- !u!4 &64651962
 Transform:
@@ -951,6 +952,7 @@ MonoBehaviour:
   promptPrefab: {fileID: 926613821937977704, guid: 49cfaf71d55284b3fb6c1b8a300f4003, type: 3}
   promptSpacing: 2
   spawnOffset: {x: -6, y: 8, z: 0}
+  autoStartGeneration: 0
   unitsPerBeat: 1
   beatSpeedMultiplier: 1
   beatClock: {fileID: 1130057111}
@@ -1010,6 +1012,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UserTestingController
   planetManager: {fileID: 967029054}
+  promptQueue: {fileID: 733875701}
   planetSpawnPoints:
   - {fileID: 1816788360}
   - {fileID: 1900377328}
