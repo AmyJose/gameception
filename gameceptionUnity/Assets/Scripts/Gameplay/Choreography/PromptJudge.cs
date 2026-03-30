@@ -15,7 +15,8 @@ namespace Gameplay.Choreography
         [SerializeField] private PromptQueue promptQueue;
 
         [Header("Thresholds")]
-        [SerializeField] private float minPoseConfidence = 0.7f;
+        [SerializeField] private float minPoseConfidence = 0.70f;
+        [SerializeField] private float maxPoseConfidence = 0.98f;
         [SerializeField] private long stabilityMs = 200;
 
         public event Action<JudgementResult> OnJudged;
@@ -79,7 +80,7 @@ namespace Gameplay.Choreography
                 sequenceId = data.sequenceId,
                 detectedPose = poseState?.CurrentPose ?? ElementPose.None,
                 selectedPad = GetSelectedPad(),
-                quality = Evaluate(data.requiredPose)
+                quality = Evaluate(data.requiredPose, poseState.CurrentPose, minPoseConfidence, maxPoseConfidence, poseState.Confidence)
             };
 
             Debug.Log($"[PromptJudge- seq {data.sequenceId}:] Prompt {data.id}: {result.quality} " +
@@ -151,12 +152,19 @@ namespace Gameplay.Choreography
             }
         }
 
-        private HitQuality Evaluate(ElementPose required)
+        private HitQuality Evaluate(ElementPose required, ElementPose current, float minConfidence, float maxConfidence, float confidence)
         {
-            if (poseState.CurrentPose != required)
+            if (current != required)
                 return HitQuality.WrongPose;
-
-            return HitQuality.Perfect;
+            //evaluate teh current confidence against thresholds to determine hit quality
+            bool isHighConfidence = confidence >= maxConfidence;
+            bool isMediumConfidence = confidence >= minConfidence;
+            if (isHighConfidence)
+                return HitQuality.Perfect;
+            else if (isMediumConfidence)
+                return HitQuality.Good;
+            else
+                return HitQuality.NoInput;
         }
 
         private int GetSelectedPad()
