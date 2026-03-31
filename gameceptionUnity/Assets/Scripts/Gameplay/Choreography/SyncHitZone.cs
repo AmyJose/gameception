@@ -16,6 +16,6 @@ public class SyncHitZone : MonoBehaviour
 
         //Scales the box to be exactly the size of the threshold math
         float boxHeight = queue.hitZoneThreshold * 2f;
-        spriteRenderer.size = new Vector2(90f, boxHeight); 
+        spriteRenderer.size = new Vector2(50f, boxHeight); 
     }
 }

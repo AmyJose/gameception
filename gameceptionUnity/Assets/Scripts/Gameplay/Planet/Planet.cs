@@ -37,7 +37,7 @@ namespace Gameplay
         [SerializeField] private Color dyingColor = new Color(0.35f, 0.35f, 0.35f, 1f);
 
         [Header("Spawn Animation")]
-        [SerializeField] private float growDuration = 0.5f;
+        [SerializeField] private float growDuration = 1.5f;
         [SerializeField] private AnimationCurve growCurve = null;
 
         private Vector3 _targetScale;
