@@ -26,7 +26,6 @@ namespace Gameplay
     public class GameFlowController : MonoBehaviour
     {
         [Header("References")]
-        //play scene!!
         [SerializeField] private PromptQueue promptQueue;
         [SerializeField] private ScoreManager scoreManager;
 
@@ -101,6 +100,12 @@ namespace Gameplay
             if (_runEnded) return;
             _runEnded = true;
             ChangeState(GameState.Ending);
+
+            if(promptQueue != null)
+            {
+                promptQueue.StopGeneration();
+                promptQueue.ClearAll();
+            }
 
             if (scoreManager != null) scoreManager.EndRun();
 
