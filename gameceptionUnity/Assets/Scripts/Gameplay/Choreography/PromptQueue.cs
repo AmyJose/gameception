@@ -18,7 +18,7 @@ namespace Gameplay.Choreography
 
         [Header("Spawn")]
         [SerializeField] private PromptIndicator promptPrefab;
-        [SerializeField] private float promptSpacing = 2f;
+        [SerializeField] private int promptBeatSpacing   = 2;
         [SerializeField] public Vector3 spawnOffset = Vector3.zero;
         [SerializeField] private bool autoStartGeneration = false;
 
@@ -58,7 +58,9 @@ namespace Gameplay.Choreography
         private float _totalScrollDistance = 0f;
         private int _nextPromptId = 0;
         private int _nextSequenceId = 0;
-        private int _lastGeneratedBeat = -999;
+        private int _lastGeneratedSequenceBeat = -999;
+        private int _currentSequenceStartBeat = 0;
+        private int _promptsSpawnedThisSequence = 0;
 
         private bool _isGenerating = false;
 
@@ -77,19 +79,31 @@ namespace Gameplay.Choreography
 
         private void HandleBeat(BeatInfo beat)
         {
+            _isGenerating = autoStartGeneration;
             if (!_isGenerating) return;
 
-            // Generate new sequence if interval reached
-            if (beat.beatIndex >= _lastGeneratedBeat + generationIntervalBeats)
+            // Check if time to start a new sequence
+            if (beat.beatIndex >= _lastGeneratedSequenceBeat + generationIntervalBeats)
+
             {
-                GenerateSequence();
-                _lastGeneratedBeat = beat.beatIndex;
-                Debug.Log($"[PromptQueue] Beat {beat.beatIndex}: Generated sequence {_nextSequenceId - 1}");
+                StartNewSequence(beat.beatIndex);
+                _lastGeneratedSequenceBeat = beat.beatIndex;
+                _promptsSpawnedThisSequence = 0;
             }
 
-            // Scroll all prompts down
-            // _totalScrollDistance += unitsPerBeat;
-            // UpdatePrompts();
+            // Spawn one prompt per beat within the current seq based on spacing pattern
+            if (_promptsSpawnedThisSequence < promptsPerSequence)
+            {
+                int beatOffsetInSequence = beat.beatIndex - _currentSequenceStartBeat;
+                
+                // Check if this beat should spawn based on spacing
+                if (beatOffsetInSequence % promptBeatSpacing == 0)
+                {
+                    SpawnOnePrompt(beat.beatIndex);
+                    _promptsSpawnedThisSequence++;
+                }
+            }
+
         }
         private void Update()
         {
@@ -103,31 +117,30 @@ namespace Gameplay.Choreography
             UpdatePrompts();
         }
 
-        private void GenerateSequence()
+        private void StartNewSequence(int startBeat)
         {
             int sequenceId = _nextSequenceId++;
+            _currentSequenceStartBeat = startBeat;
 
-            for (int i = 0; i < promptsPerSequence; i++)
-            {
-                SpawnPrompt(GetRandomPose(), sequenceId, i);
-            }
-
-            Debug.Log($"[PromptQueue] Sequence {sequenceId}: spawned {promptsPerSequence} prompts");
+            Debug.Log($"[PromptQueue] Beat {startBeat}: START sequence {sequenceId} (spacing: {promptBeatSpacing})");
+            
             if (promptJudge != null)
             {
                 promptJudge.RegisterSequence(sequenceId, promptsPerSequence);
             }
         }
 
-        private void SpawnPrompt(ElementPose pose, int sequenceId, int indexInSequence)
+        private void SpawnOnePrompt(int beatIndex)
         {
-            if (promptPrefab == null) return;
+            int sequenceId = _nextSequenceId - 1;  // Current sequence
+            int indexInSequence = _promptsSpawnedThisSequence;  // Position in sequence (0, 1, 2, 3)
+
+            ElementPose pose = GetRandomPose();
 
             var indicator = Instantiate(promptPrefab, transform);
             indicator.Initialize(pose, _nextPromptId);
 
-            // Calculate spawn position
-            float initialY = spawnOffset.y + (indexInSequence * promptSpacing);
+            float initialY = spawnOffset.y;
             indicator.transform.localPosition = new Vector3(spawnOffset.x, initialY, 0);
 
             _promptInfo[_nextPromptId] = new PromptInfo
@@ -140,7 +153,7 @@ namespace Gameplay.Choreography
 
             _activePrompts.Add(indicator);
 
-            Debug.Log($"[PromptQueue] Spawned prompt {_nextPromptId} (seq {sequenceId}, idx {indexInSequence}) at Y={initialY:F2}");
+            Debug.Log($"[PromptQueue] Beat {beatIndex}: Spawned prompt {_nextPromptId} (seq {sequenceId}, index {indexInSequence})");
 
             _nextPromptId++;
         }
@@ -260,7 +273,7 @@ namespace Gameplay.Choreography
         public void BeginGeneration()
         {
             _isGenerating = true;
-            _lastGeneratedBeat = -999;
+            _lastGeneratedSequenceBeat = -999;
             Debug.Log("[PromptQueue] Generation started");
         }
         public void StopGeneration()

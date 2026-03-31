@@ -39,11 +39,6 @@ public class UserTestingController : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
 
-        if(promptQueue != null)
-        {
-            promptQueue.BeginGeneration();
-        }
-
     }
     private Transform GetNextPlanetSpawnPoint()
     {

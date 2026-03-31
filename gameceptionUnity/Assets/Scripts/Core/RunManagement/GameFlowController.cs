@@ -101,6 +101,12 @@ namespace Gameplay
             _runEnded = true;
             ChangeState(GameState.Ending);
 
+            if(promptQueue != null)
+            {
+                promptQueue.StopGeneration();
+                promptQueue.ClearAll();
+            }
+
             if (scoreManager != null) scoreManager.EndRun();
 
             RunResults results = BuildResults();
