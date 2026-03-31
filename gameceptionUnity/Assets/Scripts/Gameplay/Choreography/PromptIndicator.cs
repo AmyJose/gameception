@@ -19,6 +19,7 @@ namespace Gameplay.Choreography
         [SerializeField] private Color hitZoneColor = new Color(1f, 1f, 1f, 0.7f); //becomes green when in hit zone
         [SerializeField] private Color missColor = new Color(1f, 0f, 0f, 0.9f);
         [SerializeField] private Color successColor = new Color(1f, 1f, 1f, 0.7f);
+        [SerializeField] private Color midHitColor = new Color(1f, 1f, 0f, 0.9f); // Yellow for "Good" hits
 
         [Header("Visual Polish")]
         [SerializeField] private float scaleInHitZone = 1.15f; // grows when in hit zone
@@ -30,6 +31,7 @@ namespace Gameplay.Choreography
         private bool _isInHitZone = false;
         private bool _missed = false;
         private bool _succeeded = false;
+        private bool _midHit = false;
 
         private void Awake()
         {
@@ -91,21 +93,21 @@ namespace Gameplay.Choreography
         public void SetMissed()
         {
             // if (_missed || _succeeded) return;
-            
+
             _missed = true;
             backgroundRenderer.color = missColor;
             transform.localScale = Vector3.one * normalScale;
-            
+
             Debug.Log($"❌ [PromptIndicator {_promptId}] MISS:red");
         }
 
         public void SetSucceeded()
         {
             // if (_succeeded || _missed) return;
-            
+
             _succeeded = true;
             backgroundRenderer.color = successColor;
-            
+
             Debug.Log($"[PromptIndicator {_promptId}] SUCCESS: green");
         }
 
@@ -120,6 +122,12 @@ namespace Gameplay.Choreography
         {
             if (backgroundRenderer != null)
                 backgroundRenderer.color = new Color(1f, 0f, 0f, 1f); // Red
+        }
+
+        public void SetMidHit()
+        {
+            if (backgroundRenderer != null)
+                backgroundRenderer.color = midHitColor; // Yellow
         }
 
 

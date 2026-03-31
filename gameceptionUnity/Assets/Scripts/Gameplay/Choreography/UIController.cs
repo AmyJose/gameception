@@ -10,6 +10,8 @@ namespace Gameplay.Choreography.UI
         [SerializeField] private PromptQueue queue;
         [SerializeField] private PromptJudge judge;
 
+
+
         private Dictionary<int, PromptIndicator> _promptMap = new();
 
         private void OnEnable()
@@ -47,18 +49,44 @@ namespace Gameplay.Choreography.UI
 
             if (found == null) return;
 
-            if (result.quality == PromptJudge.HitQuality.Perfect || 
-                result.quality == PromptJudge.HitQuality.Good)
+            /*if (result.quality == PromptJudge.HitQuality.Perfect)
             {
                 found.SetSuccess();
                 Destroy(found.gameObject, 4f);
                 Debug.Log($"✅ Prompt {result.promptId} SUCCESS");
             }
+            else if (result.quality == PromptJudge.HitQuality.Good)
+            {
+                found.SetMidHit();
+                Destroy(found.gameObject, 4f);
+                Debug.Log($"✅ Prompt {result.promptId} GOOD HIT");
+            }
             else
             {
                 found.SetFail();
                 Debug.Log($"❌ Prompt {result.promptId} FAIL");
+            }*/
+            if (result.quality == PromptJudge.HitQuality.WrongPose ||
+                result.quality == PromptJudge.HitQuality.NoInput)
+            {
+                found.SetFail();
+                Debug.Log($"❌ Prompt {result.promptId} FAIL: {result.quality}");
             }
+            else
+            {
+                if (result.timing == PromptJudge.PoseTiming.Perfect &&
+                    result.quality == PromptJudge.HitQuality.Perfect)
+                {
+                    found.SetSuccess();
+                    Debug.Log($"💎 Prompt {result.promptId} PERFECT HIT");
+                }
+                else
+                {
+                    found.SetMidHit();
+                    Debug.Log($"✅ Prompt {result.promptId} GOOD HIT ({result.timing})");
+                }
+            }
+
         }
     }
 }

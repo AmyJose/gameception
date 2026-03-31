@@ -9,12 +9,12 @@ namespace Gameplay.Choreography
     // Spawns prompts at cascading positions from spawnOffset
 
     public class PromptQueue : MonoBehaviour
-    {   
+    {
         [Header("Dependencies")]
         [SerializeField] private PromptJudge promptJudge;
         [Header("Queue Layout")]
         [SerializeField] public float hitZoneY = 0f;
-        [SerializeField] public float hitZoneThreshold = 0.5f;
+        [SerializeField] public float hitZoneThreshold = 0.8f;
 
         [Header("Spawn")]
         [SerializeField] private PromptIndicator promptPrefab;
@@ -40,6 +40,7 @@ namespace Gameplay.Choreography
             public int id;
             public int sequenceId;
             public ElementPose requiredPose;
+            public float currentY;
         }
 
         private struct PromptInfo
@@ -162,7 +163,7 @@ namespace Gameplay.Choreography
                 //Uses stored initialY and scroll amount
                 float scrollAmount = _totalScrollDistance - info.spawnTime;
                 float scrolledY = info.initialY - scrollAmount;
-                
+
                 prompt.SetYPosition(scrolledY);
 
                 // Zone detection
@@ -177,7 +178,8 @@ namespace Gameplay.Choreography
                         {
                             id = id,
                             sequenceId = info.sequenceId,
-                            requiredPose = prompt.GetRequiredPose()
+                            requiredPose = prompt.GetRequiredPose(),
+                            currentY = scrolledY
                         });
                     }
                 }
@@ -192,7 +194,8 @@ namespace Gameplay.Choreography
                         {
                             id = id,
                             sequenceId = info.sequenceId,
-                            requiredPose = prompt.GetRequiredPose()
+                            requiredPose = prompt.GetRequiredPose(),
+                            currentY = scrolledY
                         });
                     }
                 }
@@ -220,6 +223,17 @@ namespace Gameplay.Choreography
             _activePrompts.Clear();
             _promptInfo.Clear();
             _promptsInZone.Clear();
+        }
+
+        public float GetPromptCurrentY(int id)
+        {
+            if (_promptInfo.TryGetValue(id, out var info))
+            {
+                float scrollAmount = _totalScrollDistance - info.spawnTime;
+                return info.initialY - scrollAmount;
+            }
+
+            return -999f;
         }
 
         private void OnDrawGizmos()
