@@ -26,7 +26,6 @@ namespace Gameplay
     public class GameFlowController : MonoBehaviour
     {
         [Header("References")]
-        //play scene!!
         [SerializeField] private PromptQueue promptQueue;
         [SerializeField] private ScoreManager scoreManager;
 
