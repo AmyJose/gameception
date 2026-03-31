@@ -11,7 +11,7 @@ public class SyncHitZone : MonoBehaviour
     {
         if (queue == null || spriteRenderer == null) return;
 
-        //Positions the box at the exact hitZoneY - logical zone
+        //Positions the box at the exact hitZoneY (logical zone)
         transform.localPosition = new Vector3(queue.spawnOffset.x, queue.hitZoneY, 0);
 
         //Scales the box to be exactly the size of the threshold math
