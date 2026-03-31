@@ -20,6 +20,13 @@ namespace Gameplay.Choreography
         [SerializeField] private PromptIndicator promptPrefab;
         [SerializeField] private int promptBeatSpacing   = 2;
         [SerializeField] public Vector3 spawnOffset = Vector3.zero;
+        [SerializeField] private Vector3[] laneOffsets = new Vector3[4]
+        {
+            new Vector3(-8f, 0f, 0f),  // Lane 0: Left
+            new Vector3(-6f, 0f, 0f),  // Lane 1
+            new Vector3(-4f, 0f, 0f),   // Lane 2
+            new Vector3(-2f, 0f, 0f)    // Lane 3: Right
+        };
         [SerializeField] private bool autoStartGeneration = false;
 
         [Header("Scroll")]
@@ -39,6 +46,7 @@ namespace Gameplay.Choreography
         {
             public int id;
             public int sequenceId;
+            public int laneIndex; // (0-3)for future: link with planet id
             public ElementPose requiredPose;
             public float currentY;
         }
@@ -47,6 +55,7 @@ namespace Gameplay.Choreography
         {
             public int id;
             public int sequenceId;
+            public int laneIndex; // for future: link with planet id
             public float initialY;
             public float spawnTime;
         }
@@ -134,6 +143,7 @@ namespace Gameplay.Choreography
         {
             int sequenceId = _nextSequenceId - 1;  // Current sequence
             int indexInSequence = _promptsSpawnedThisSequence;  // Position in sequence (0, 1, 2, 3)
+            int laneIndex = _nextPromptId % 4; // lane assignment
 
             ElementPose pose = GetRandomPose();
 
@@ -141,19 +151,22 @@ namespace Gameplay.Choreography
             indicator.Initialize(pose, _nextPromptId);
 
             float initialY = spawnOffset.y;
-            indicator.transform.localPosition = new Vector3(spawnOffset.x, initialY, 0);
+            Vector3 laneSpawnPos = spawnOffset + laneOffsets[laneIndex];
+            // indicator.transform.localPosition = new Vector3(spawnOffset.x, initialY, 0);
+            indicator.transform.localPosition = laneSpawnPos;
 
             _promptInfo[_nextPromptId] = new PromptInfo
             {
                 id = _nextPromptId,
                 sequenceId = sequenceId,
+                laneIndex = laneIndex,
                 initialY = initialY,
                 spawnTime = _totalScrollDistance
             };
 
             _activePrompts.Add(indicator);
 
-            Debug.Log($"[PromptQueue] Beat {beatIndex}: Spawned prompt {_nextPromptId} (seq {sequenceId}, index {indexInSequence})");
+            Debug.Log($"[PromptQueue] Beat {beatIndex}: Spawned prompt {_nextPromptId} (seq {sequenceId}, index {indexInSequence}, lane {laneIndex})");
 
             _nextPromptId++;
         }
@@ -191,6 +204,7 @@ namespace Gameplay.Choreography
                         {
                             id = id,
                             sequenceId = info.sequenceId,
+                            laneIndex = info.laneIndex,
                             requiredPose = prompt.GetRequiredPose(),
                             currentY = scrolledY
                         });
@@ -207,6 +221,7 @@ namespace Gameplay.Choreography
                         {
                             id = id,
                             sequenceId = info.sequenceId,
+                            laneIndex = info.laneIndex,
                             requiredPose = prompt.GetRequiredPose(),
                             currentY = scrolledY
                         });

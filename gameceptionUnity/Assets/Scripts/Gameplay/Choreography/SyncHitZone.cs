@@ -6,6 +6,7 @@ public class SyncHitZone : MonoBehaviour
 {
     [SerializeField] private PromptQueue queue;
     [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private float boxWidth = 74f;
 
     void Update()
     {
@@ -16,6 +17,6 @@ public class SyncHitZone : MonoBehaviour
 
         //Scales the box to be exactly the size of the threshold math
         float boxHeight = queue.hitZoneThreshold * 2f;
-        spriteRenderer.size = new Vector2(50f, boxHeight); 
+        spriteRenderer.size = new Vector2(boxWidth, boxHeight); 
     }
 }
