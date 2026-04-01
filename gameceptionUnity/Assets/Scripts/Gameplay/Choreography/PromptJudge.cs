@@ -29,6 +29,7 @@ namespace Gameplay.Choreography
         private class ActivePrompt
         {
             public int sequenceId;
+            public int laneIndex;
             public ElementPose requiredPose;
             public bool success;
             public float bestOffset;
@@ -38,6 +39,7 @@ namespace Gameplay.Choreography
         {
             public int promptId;
             public int sequenceId;
+            public int laneIndex;
             public ElementPose detectedPose;
             public HitQuality quality;
             public PoseTiming timing;
@@ -123,6 +125,7 @@ namespace Gameplay.Choreography
             {
                 promptId = data.id,
                 sequenceId = data.sequenceId,
+                laneIndex = data.laneIndex,
                 detectedPose = poseState?.CurrentPose ?? ElementPose.None,
                 selectedPad = GetSelectedPad(),
                 quality = EvaluateConfidence(data.requiredPose, poseState.CurrentPose, minPoseConfidence, maxPoseConfidence, poseState.Confidence),
@@ -143,6 +146,7 @@ namespace Gameplay.Choreography
             _activePrompts[data.id] = new ActivePrompt
             {
                 sequenceId = data.sequenceId,
+                laneIndex = data.laneIndex,
                 requiredPose = data.requiredPose,
                 success = false,
                 bestOffset = float.MaxValue
@@ -183,6 +187,7 @@ namespace Gameplay.Choreography
             {
                 promptId = id,
                 sequenceId = prompt.sequenceId,
+                laneIndex = prompt.laneIndex,
                 detectedPose = poseState.CurrentPose,
                 selectedPad = GetSelectedPad(),
                 quality = EvaluateConfidence(
@@ -207,6 +212,7 @@ namespace Gameplay.Choreography
             {
                 promptId = id,
                 sequenceId = prompt.sequenceId,
+                laneIndex = prompt.laneIndex,
                 detectedPose = poseState.CurrentPose,
                 selectedPad = GetSelectedPad(),
                 quality = HitQuality.NoInput,
