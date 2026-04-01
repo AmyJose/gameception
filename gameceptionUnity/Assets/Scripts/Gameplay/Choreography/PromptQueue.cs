@@ -88,7 +88,6 @@ namespace Gameplay.Choreography
 
         private void HandleBeat(BeatInfo beat)
         {
-            _isGenerating = autoStartGeneration;
             if (!_isGenerating) return;
 
             // Check if time to start a new sequence

@@ -36,8 +36,10 @@ public class UserTestingController : MonoBehaviour
             Planet newPlanet = planetManager.SpawnPlanetAt(spawnPoint.position, planetManager.availableDefinitions[planetManager.PlanetCount]);
 
             yield return new WaitUntil(() => !newPlanet.IsGrowing);
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.5f);
         }
+
+        if (promptQueue != null) promptQueue.BeginGeneration();
 
     }
     private Transform GetNextPlanetSpawnPoint()
