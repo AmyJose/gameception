@@ -28,6 +28,11 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
     [SerializeField] private MonoBehaviour poseClassifierComponent; // assign HeuristicPoseClassifier
     private IPoseClassifier poseClassifier;
 
+    [Header("Tutorial Mode")]
+    [SerializeField] private bool tutorialStartHidden = false;
+    [SerializeField] private GameObject cameraFeedVisualRoot;
+    [SerializeField] private GameObject annotationVisualRoot;
+
     [Header("Thread Handoff")]
     private PoseLandmarkerResult _latestResult;
     private long _latestTimestamp;
@@ -39,6 +44,20 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         base.Stop();
         _textureFramePool?.Dispose();
         _textureFramePool = null;
+    }
+    protected override IEnumerator Start()
+    {
+        if (tutorialStartHidden)
+        {
+            SetVisualsVisible(false);
+        }
+
+        yield return base.Start();
+
+        if (tutorialStartHidden)
+        {
+            PauseDetection();
+        }
     }
 
     private void Update()
@@ -240,5 +259,19 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
                 mask.Dispose();
             }
         }
+    }
+    public void PauseDetection()
+    {
+        isPaused = true;
+    }
+    public void ResumeDetection()
+    {
+        isPaused = false;
+    }
+    public void SetVisualsVisible(bool visible)
+    {
+        if (cameraFeedVisualRoot != null) cameraFeedVisualRoot.SetActive(visible);
+
+        if (annotationVisualRoot != null) annotationVisualRoot.SetActive(visible);
     }
 }

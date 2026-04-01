@@ -16,6 +16,8 @@ namespace InputLayer
         [SerializeField] private bool autoSelectFirst = false;
         [SerializeField] private int planetCount = 0;
         [SerializeField] private bool latchSelectionForTesting = false;
+        [SerializeField] private bool overrideAllowedPadCount = false;
+        [SerializeField] private int allowedPadCount = 0;
 
         [Header("State")]
         [SerializeField] private bool selectionEnabled = true;
@@ -146,8 +148,11 @@ namespace InputLayer
         private bool IsIndexAllowed(int idx)
         {
             if (idx < 0) return false;
-            if (idx >= planetCount) return false;
-            return true;
+
+            if (overrideAllowedPadCount)
+                return idx < allowedPadCount;
+
+            return idx < planetCount;
         }
     }
 }
