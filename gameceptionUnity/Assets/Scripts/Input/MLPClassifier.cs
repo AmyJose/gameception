@@ -20,7 +20,7 @@ namespace InputLayer
         //public float[] LastScores => _lastScores;
 
         private readonly float[] _rawBuffer = new float[66]; // 33 landmarks * 2 (x,y)
-        private readonly float[] _processed = new float[70]; // 66 + 4 angles
+        private readonly float[] _processed = new float[8]; // updated 8 features 
 
         private void Start()
         {
@@ -46,9 +46,9 @@ namespace InputLayer
             _scalerMean = scaler.mean;
             _scalerStd = scaler.std;
 
-            if (_scalerMean.Length != 70 || _scalerStd.Length != 70)
+            if (_scalerMean.Length != 8 || _scalerStd.Length != 8)
             {
-                Debug.LogError($"[PoseClassifier] Scaler data wrong size: mean={_scalerMean.Length}, std={_scalerStd.Length}. Expected 70.");
+                Debug.LogError($"[PoseClassifier] Scaler data wrong size: mean={_scalerMean.Length}, std={_scalerStd.Length}. Expected 8.");
             }
 
             // Parse labels JSON
@@ -76,7 +76,7 @@ namespace InputLayer
             Preprocess(_rawBuffer);
 
             // Creates input tensor: shape (1, 70)
-            using var inputTensor = new Tensor<float>(new TensorShape(1, 70), _processed);
+            using var inputTensor = new Tensor<float>(new TensorShape(1, 8), _processed);
 
             // Runs the model
             _worker.Schedule(inputTensor);
@@ -100,7 +100,7 @@ namespace InputLayer
             }
 
             // 5. Confidence Threshold & Result Construction
-            if (bestScore <= 0.98f)
+            if (bestScore <= 0.90f)
                 return new PoseClassification { pose = ElementPose.None, confidence = bestScore };
 
             // Map index to Enum directly (skipping label JSON)
@@ -109,7 +109,8 @@ namespace InputLayer
                 0 => ElementPose.Ice,
                 1 => ElementPose.Earth,
                 2 => ElementPose.Fire,
-                3 => ElementPose.Water,
+                3 => ElementPose.None,
+                4 => ElementPose.Water,
                 _ => ElementPose.None
             };
 
@@ -123,39 +124,34 @@ namespace InputLayer
 
         private void Preprocess(float[] raw)
         {
-            // 1. Centre on hip midpoint (23 & 24)
-            float hipCenterX = (raw[23 * 2] + raw[24 * 2]) / 2f;
-            float hipCenterY = (raw[23 * 2 + 1] + raw[24 * 2 + 1]) / 2f;
+            // --- Torso length (same as Python) ---
+            Vector2 shoulderMid = (GetRawPos(raw, 11) + GetRawPos(raw, 12)) / 2f;
+            Vector2 hipMid = (GetRawPos(raw, 23) + GetRawPos(raw, 24)) / 2f;
+            float torsoLen = Vector2.Distance(shoulderMid, hipMid);
+            torsoLen = Mathf.Max(torsoLen, 1e-6f);
 
-            for (int i = 0; i < 33; i++)
-            {
-                _processed[i * 2] = raw[i * 2] - hipCenterX;
-                _processed[i * 2 + 1] = raw[i * 2 + 1] - hipCenterY;
-            }
+            // --- Group A: Angles ---
+            _processed[0] = GetAngle(GetRawPos(raw, 11), GetRawPos(raw, 13), GetRawPos(raw, 15)); // L Elbow
+            _processed[1] = GetAngle(GetRawPos(raw, 12), GetRawPos(raw, 14), GetRawPos(raw, 16)); // R Elbow
+            _processed[2] = GetAngle(GetRawPos(raw, 23), GetRawPos(raw, 11), GetRawPos(raw, 13)); // L Shoulder
+            _processed[3] = GetAngle(GetRawPos(raw, 24), GetRawPos(raw, 12), GetRawPos(raw, 14)); // R Shoulder
 
-            // 2. Normalise by torso length
-            float shoulderCenterX = (_processed[11 * 2] + _processed[12 * 2]) / 2f;
-            float shoulderCenterY = (_processed[11 * 2 + 1] + _processed[12 * 2 + 1]) / 2f;
-            float torsoLength = Mathf.Sqrt(shoulderCenterX * shoulderCenterX + shoulderCenterY * shoulderCenterY);
-            torsoLength = Mathf.Max(torsoLength, 1e-6f);
+            // --- Group B: Distances ---
+            _processed[4] = (raw[15 * 2 + 1] - raw[11 * 2 + 1]) / torsoLen; // L Wrist Y
+            _processed[5] = (raw[16 * 2 + 1] - raw[12 * 2 + 1]) / torsoLen; // R Wrist Y
+            _processed[6] = (raw[15 * 2] - raw[11 * 2]) / torsoLen;         // L Wrist X
+            _processed[7] = (raw[16 * 2] - raw[12 * 2]) / torsoLen;         // R Wrist X
 
-            for (int i = 0; i < 66; i++) { _processed[i] /= torsoLength; }
-
-            // 3. Feature Engineering: Angles (Indices 66-69)
-            // Left Elbow: Shoulder(11), Elbow(13), Wrist(15)
-            _processed[66] = GetAngle(GetPos(11), GetPos(13), GetPos(15));
-            // Right Elbow: Shoulder(12), Elbow(14), Wrist(16)
-            _processed[67] = GetAngle(GetPos(12), GetPos(14), GetPos(16));
-            // Left Shoulder: Hip(23), Shoulder(11), Elbow(13)
-            _processed[68] = GetAngle(GetPos(23), GetPos(11), GetPos(13));
-            // Right Shoulder: Hip(24), Shoulder(12), Elbow(14)
-            _processed[69] = GetAngle(GetPos(24), GetPos(12), GetPos(14));
-
-            // 5. StandardScaler (Now 70 features)
-            for (int i = 0; i < 70; i++)
+            // --- StandardScaler ---
+            for (int i = 0; i < 8; i++)
             {
                 _processed[i] = (_processed[i] - _scalerMean[i]) / _scalerStd[i];
             }
+        }
+
+        private Vector2 GetRawPos(float[] raw, int index)
+        {
+            return new Vector2(raw[index * 2], raw[index * 2 + 1]);
         }
 
         private static string[] ParseLabelJson(string json)
@@ -193,10 +189,6 @@ namespace InputLayer
             public float[] std;
         }
 
-        private Vector2 GetPos(int index)
-        {
-            return new Vector2(_processed[index * 2], _processed[index * 2 + 1]);
-        }
 
         private float GetAngle(Vector2 a, Vector2 b, Vector2 c)
         {

@@ -171,6 +171,9 @@ MonoBehaviour:
   dataCollector: {fileID: 893619848}
   poseState: {fileID: 1825261778}
   poseClassifierComponent: {fileID: 1918999158}
+  tutorialStartHidden: 0
+  cameraFeedVisualRoot: {fileID: 0}
+  annotationVisualRoot: {fileID: 0}
 --- !u!4 &184578139
 Transform:
   m_ObjectHideFlags: 0
@@ -1936,8 +1939,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2fc0a4cda9812246849a8a770090f31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputLayer.MLPPoseClassifier
-  modelAsset: {fileID: 5022602860645237092, guid: 60ae02037034a4da38f4eec383da61d5, type: 3}
-  scalerJson: {fileID: 4900000, guid: e2be859e21ca84097b80b13333a42af9, type: 3}
+  modelAsset: {fileID: 5022602860645237092, guid: 8c4d5142720bf479388d0d077cc028be, type: 3}
+  scalerJson: {fileID: 4900000, guid: 5c71b03cddf314cc79013d13cad664a9, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -154,6 +154,7 @@ MonoBehaviour:
   minPoseConfidence: 0.7
   maxPoseConfidence: 0.98
   stabilityMs: 200
+  perfectWindow: 0.45
 --- !u!4 &64651962
 Transform:
   m_ObjectHideFlags: 0
@@ -919,8 +920,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2fc0a4cda9812246849a8a770090f31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputLayer.MLPPoseClassifier
-  modelAsset: {fileID: 5022602860645237092, guid: 60ae02037034a4da38f4eec383da61d5, type: 3}
-  scalerJson: {fileID: 4900000, guid: e2be859e21ca84097b80b13333a42af9, type: 3}
+  modelAsset: {fileID: 5022602860645237092, guid: 8c4d5142720bf479388d0d077cc028be, type: 3}
+  scalerJson: {fileID: 4900000, guid: 5c71b03cddf314cc79013d13cad664a9, type: 3}
 --- !u!1 &733875699
 GameObject:
   m_ObjectHideFlags: 0
@@ -969,8 +970,13 @@ MonoBehaviour:
   hitZoneY: 0
   hitZoneThreshold: 0.5
   promptPrefab: {fileID: 926613821937977704, guid: 49cfaf71d55284b3fb6c1b8a300f4003, type: 3}
-  promptSpacing: 2
+  promptBeatSpacing: 2
   spawnOffset: {x: -6, y: 8, z: 0}
+  laneOffsets:
+  - {x: -8, y: 0, z: 0}
+  - {x: -6, y: 0, z: 0}
+  - {x: -4, y: 0, z: 0}
+  - {x: -2, y: 0, z: 0}
   autoStartGeneration: 1
   unitsPerBeat: 1
   beatSpeedMultiplier: 1
@@ -1163,6 +1169,9 @@ MonoBehaviour:
   dataCollector: {fileID: 411293888}
   poseState: {fileID: 1793061302}
   poseClassifierComponent: {fileID: 589382564}
+  tutorialStartHidden: 0
+  cameraFeedVisualRoot: {fileID: 0}
+  annotationVisualRoot: {fileID: 0}
 --- !u!4 &1019512105
 Transform:
   m_ObjectHideFlags: 0
@@ -1526,6 +1535,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SyncHitZone
   queue: {fileID: 733875701}
   spriteRenderer: {fileID: 1235703019}
+  boxWidth: 74
 --- !u!4 &1177607477
 Transform:
   m_ObjectHideFlags: 0
@@ -1734,7 +1744,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 2
-  m_Size: {x: 50, y: 1}
+  m_Size: {x: 74, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -2052,6 +2062,8 @@ MonoBehaviour:
   autoSelectFirst: 0
   planetCount: 0
   latchSelectionForTesting: 1
+  overrideAllowedPadCount: 0
+  allowedPadCount: 0
   selectionEnabled: 1
 --- !u!1 &1434389955
 GameObject:
