@@ -13,7 +13,7 @@ public class PoseClassifier : IDisposable
     public float[] LastScores => _lastScores;
 
     // Pre-allocated buffer for preprocessed data
-    private readonly float[] _processed = new float[70];
+    private readonly float[] _processed = new float[8];
 
     public void Load(ModelAsset modelAsset, TextAsset scalerJson, TextAsset labelsJson)
     {
@@ -27,9 +27,9 @@ public class PoseClassifier : IDisposable
         _scalerMean = scaler.mean;
         _scalerStd = scaler.std;
 
-        if (_scalerMean.Length != 70 || _scalerStd.Length != 70)
+        if (_scalerMean.Length != 8 || _scalerStd.Length != 8)
         {
-            Debug.LogError($"[PoseClassifier] Scaler data wrong size: mean={_scalerMean.Length}, std={_scalerStd.Length}. Expected 70.");
+            Debug.LogError($"[PoseClassifier] Scaler data wrong size: mean={_scalerMean.Length}, std={_scalerStd.Length}. Expected 8.");
         }
 
         // Parse labels JSON
@@ -38,9 +38,9 @@ public class PoseClassifier : IDisposable
         Debug.Log($"[PoseClassifier] Loaded. Labels: {string.Join(", ", _labelNames)}");
     }
 
-    // Classify a pose from 70 raw landmark floats (x0,y0,x1,y1,...,x34,y34).
+    // Classify a pose from 8 preprocessed floats.
     // Returns the predicted label string (e.g. "earth").
-    public string Classify(float[] input70)
+    public string Classify(float[] input8)
     {
         if (_worker == null)
         {
@@ -49,10 +49,10 @@ public class PoseClassifier : IDisposable
         }
 
         // Preprocess: must match Python pipeline exactly
-        Preprocess(input70);
+        Preprocess(input8);
 
-        // Creates input tensor: shape (1, 70)
-        using var inputTensor = new Tensor<float>(new TensorShape(1, 70), _processed);
+        // Creates input tensor: shape (1, 8)
+        using var inputTensor = new Tensor<float>(new TensorShape(1, 8), _processed);
 
         // Runs the model
         _worker.Schedule(inputTensor);
@@ -100,6 +100,38 @@ public class PoseClassifier : IDisposable
 
     private void Preprocess(float[] raw)
     {
+        // --- Torso length (same as Python) ---
+        Vector2 shoulderMid = (GetRawPos(raw, 11) + GetRawPos(raw, 12)) / 2f;
+        Vector2 hipMid = (GetRawPos(raw, 23) + GetRawPos(raw, 24)) / 2f;
+        float torsoLen = Vector2.Distance(shoulderMid, hipMid);
+        torsoLen = Mathf.Max(torsoLen, 1e-6f);
+
+        // --- Group A: Angles ---
+        _processed[0] = GetAngle(GetRawPos(raw, 11), GetRawPos(raw, 13), GetRawPos(raw, 15)); // L Elbow
+        _processed[1] = GetAngle(GetRawPos(raw, 12), GetRawPos(raw, 14), GetRawPos(raw, 16)); // R Elbow
+        _processed[2] = GetAngle(GetRawPos(raw, 23), GetRawPos(raw, 11), GetRawPos(raw, 13)); // L Shoulder
+        _processed[3] = GetAngle(GetRawPos(raw, 24), GetRawPos(raw, 12), GetRawPos(raw, 14)); // R Shoulder
+
+        // --- Group B: Distances ---
+        _processed[4] = (raw[15 * 2 + 1] - raw[11 * 2 + 1]) / torsoLen; // L Wrist Y
+        _processed[5] = (raw[16 * 2 + 1] - raw[12 * 2 + 1]) / torsoLen; // R Wrist Y
+        _processed[6] = (raw[15 * 2] - raw[11 * 2]) / torsoLen;         // L Wrist X
+        _processed[7] = (raw[16 * 2] - raw[12 * 2]) / torsoLen;         // R Wrist X
+
+        // --- StandardScaler ---
+        for (int i = 0; i < 8; i++)
+        {
+            _processed[i] = (_processed[i] - _scalerMean[i]) / _scalerStd[i];
+        }
+    }
+
+    private Vector2 GetRawPos(float[] raw, int index)
+    {
+        return new Vector2(raw[index * 2], raw[index * 2 + 1]);
+    }
+
+    /*private void Preprocess(float[] raw)
+    {
         // 1. Centre on hip midpoint (23 & 24)
         float hipCenterX = (raw[23 * 2] + raw[24 * 2]) / 2f;
         float hipCenterY = (raw[23 * 2 + 1] + raw[24 * 2 + 1]) / 2f;
@@ -134,7 +166,7 @@ public class PoseClassifier : IDisposable
         {
             _processed[i] = (_processed[i] - _scalerMean[i]) / _scalerStd[i];
         }
-    }
+    }*/
 
     private static string[] ParseLabelJson(string json)
     {
