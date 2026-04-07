@@ -39,7 +39,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
     private long _latestTimestamp;
     private bool _isNewResultAvailable = false;
     private readonly object _resultLock = new object();
-    private ElementPose _lastPose = ElementPose.None;
+
 
     public override void Stop()
     {
@@ -84,38 +84,33 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
             var classification = poseClassifier.Classify(resultToProcess);
             poseState.SetPose(classification.pose, classification.confidence, timestampToProcess);
 
-            if (classification.pose != _lastPose)
-            {
-                _lastPose = classification.pose;
-                UpdateSkeletonColor(classification.pose);
-            }
+
+            UpdateSkeletonColor(classification.pose);
+            
         }
     }
 
     private void UpdateSkeletonColor(ElementPose pose)
     {
+        Debug.Log($"[SkeletonColor] Updating color for pose: {pose}");
         // Example: change skeleton color based on the classified pose
-        switch (pose)
+        Color color = pose switch
         {
-            case ElementPose.Earth:
-                _poseLandmarkerResultAnnotationController.SetSkeletonColor(Color.green);
-                break;
-            case ElementPose.Fire:
-                _poseLandmarkerResultAnnotationController.SetSkeletonColor(Color.red);
-                break;
-            case ElementPose.Ice:
-                _poseLandmarkerResultAnnotationController.SetSkeletonColor(Color.cyan);
-                break;
-            case ElementPose.Water:
-                _poseLandmarkerResultAnnotationController.SetSkeletonColor(Color.blue);
-                break;
-            case ElementPose.None:
-                _poseLandmarkerResultAnnotationController.SetSkeletonColor(Color.white);
-                break;
-            default:
-                _poseLandmarkerResultAnnotationController.SetSkeletonColor(Color.white);
-                break;
+            ElementPose.Earth => Color.green,
+            ElementPose.Fire  => Color.red,
+            ElementPose.Ice   => Color.cyan,
+            ElementPose.Water => Color.blue,
+            _                 => Color.yellow
+        };
+
+        if (_poseLandmarkerResultAnnotationController == null)
+        {
+            Debug.LogError("[SkeletonColor] _poseLandmarkerResultAnnotationController is NULL");
+            return;
         }
+
+        _poseLandmarkerResultAnnotationController.SetSkeletonColor(color);
+        Debug.Log($"[SkeletonColor] Color set to: {color}");
     }
 
     protected override IEnumerator Run()
