@@ -50,6 +50,13 @@ namespace Mediapipe.Unity
       }
     }
 
+    public void SetSkeletonColor(UnityEngine.Color color)
+    {
+        annotation.SetLeftLandmarkColor(color);
+        annotation.SetRightLandmarkColor(color);
+        annotation.SetConnectionColor(color);
+    }
+
     protected override void SyncNow()
     {
       lock (_currentTargetLock)

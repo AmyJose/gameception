@@ -11,6 +11,7 @@ using Unity.Loading;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
+using Color = UnityEngine.Color;
 
 // NOTE: this script currently holds a lot of switch statements depending on the type of imagesource and processing selected
 // possibly can strip this back for performance if needed
@@ -38,6 +39,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
     private long _latestTimestamp;
     private bool _isNewResultAvailable = false;
     private readonly object _resultLock = new object();
+    private ElementPose _lastPose = ElementPose.None;
 
     public override void Stop()
     {
@@ -81,6 +83,38 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         {
             var classification = poseClassifier.Classify(resultToProcess);
             poseState.SetPose(classification.pose, classification.confidence, timestampToProcess);
+
+            if (classification.pose != _lastPose)
+            {
+                _lastPose = classification.pose;
+                UpdateSkeletonColor(classification.pose);
+            }
+        }
+    }
+
+    private void UpdateSkeletonColor(ElementPose pose)
+    {
+        // Example: change skeleton color based on the classified pose
+        switch (pose)
+        {
+            case ElementPose.Earth:
+                _poseLandmarkerResultAnnotationController.SetSkeletonColor(Color.green);
+                break;
+            case ElementPose.Fire:
+                _poseLandmarkerResultAnnotationController.SetSkeletonColor(Color.red);
+                break;
+            case ElementPose.Ice:
+                _poseLandmarkerResultAnnotationController.SetSkeletonColor(Color.cyan);
+                break;
+            case ElementPose.Water:
+                _poseLandmarkerResultAnnotationController.SetSkeletonColor(Color.blue);
+                break;
+            case ElementPose.None:
+                _poseLandmarkerResultAnnotationController.SetSkeletonColor(Color.white);
+                break;
+            default:
+                _poseLandmarkerResultAnnotationController.SetSkeletonColor(Color.white);
+                break;
         }
     }
 
