@@ -151,10 +151,11 @@ MonoBehaviour:
   poseState: {fileID: 1793061302}
   selectionState: {fileID: 2047366721}
   promptQueue: {fileID: 733875701}
-  minPoseConfidence: 0.7
-  maxPoseConfidence: 0.98
+  minPoseConfidence: 0.85
+  maxPoseConfidence: 0.9
   stabilityMs: 200
   perfectWindow: 0.45
+  logThresholdsOnEnable: 1
 --- !u!4 &64651962
 Transform:
   m_ObjectHideFlags: 0

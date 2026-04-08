@@ -15,8 +15,8 @@ namespace Gameplay.Choreography
         [SerializeField] private PromptQueue promptQueue;
 
         [Header("Thresholds")]
-        [SerializeField] private float minPoseConfidence = 0.90f;
-        [SerializeField] private float maxPoseConfidence = 0.99f;
+        [SerializeField] private float minPoseConfidence = 0.85f;
+        [SerializeField] private float maxPoseConfidence = 0.86f;
         [SerializeField] private long stabilityMs = 200;
         [SerializeField] private float perfectWindow = 0.45f;
 
@@ -201,7 +201,7 @@ namespace Gameplay.Choreography
             };
 
             Debug.Log($"[PromptJudge - HIT] Seq {result.sequenceId} | Prompt {id}: {result.quality} | " +
-              $"Timing: {result.timing} (Offset: {offset:F2}) | Pose: {result.detectedPose}");
+              $"Timing: {result.timing} (Offset: {offset:F2}) | Pose: {result.detectedPose}| Confidence: {poseState.Confidence:F2}");
             OnJudged?.Invoke(result);
             UpdateSequenceProgress(prompt.sequenceId, result.quality);
         }

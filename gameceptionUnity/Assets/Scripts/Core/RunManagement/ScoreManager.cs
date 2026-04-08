@@ -12,13 +12,6 @@ namespace Gameplay
         Perfect
     }
 
-    public enum PoseConfidence
-    {
-        Low,
-        Medium,
-        High
-    }
-
     // NOTE: currently doesnt care about lanes and that.
     // also doesnt care about population etc. just only the prompt Judge
     public class ScoreManager : MonoBehaviour
@@ -100,11 +93,17 @@ namespace Gameplay
             switch (result.quality)
             {
                 case PromptJudge.HitQuality.Perfect:
-                    RegisterHit(TimingJudgement.Perfect);
+                    if (result.timing == PromptJudge.PoseTiming.Perfect)
+                        RegisterHit(TimingJudgement.Perfect);
+                    else
+                        RegisterHit(TimingJudgement.Good);
                     break;
 
                 case PromptJudge.HitQuality.Good:
-                    RegisterHit(TimingJudgement.Good);
+                    if (result.timing == PromptJudge.PoseTiming.Perfect)
+                        RegisterHit(TimingJudgement.Good);
+                    else
+                        RegisterHit(TimingJudgement.Okay);
                     break;
 
                 case PromptJudge.HitQuality.WrongPose:

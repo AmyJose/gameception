@@ -86,21 +86,19 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
 
 
             UpdateSkeletonColor(classification.pose);
-            
+
         }
     }
 
     private void UpdateSkeletonColor(ElementPose pose)
     {
-        Debug.Log($"[SkeletonColor] Updating color for pose: {pose}");
-        // Example: change skeleton color based on the classified pose
         Color color = pose switch
         {
             ElementPose.Earth => Color.green,
-            ElementPose.Fire  => Color.red,
-            ElementPose.Ice   => Color.cyan,
+            ElementPose.Fire => Color.red,
+            ElementPose.Ice => Color.cyan,
             ElementPose.Water => Color.blue,
-            _                 => Color.yellow
+            _ => Color.yellow
         };
 
         if (_poseLandmarkerResultAnnotationController == null)
@@ -110,7 +108,6 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         }
 
         _poseLandmarkerResultAnnotationController.SetSkeletonColor(color);
-        Debug.Log($"[SkeletonColor] Color set to: {color}");
     }
 
     protected override IEnumerator Run()
@@ -278,7 +275,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
         _poseLandmarkerResultAnnotationController.DrawLater(result);
         DisposeAllMasks(result);
     }
-    
+
     private void DisposeAllMasks(PoseLandmarkerResult result)
     {
         if (result.segmentationMasks != null)
