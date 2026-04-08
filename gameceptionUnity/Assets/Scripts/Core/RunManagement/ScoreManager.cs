@@ -122,7 +122,8 @@ namespace Gameplay
         {
             if (!RunActive) return;
 
-            RegisterSequenceCompleted();
+            bool qualifiesForCompletionBonus = result.missesCount == 0 && result.hitsCount > 0;
+            RegisterSequenceCompleted(qualifiesForCompletionBonus);
         }
 
         public void RegisterHit(TimingJudgement timing)
@@ -170,12 +171,17 @@ namespace Gameplay
             NotifyAll();
         }
 
-        public void RegisterSequenceCompleted()
+        public void RegisterSequenceCompleted(bool awardBonus)
         {
             if (!RunActive) return;
 
             SequencesCompleted++;
-            CurrentScore += sequenceCompleteBonus;
+
+            // Completion bonus is only for clean sequences with no misses.
+            if (awardBonus)
+            {
+                CurrentScore += sequenceCompleteBonus;
+            }
 
             NotifyAll();
         }
