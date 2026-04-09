@@ -18,9 +18,10 @@ namespace Gameplay.Choreography
 
         [Header("Spawn")]
         [SerializeField] private PromptIndicator promptPrefab;
-        [SerializeField] private int promptBeatSpacing   = 2;
+        [SerializeField] private int promptBeatSpacing = 2;
         [SerializeField] public Vector3 spawnOffset = Vector3.zero;
-        [SerializeField] private Vector3[] laneOffsets = new Vector3[4]
+        [SerializeField]
+        private Vector3[] laneOffsets = new Vector3[4]
         {
             new Vector3(-8f, 0f, 0f),  // Lane 0: Left
             new Vector3(-6f, 0f, 0f),  // Lane 1
@@ -38,6 +39,9 @@ namespace Gameplay.Choreography
         [SerializeField] private int generationIntervalBeats = 10;
         [SerializeField] private int promptsPerSequence = 4;
 
+        [Header("Difficulty Settings")]
+        [SerializeField] private float difficultyRamp = 0.002f; // per beat
+        [SerializeField] private float maxSpeedMultiplier = 2.5f;
         // Events
         public event Action<PromptData> OnPromptEnteredZone;
         public event Action<PromptData> OnPromptExitedZone;
@@ -103,8 +107,9 @@ namespace Gameplay.Choreography
             if (_promptsSpawnedThisSequence < promptsPerSequence)
             {
                 int beatOffsetInSequence = beat.beatIndex - _currentSequenceStartBeat;
-                
+
                 // Check if this beat should spawn based on spacing
+                int promptBeatSpacing = GetCurrentSpacing();
                 if (beatOffsetInSequence % promptBeatSpacing == 0)
                 {
                     SpawnOnePrompt(beat.beatIndex);
@@ -119,7 +124,10 @@ namespace Gameplay.Choreography
 
             // Calculate the exact distance based on the smooth floating-point beat.
             // If multiplier is 2, it multiplies the final distance, keeping it perfectly smooth.
-            _totalScrollDistance = beatClock.CurrentBeat * unitsPerBeat * beatSpeedMultiplier;
+            float difficultyFactor = 1f + beatClock.CurrentBeat * difficultyRamp;
+            difficultyFactor = Mathf.Min(difficultyFactor, maxSpeedMultiplier);
+
+            _totalScrollDistance = beatClock.CurrentBeat * unitsPerBeat * beatSpeedMultiplier * difficultyFactor;
 
             // Move the prompts every single frame
             UpdatePrompts();
@@ -131,7 +139,7 @@ namespace Gameplay.Choreography
             _currentSequenceStartBeat = startBeat;
 
             Debug.Log($"[PromptQueue] Beat {startBeat}: START sequence {sequenceId} (spacing: {promptBeatSpacing})");
-            
+
             if (promptJudge != null)
             {
                 promptJudge.RegisterSequence(sequenceId, promptsPerSequence);
@@ -235,6 +243,12 @@ namespace Gameplay.Choreography
                     Destroy(prompt.gameObject);
                 }
             }
+        }
+
+        private int GetCurrentSpacing()
+        {
+            if (beatClock.CurrentBeat < 60) return 2;
+            else return 1;
         }
 
         private ElementPose GetRandomPose()
