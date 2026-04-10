@@ -18,7 +18,7 @@ namespace Gameplay
 
         [Header("References")]
         [SerializeField] private PlanetResourceUI resourceUI;
-        [SerializeField] private PlanetNeeds needs;
+        //[SerializeField] private PlanetNeeds needs;
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private Transform visualRoot;
         [SerializeField] private AlienSwarmView alienSwarmView;
@@ -28,13 +28,13 @@ namespace Gameplay
         [SerializeField] private float populationGrowthPerSecond = 0.75f;
         [SerializeField] private float populationDeclinePerSecond = 0.5f;
 
-        [Header("Stability Thresholds")]
+        /*[Header("Stability Thresholds")]
         [SerializeField, Range(0f, 1f)] private float healthyThreshold = 0.75f;
         [SerializeField, Range(0f, 1f)] private float unstableThreshold = 0.4f;
 
         [Header("Visual State")]
         [SerializeField] private Color healthyColor = Color.white;
-        [SerializeField] private Color dyingColor = new Color(0.35f, 0.35f, 0.35f, 1f);
+        [SerializeField] private Color dyingColor = new Color(0.35f, 0.35f, 0.35f, 1f);*/
 
         [Header("Spawn Animation")]
         [SerializeField] private float growDuration = 1.5f;
@@ -49,7 +49,7 @@ namespace Gameplay
         public PlanetDefinition Definition => definition;
         public float Population => population;
         public bool IsGrowing => _isGrowing;
-        public PlanetNeeds Needs => needs;
+        //public PlanetNeeds Needs => needs;
         public bool StarterPop => _starterPop;
 
         public AlienType PlanetAlienType => definition != null ? definition.alienType : AlienType.Earth;
@@ -72,10 +72,10 @@ namespace Gameplay
             }
             _targetScale = visualRoot.localScale;
 
-            if (needs == null)
+            /*if (needs == null)
             {
                 needs = GetComponent<PlanetNeeds>();
-            }
+            }*/
 
             if(alienSwarmView == null)
             {
@@ -92,7 +92,7 @@ namespace Gameplay
                 ApplyDefinition();
             }
 
-            UpdateVisualState();
+            //UpdateVisualState();
         }
 
         private void OnEnable()
@@ -157,17 +157,17 @@ namespace Gameplay
 
             float decayMult = difficulty != null ? difficulty.elementDecayMultiplier : 1f;
 
-            if(needs != null)
+            /*if(needs != null)
             {
                 needs.Tick(dt, decayMult);
-            }
+            }*/
 
-            UpdatePopulation(dt);
-            UpdateVisualState();
+            //UpdatePopulation(dt);
+            //UpdateVisualState();
         }
 
         //restore one matching need slot on this planet
-        public bool RestoreNeed(ElementPose element)
+        /*public bool RestoreNeed(ElementPose element)
         {
             if (needs == null)
             {
@@ -194,7 +194,7 @@ namespace Gameplay
         public bool IsUnstable()
         {
             return GetStabilityRatio() < unstableThreshold;
-        }
+        }*/
 
         public void AddStarterPopulation(float amount)
         {
@@ -228,18 +228,18 @@ namespace Gameplay
                 spriteRenderer.sprite = definition.planetSprite;
             }
 
-            if (needs != null)
+            /*if (needs != null)
             {
                 needs.InitialiseFromDefinition(definition);
-            }
+            }*/
 
             population = Mathf.Clamp(definition.startingPopulation, 0f, definition.populationCap);
 
             UpdateSelectionVisuals();
-            UpdateVisualState();
+            //UpdateVisualState();
         }
 
-        private void UpdatePopulation(float dt)
+        /*private void UpdatePopulation(float dt)
         {
             if (definition == null)
                 return;
@@ -267,8 +267,8 @@ namespace Gameplay
             }
 
             population = Mathf.Clamp(population, 0f, definition.populationCap);
-        }
-        private void UpdateVisualState()
+        }*/
+        /*private void UpdateVisualState()
         {
             if (spriteRenderer == null)
                 return;
@@ -282,7 +282,7 @@ namespace Gameplay
                 _aliensCurrentlyAngry = shouldBeAngry;
                 alienSwarmView.SetAliensAngry(shouldBeAngry);
             }
-        }
+        }*/
 
         private void UpdateSelectionVisuals()
         {
@@ -326,13 +326,13 @@ namespace Gameplay
 
             population += amount;
             population = Mathf.Clamp(population, 0f, definition.populationCap);
-            UpdateVisualState();
+            //UpdateVisualState();
         }
 
         public void ApplySequenceReward(float populationBonus, ElementPose pose)
         {
             AddPopulation(populationBonus);  
-            RestoreNeed(pose);              
+            //RestoreNeed(pose);              
         }
     }
 }

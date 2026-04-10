@@ -12,16 +12,15 @@ namespace Gameplay.Choreography
     {
         [Header("Dependencies")]
         [SerializeField] private PromptJudge promptJudge;
+
         [Header("Queue Layout")]
         [SerializeField] public float hitZoneY = 0f;
         [SerializeField] public float hitZoneThreshold = 0.8f;
 
         [Header("Spawn")]
         [SerializeField] private PromptIndicator promptPrefab;
-        [SerializeField] private int promptBeatSpacing = 2;
         [SerializeField] public Vector3 spawnOffset = Vector3.zero;
-        [SerializeField]
-        private Vector3[] laneOffsets = new Vector3[4]
+        [SerializeField] private Vector3[] laneOffsets = new Vector3[4]
         {
             new Vector3(-8f, 0f, 0f),  // Lane 0: Left
             new Vector3(-6f, 0f, 0f),  // Lane 1
@@ -65,6 +64,9 @@ namespace Gameplay.Choreography
         private Dictionary<int, PromptInfo> _promptInfo = new();
         private HashSet<int> _promptsInZone = new();
 
+        private readonly List<int> _activeLanes = new();
+        private readonly List<int> _sequenceLaneOrder = new();
+
         private float _totalScrollDistance = 0f;
         private int _nextPromptId = 0;
         private int _nextSequenceId = 0;
@@ -73,6 +75,8 @@ namespace Gameplay.Choreography
         private int _promptsSpawnedThisSequence = 0;
 
         private bool _isGenerating = false;
+        public bool IsGenerating => _isGenerating;
+        public IReadOnlyList<int> ActiveLanes => _activeLanes;
 
         private void OnEnable()
         {
@@ -90,6 +94,7 @@ namespace Gameplay.Choreography
         private void HandleBeat(BeatInfo beat)
         {
             if (!_isGenerating) return;
+            if (_activeLanes.Count == 0) return;
 
             // Check if time to start a new sequence
             if (beat.beatIndex >= _lastGeneratedSequenceBeat + generationIntervalBeats)
@@ -101,7 +106,8 @@ namespace Gameplay.Choreography
             }
 
             // Spawn one prompt per beat within the current seq based on spacing pattern
-            if (_promptsSpawnedThisSequence < promptsPerSequence)
+            int promptsThisSequence = Mathf.Min(promptsPerSequence, _sequenceLaneOrder.Count);
+            if (_promptsSpawnedThisSequence < promptsThisSequence)
             {
                 int beatOffsetInSequence = beat.beatIndex - _currentSequenceStartBeat;
 
@@ -127,14 +133,31 @@ namespace Gameplay.Choreography
 
         private void StartNewSequence(int startBeat)
         {
+            if (_activeLanes.Count == 0) return;
+
             int sequenceId = _nextSequenceId++;
             _currentSequenceStartBeat = startBeat;
+            
+            BuildSequenceLaneOrder();
 
-            Debug.Log($"[PromptQueue] Beat {startBeat}: START sequence {sequenceId} (spacing: {promptBeatSpacing})");
+            int promptsThisSequence = Mathf.Min(promptsPerSequence, _sequenceLaneOrder.Count);
+
+            Debug.Log($"[PromptQueue] Beat {startBeat}: START sequence {sequenceId} with {promptsThisSequence} prompts across {_activeLanes.Count} active lanes");
 
             if (promptJudge != null)
             {
-                promptJudge.RegisterSequence(sequenceId, promptsPerSequence);
+                promptJudge.RegisterSequence(sequenceId, promptsThisSequence);
+            }
+        }
+        private void BuildSequenceLaneOrder()
+        {
+            _sequenceLaneOrder.Clear();
+            _sequenceLaneOrder.AddRange(_activeLanes);
+
+            for(int i=0; i<_sequenceLaneOrder.Count; i++)
+            {
+                int j = UnityEngine.Random.Range(i, _sequenceLaneOrder.Count);
+                (_sequenceLaneOrder[i], _sequenceLaneOrder[j]) = (_sequenceLaneOrder[j], _sequenceLaneOrder[i]);
             }
         }
 
@@ -142,7 +165,10 @@ namespace Gameplay.Choreography
         {
             int sequenceId = _nextSequenceId - 1;  // Current sequence
             int indexInSequence = _promptsSpawnedThisSequence;  // Position in sequence (0, 1, 2, 3)
-            int laneIndex = _nextPromptId % 4; // lane assignment
+
+            if (indexInSequence < 0 || indexInSequence >= _sequenceLaneOrder.Count) return;
+
+            int laneIndex = _sequenceLaneOrder[indexInSequence];
 
             ElementPose pose = GetRandomPose();
 
@@ -151,7 +177,6 @@ namespace Gameplay.Choreography
 
             float initialY = spawnOffset.y;
             Vector3 laneSpawnPos = spawnOffset + laneOffsets[laneIndex];
-            // indicator.transform.localPosition = new Vector3(spawnOffset.x, initialY, 0);
             indicator.transform.localPosition = laneSpawnPos;
 
             _promptInfo[_nextPromptId] = new PromptInfo
@@ -190,11 +215,11 @@ namespace Gameplay.Choreography
                 float scrolledY = info.initialY - scrollAmount;
 
                 prompt.SetYPosition(scrolledY);
+                float distance = Mathf.Abs(scrolledY - hitZoneY);
 
                 // Zone detection
                 if (!_promptsInZone.Contains(id))
                 {
-                    float distance = Mathf.Abs(scrolledY - hitZoneY);
                     if (distance <= hitZoneThreshold)
                     {
                         _promptsInZone.Add(id);
@@ -211,7 +236,6 @@ namespace Gameplay.Choreography
                 }
                 else
                 {
-                    float distance = Mathf.Abs(scrolledY - hitZoneY);
                     if (distance > hitZoneThreshold)
                     {
                         _promptsInZone.Remove(id);
@@ -256,6 +280,7 @@ namespace Gameplay.Choreography
             _activePrompts.Clear();
             _promptInfo.Clear();
             _promptsInZone.Clear();
+            _sequenceLaneOrder.Clear();
         }
 
         public float GetPromptCurrentY(int id)
@@ -300,6 +325,36 @@ namespace Gameplay.Choreography
         {
             _isGenerating = false;
             Debug.Log("[PromptQueue] Generation stopped");
+        }
+
+        public void SetActiveLanes(IEnumerable<int> lanes)
+        {
+            _activeLanes.Clear();
+
+            foreach(var lane in lanes)
+            {
+                if (lane < 0 || lane >= laneOffsets.Length) continue;
+                if (_activeLanes.Contains(lane)) continue;
+                _activeLanes.Add(lane);
+            }
+
+            Debug.Log($"[PromptQueue] Active lanes set: [{string.Join(", ", _activeLanes)}]");
+        }
+
+        public void AddActiveLane(int lane)
+        {
+            if (lane < 0 || lane >= laneOffsets.Length) return;
+            if (_activeLanes.Contains(lane)) return;
+
+            _activeLanes.Add(lane);
+            Debug.Log($"[PromptQueue] Added active lane {lane}");
+        }
+        public void RemoveActiveLane(int lane)
+        {
+            if (_activeLanes.Remove(lane))
+            {
+                Debug.Log($"[PromptQueue] Removed active lane {lane}");
+            }
         }
     }
 }
