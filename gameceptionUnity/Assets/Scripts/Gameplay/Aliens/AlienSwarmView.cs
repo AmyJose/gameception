@@ -10,7 +10,7 @@ public class AlienSwarmView : MonoBehaviour
     [SerializeField] private AlienLibrary alienLibrary;
     [SerializeField] private SpriteRenderer planetSpriteRenderer;
     [SerializeField] private BeatClock beatClock;
-    [SerializeField] private int populationPerSprite = 5;
+    [SerializeField] private int populationPerSprite = 2;
     [SerializeField] private int maxSprites = 30;
 
     [SerializeField] private float edgeOffset = 0.5f;

@@ -34,8 +34,6 @@ Transform:
   m_Children:
   - {fileID: 1120777604323684103}
   - {fileID: 7096330909747885456}
-  - {fileID: 6337787178135900254}
-  - {fileID: 3349405953292296670}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2421352814427187259
@@ -52,17 +50,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Planet
   definition: {fileID: 11400000, guid: 9fadc5a8dfc0cf0448a0a1df04006b52, type: 2}
   difficulty: {fileID: 11400000, guid: b35e8d0df4dcce3479bacb894a29c502, type: 2}
-  needs: {fileID: 973496664835851503}
+  selectionState: {fileID: 0}
+  planetIndex: 0
+  resourceUI: {fileID: 0}
   spriteRenderer: {fileID: 2934997472566962085}
   visualRoot: {fileID: 1120777604323684103}
   alienSwarmView: {fileID: 0}
   population: 0
-  populationGrowthPerSecond: 0.75
-  populationDeclinePerSecond: 0.5
-  healthyThreshold: 0.75
-  unstableThreshold: 0.4
-  healthyColor: {r: 1, g: 1, b: 1, a: 1}
-  dyingColor: {r: 0.35, g: 0.35, b: 0.35, a: 1}
+  choreographyActive: 0
+  vitality: 60
+  maxVitality: 100
+  passiveDecayPerSecond: 2
+  perfectVitalityGain: 12
+  goodVitalityGain: 7
+  wrongPoseVitalityLoss: 8
+  noInputVitalityLoss: 12
+  perfectPopulationGain: 2
+  goodPopulationGain: 1
+  wrongPosePopulationLoss: 0.5
+  noInputPopulationLoss: 1
+  angryVitalityThreshold: 0.4
   growDuration: 0.5
   growCurve:
     serializedVersion: 2
@@ -105,7 +112,7 @@ MonoBehaviour:
   alienLibrary: {fileID: 11400000, guid: 75d9f3ad390dc334cbc2a9ee0a055da3, type: 2}
   planetSpriteRenderer: {fileID: 2934997472566962085}
   beatClock: {fileID: 0}
-  populationPerSprite: 5
+  populationPerSprite: 2
   maxSprites: 30
   edgeOffset: 0
   jitter: 0.2
@@ -124,11 +131,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ded045c37e8b9374289cef30b80279b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlanetView
-  selectionState: {fileID: 0}
-  planetIndex: 0
-  resourceUI: {fileID: 0}
   planetRenderer: {fileID: 2934997472566962085}
-  planetDefinition: {fileID: 0}
+  planet: {fileID: 0}
+  planetGlowing: {fileID: 0}
 --- !u!1 &2173057697115594395
 GameObject:
   m_ObjectHideFlags: 0
@@ -158,140 +163,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4645923925486781507}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2606149455798616269
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6337787178135900254}
-  - component: {fileID: 973496664835851503}
-  m_Layer: 0
-  m_Name: Needs
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6337787178135900254
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2606149455798616269}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4645923925486781507}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &973496664835851503
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2606149455798616269}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6adcd3fdbcf5b8d419dd47e07ea37454, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlanetNeeds
-  slots: []
-  startFilled: 1
-  filledDecayWeight: 1
-  fadingDecayWeight: 0.7
-  lastDecayedPenaltyMultiplier: 0.25
-  avoidRepeatingLastDecay: 1
-  averageDecayInterval: 4.5
-  decayJitter: 1.5
-  showDebugLogs: 1
---- !u!1 &3259785269783132253
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 812814074259942823}
-  - component: {fileID: 5899816918501125579}
-  m_Layer: 0
-  m_Name: PlanetNeedsWorldUI
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &812814074259942823
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3259785269783132253}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 0}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3349405953292296670}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5899816918501125579
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3259785269783132253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eaf83c15d64b96643acdddf35d70e8ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.PlanetNeedsWorldUI
-  targetPlanet: {fileID: 2421352814427187259}
-  targetNeeds: {fileID: 973496664835851503}
-  slotPrefab: {fileID: 7457207415687974300, guid: 3649d28cec3d9b24d8738ef3e2a5ff31, type: 3}
-  spacing: 2.2
-  offset: {x: -6, y: 0, z: 0}
---- !u!1 &7386094661875923653
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3349405953292296670}
-  m_Layer: 0
-  m_Name: NeedsRoot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3349405953292296670
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7386094661875923653}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 812814074259942823}
   m_Father: {fileID: 4645923925486781507}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8713938942086236444

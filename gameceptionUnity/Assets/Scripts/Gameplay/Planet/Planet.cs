@@ -30,13 +30,19 @@ namespace Gameplay
         [SerializeField] private bool choreographyActive = false;
         [SerializeField] private float vitality = 60f;
         [SerializeField] private float maxVitality = 100f;
-        [SerializeField] private float passiveDecayPerSecond = 2f;
 
         [Header("Judgement Effects")]
         [SerializeField] private float perfectVitalityGain = 12f;
         [SerializeField] private float goodVitalityGain = 7f;
         [SerializeField] private float wrongPoseVitalityLoss = 8f;
         [SerializeField] private float noInputVitalityLoss = 12f;
+
+        [Header("Visual Deterioration")]
+        [SerializeField] private Color healthyColor = Color.white;
+        [SerializeField] private Color strugglingColor = new Color(0.75f, 0.75f, 0.75f, 1f);
+        [SerializeField] private Color dyingColor = new Color(0.45f, 0.45f, 0.45f, 1f);
+        [SerializeField] private float healthyScaleMultiplier = 1f;
+        [SerializeField] private float dyingScaleMultiplier = 0.9f;
 
         [Header("Population Rewards")]
         [SerializeField] private float perfectPopulationGain = 2f;
@@ -171,17 +177,13 @@ namespace Gameplay
 
         private void TickChoreography(float dt)
         {
-            float difficultyMultiplier = difficulty != null ? difficulty.elementDecayMultiplier : 1f;
-
-            vitality -= passiveDecayPerSecond * difficultyMultiplier * dt;
-            vitality = Mathf.Clamp(vitality, 0f, maxVitality);
-
-            RefreshAlienMood();
+           //no passive drain
         }
         public void ActivateChoreography()
         {
             choreographyActive = true;
             RefreshAlienMood();
+            RefreshDeteriorationVisuals();
             Debug.Log($"[Planet] Planet {planetIndex} choreography activated");
         }
         public void DeactivateChoreography()
@@ -227,37 +229,24 @@ namespace Gameplay
 
         public void ApplyJudgement(PromptJudge.JudgementResult result)
         {
-            if (!choreographyActive) return;
+            if (!choreographyActive)
+                return;
 
-            switch (result.quality)
-            {
-                case PromptJudge.HitQuality.Perfect:
-                    vitality += perfectVitalityGain;
-                    AddPopulation(perfectPopulationGain);
-                    break;
+            float vitalityDelta = GetVitalityDelta(result);
+            float populationDelta = GetPopulationDelta(result);
 
-                case PromptJudge.HitQuality.Good:
-                    vitality += goodVitalityGain;
-                    AddPopulation(goodPopulationGain);
-                    break;
-
-                case PromptJudge.HitQuality.WrongPose:
-                    vitality -= wrongPoseVitalityLoss;
-                    AddPopulation(-wrongPosePopulationLoss);
-                    break;
-
-                case PromptJudge.HitQuality.NoInput:
-                    vitality -= noInputVitalityLoss;
-                    AddPopulation(-noInputPopulationLoss);
-                    break;
-            }
-
+            vitality += vitalityDelta;
             vitality = Mathf.Clamp(vitality, 0f, maxVitality);
 
+            AddPopulation(populationDelta);
+
             RefreshAlienMood();
+            RefreshDeteriorationVisuals();
 
             Debug.Log(
-                $"[Planet] Lane/Planet {planetIndex} got {result.quality}. " +
+                $"[Planet] Planet {planetIndex} got {result.quality}/{result.timing}. " +
+                $"Vitality delta={vitalityDelta:+0.0;-0.0;0.0}, " +
+                $"Population delta={populationDelta:+0.0;-0.0;0.0}, " +
                 $"Vitality={vitality:F1}/{maxVitality}, Population={population:F1}"
             );
         }
@@ -286,6 +275,7 @@ namespace Gameplay
 
             UpdateSelectionVisuals();
             RefreshAlienMood();
+            RefreshDeteriorationVisuals();
         }
         private void UpdateSelectionVisuals()
         {
@@ -318,6 +308,33 @@ namespace Gameplay
                 alienSwarmView.SetAliensAngry(shouldBeAngry);
             }
         }
+        private void RefreshDeteriorationVisuals()
+        {
+            if (spriteRenderer == null)
+                return;
+
+            float t = VitalityNormalized;
+
+            Color targetColor;
+            if (t >= 0.5f)
+            {
+                float lerp = Mathf.InverseLerp(0.5f, 1f, t);
+                targetColor = Color.Lerp(strugglingColor, healthyColor, lerp);
+            }
+            else
+            {
+                float lerp = Mathf.InverseLerp(0f, 0.5f, t);
+                targetColor = Color.Lerp(dyingColor, strugglingColor, lerp);
+            }
+
+            spriteRenderer.color = targetColor;
+
+            if (visualRoot != null && !_isGrowing)
+            {
+                float scaleMult = Mathf.Lerp(dyingScaleMultiplier, healthyScaleMultiplier, t);
+                visualRoot.localScale = _targetScale * scaleMult;
+            }
+        }
 
         private void HandleGrowth(float dt)
         {
@@ -334,6 +351,48 @@ namespace Gameplay
                 visualRoot.localRotation = Quaternion.identity;
                 _isGrowing = false;
                 Debug.Log("[Planet] Growth complete");
+            }
+        }
+
+        private float GetVitalityDelta(PromptJudge.JudgementResult result)
+        {
+            switch (result.quality)
+            {
+                case PromptJudge.HitQuality.Perfect:
+                    return result.timing == PromptJudge.PoseTiming.Perfect ? 12f : 9f;
+
+                case PromptJudge.HitQuality.Good:
+                    return result.timing == PromptJudge.PoseTiming.Perfect ? 7f : 5f;
+
+                case PromptJudge.HitQuality.WrongPose:
+                    return result.timing == PromptJudge.PoseTiming.Perfect ? -6f : -8f;
+
+                case PromptJudge.HitQuality.NoInput:
+                    return -12f;
+
+                default:
+                    return 0f;
+            }
+        }
+
+        private float GetPopulationDelta(PromptJudge.JudgementResult result)
+        {
+            switch (result.quality)
+            {
+                case PromptJudge.HitQuality.Perfect:
+                    return result.timing == PromptJudge.PoseTiming.Perfect ? 4f : 3f;
+
+                case PromptJudge.HitQuality.Good:
+                    return result.timing == PromptJudge.PoseTiming.Perfect ? 2f : 1f;
+
+                case PromptJudge.HitQuality.WrongPose:
+                    return result.timing == PromptJudge.PoseTiming.Perfect ? -2f : -3f;
+
+                case PromptJudge.HitQuality.NoInput:
+                    return -4f;
+
+                default:
+                    return 0f;
             }
         }
     }

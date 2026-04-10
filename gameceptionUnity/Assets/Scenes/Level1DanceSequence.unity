@@ -525,9 +525,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 180546818}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47266e2897cfd9141ad49d1dfd7dfc60, type: 3}
+  m_Script: {fileID: 11500000, guid: 4a6004cef25cdff419b402d48b67771f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.ResourceSystem
+  m_EditorClassIdentifier: Assembly-CSharp::PlanetJudgementRouter
+  promptJudge: {fileID: 64651961}
   planetManager: {fileID: 967029054}
 --- !u!1 &250756403
 GameObject:
@@ -578,52 +579,6 @@ MonoBehaviour:
   maxBuffer: 4
   bufferTimeout: 4
   comboResolveDelay: 1
---- !u!1 &284896778
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 284896780}
-  - component: {fileID: 284896779}
-  m_Layer: 0
-  m_Name: SequenceRewardHandler
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &284896779
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 284896778}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d788ae1b99d9468f8aa1d4cdd8f92d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Choreography.SequenceRewardHandler
-  judge: {fileID: 64651961}
-  planetManager: {fileID: 0}
---- !u!4 &284896780
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 284896778}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.77724, y: 1.10555, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 545700348}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &328449554
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -821,12 +776,10 @@ Transform:
   - {fileID: 1130057112}
   - {fileID: 1793061301}
   - {fileID: 250756404}
-  - {fileID: 887063825}
   - {fileID: 1414206231}
   - {fileID: 733875700}
   - {fileID: 64651962}
   - {fileID: 1434389956}
-  - {fileID: 284896780}
   - {fileID: 1177607477}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -946,57 +899,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8571076842338426133, guid: 140d1d2c406167c50819d89f86d9092e, type: 3}
   m_PrefabInstance: {fileID: 121746790}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &887063824
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 887063825}
-  - component: {fileID: 887063826}
-  m_Layer: 0
-  m_Name: BeatActionResolver
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &887063825
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 887063824}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 545700348}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &887063826
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 887063824}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ab397521a4566647a5d8106faae48d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.BeatActionResolver
-  beatClock: {fileID: 1130057111}
-  poseState: {fileID: 1793061302}
-  selectionState: {fileID: 2047366721}
-  resourceSystem: {fileID: 180546820}
-  comboSystem: {fileID: 250756405}
-  planetObjects: []
-  minPoseConfidence: 0.6
 --- !u!1 &967029052
 GameObject:
   m_ObjectHideFlags: 0
