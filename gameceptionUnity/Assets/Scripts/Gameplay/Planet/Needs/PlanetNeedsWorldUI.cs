@@ -21,8 +21,7 @@ namespace Gameplay
             if (targetPlanet == null)
                 targetPlanet = GetComponentInParent<Planet>();
 
-            if (targetNeeds == null && targetPlanet != null)
-                targetNeeds = targetPlanet.Needs;
+            //if (targetNeeds == null && targetPlanet != null) targetNeeds = targetPlanet.Needs;
         }
 
         private void OnEnable()

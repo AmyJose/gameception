@@ -17,7 +17,7 @@ namespace Gameplay
                 if (planet == null) continue;
 
                 //planet.ApplyElement(element, resourceAmountPerBeat);
-                planet.RestoreNeed(element);
+                //planet.RestoreNeed(element);
                 Debug.Log($"ResourceSystem: applied {element} to planet {idx} on beat {beatIndex}");
             }
         }
