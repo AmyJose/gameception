@@ -31,11 +31,20 @@ namespace Gameplay
         [SerializeField] private float vitality = 60f;
         [SerializeField] private float maxVitality = 100f;
 
-        [Header("Judgement Effects")]
-        [SerializeField] private float perfectVitalityGain = 12f;
-        [SerializeField] private float goodVitalityGain = 7f;
-        [SerializeField] private float wrongPoseVitalityLoss = 8f;
-        [SerializeField] private float noInputVitalityLoss = 12f;
+        [Header("Base Vitality Values")]
+        [SerializeField] private float perfectVitalityBase = 10f;
+        [SerializeField] private float goodVitalityBase = 6f;
+        [SerializeField] private float wrongPoseVitalityBase = -8f;
+        [SerializeField] private float noInputVitalityBase = -12f;
+        [Header("Base Population Values")]
+        [SerializeField] private float perfectPopulationBase = 4f;
+        [SerializeField] private float goodPopulationBase = 2f;
+        [SerializeField] private float wrongPosePopulationBase = -2f;
+        [SerializeField] private float noInputPopulationBase = -4f;
+        [Header("Timing Multipliers")]
+        [SerializeField] private float perfectTimingMultiplier = 1.2f;
+        [SerializeField] private float earlyTimingMultiplier = 1.0f;
+        [SerializeField] private float lateTimingMultiplier = 1.0f;
 
         [Header("Visual Deterioration")]
         [SerializeField] private Color healthyColor = Color.white;
@@ -43,12 +52,6 @@ namespace Gameplay
         [SerializeField] private Color dyingColor = new Color(0.45f, 0.45f, 0.45f, 1f);
         [SerializeField] private float healthyScaleMultiplier = 1f;
         [SerializeField] private float dyingScaleMultiplier = 0.9f;
-
-        [Header("Population Rewards")]
-        [SerializeField] private float perfectPopulationGain = 2f;
-        [SerializeField] private float goodPopulationGain = 1f;
-        [SerializeField] private float wrongPosePopulationLoss = 0.5f;
-        [SerializeField] private float noInputPopulationLoss = 1f;
 
         [Header("Alien Mood Thresholds")]
         [SerializeField, Range(0f, 1f)] private float angryVitalityThreshold = 0.4f;
@@ -356,44 +359,72 @@ namespace Gameplay
 
         private float GetVitalityDelta(PromptJudge.JudgementResult result)
         {
-            switch (result.quality)
+            float baseValue = result.quality switch
             {
-                case PromptJudge.HitQuality.Perfect:
-                    return result.timing == PromptJudge.PoseTiming.Perfect ? 12f : 9f;
+                PromptJudge.HitQuality.Perfect => perfectVitalityBase,
+                PromptJudge.HitQuality.Good => goodVitalityBase,
+                PromptJudge.HitQuality.WrongPose => wrongPoseVitalityBase,
+                PromptJudge.HitQuality.NoInput => noInputVitalityBase,
+                _ => 0f
+            };
 
-                case PromptJudge.HitQuality.Good:
-                    return result.timing == PromptJudge.PoseTiming.Perfect ? 7f : 5f;
+            float timingMultiplier = GetTimingMultiplier(result.timing);
 
-                case PromptJudge.HitQuality.WrongPose:
-                    return result.timing == PromptJudge.PoseTiming.Perfect ? -6f : -8f;
+            bool isReward = baseValue > 0f;
+            float difficultyMultiplier = 1f;
 
-                case PromptJudge.HitQuality.NoInput:
-                    return -12f;
-
-                default:
-                    return 0f;
+            if (difficulty != null)
+            {
+                difficultyMultiplier = isReward
+                    ? difficulty.vitalityRewardMultiplier
+                    : difficulty.vitalityPenaltyMultiplier;
             }
+
+            return baseValue * timingMultiplier * difficultyMultiplier;
         }
 
         private float GetPopulationDelta(PromptJudge.JudgementResult result)
         {
-            switch (result.quality)
+            float baseValue = result.quality switch
             {
-                case PromptJudge.HitQuality.Perfect:
-                    return result.timing == PromptJudge.PoseTiming.Perfect ? 4f : 3f;
+                PromptJudge.HitQuality.Perfect => perfectPopulationBase,
+                PromptJudge.HitQuality.Good => goodPopulationBase,
+                PromptJudge.HitQuality.WrongPose => wrongPosePopulationBase,
+                PromptJudge.HitQuality.NoInput => noInputPopulationBase,
+                _ => 0f
+            };
 
-                case PromptJudge.HitQuality.Good:
-                    return result.timing == PromptJudge.PoseTiming.Perfect ? 2f : 1f;
+            float timingMultiplier = GetTimingMultiplier(result.timing);
 
-                case PromptJudge.HitQuality.WrongPose:
-                    return result.timing == PromptJudge.PoseTiming.Perfect ? -2f : -3f;
+            bool isReward = baseValue > 0f;
+            float difficultyMultiplier = 1f;
 
-                case PromptJudge.HitQuality.NoInput:
-                    return -4f;
+            if (difficulty != null)
+            {
+                difficultyMultiplier = isReward
+                    ? difficulty.populationRewardMultiplier
+                    : difficulty.populationPenaltyMultiplier;
+            }
+
+            return baseValue * timingMultiplier * difficultyMultiplier;
+        }
+        private float GetTimingMultiplier(PromptJudge.PoseTiming timing)
+        {
+            switch (timing)
+            {
+                case PromptJudge.PoseTiming.Perfect:
+                    return perfectTimingMultiplier;
+
+                case PromptJudge.PoseTiming.Early:
+                    return earlyTimingMultiplier;
+
+                case PromptJudge.PoseTiming.Late:
+                    return lateTimingMultiplier;
 
                 default:
-                    return 0f;
+                    return 1f;
             }
         }
+
     }
 }
