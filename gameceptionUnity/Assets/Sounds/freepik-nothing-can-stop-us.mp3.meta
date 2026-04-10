@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 98eaa6090b722b44f9af3e80134b06dd
+=======
+guid: 9b63625b05e7b604794ad84da4f4a169
+>>>>>>> f29d436 (warning and speech bubble)
 AudioImporter:
   externalObjects: {}
   serializedVersion: 8
