@@ -1,8 +1,9 @@
-using UnityEngine;
+using Gameplay.Choreography;
 using InputLayer;
 using System;
 using System.Collections.Generic;
 using UnityEditor.Build;
+using UnityEngine;
 
 namespace Gameplay
 {
@@ -12,29 +13,39 @@ namespace Gameplay
         [SerializeField] private PlanetDefinition definition;
         [SerializeField] private DifficultyProfile difficulty;
 
-        [Header("Selection")]
+        [Header("Selection / Lane Mapping")]
         [SerializeField] private SelectionState selectionState;
-        public int planetIndex;
+        [SerializeField] private int planetIndex; // for now same as lane id.
 
         [Header("References")]
         [SerializeField] private PlanetResourceUI resourceUI;
-        //[SerializeField] private PlanetNeeds needs;
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private Transform visualRoot;
         [SerializeField] private AlienSwarmView alienSwarmView;
 
-        [Header("Runtime Population")]
+        [Header("Population")]
         [SerializeField] private float population = 0f;
-        [SerializeField] private float populationGrowthPerSecond = 0.75f;
-        [SerializeField] private float populationDeclinePerSecond = 0.5f;
 
-        /*[Header("Stability Thresholds")]
-        [SerializeField, Range(0f, 1f)] private float healthyThreshold = 0.75f;
-        [SerializeField, Range(0f, 1f)] private float unstableThreshold = 0.4f;
+        [Header("Choreography State")]
+        [SerializeField] private bool choreographyActive = false;
+        [SerializeField] private float vitality = 60f;
+        [SerializeField] private float maxVitality = 100f;
+        [SerializeField] private float passiveDecayPerSecond = 2f;
 
-        [Header("Visual State")]
-        [SerializeField] private Color healthyColor = Color.white;
-        [SerializeField] private Color dyingColor = new Color(0.35f, 0.35f, 0.35f, 1f);*/
+        [Header("Judgement Effects")]
+        [SerializeField] private float perfectVitalityGain = 12f;
+        [SerializeField] private float goodVitalityGain = 7f;
+        [SerializeField] private float wrongPoseVitalityLoss = 8f;
+        [SerializeField] private float noInputVitalityLoss = 12f;
+
+        [Header("Population Rewards")]
+        [SerializeField] private float perfectPopulationGain = 2f;
+        [SerializeField] private float goodPopulationGain = 1f;
+        [SerializeField] private float wrongPosePopulationLoss = 0.5f;
+        [SerializeField] private float noInputPopulationLoss = 1f;
+
+        [Header("Alien Mood Thresholds")]
+        [SerializeField, Range(0f, 1f)] private float angryVitalityThreshold = 0.4f;
 
         [Header("Spawn Animation")]
         [SerializeField] private float growDuration = 1.5f;
@@ -49,8 +60,11 @@ namespace Gameplay
         public PlanetDefinition Definition => definition;
         public float Population => population;
         public bool IsGrowing => _isGrowing;
-        //public PlanetNeeds Needs => needs;
         public bool StarterPop => _starterPop;
+        public int PlanetIndex => planetIndex;
+        public bool ChoreographyActive => choreographyActive;
+        public float Vitality => vitality;
+        public float VitalityNormalized => maxVitality > 0f ? vitality / maxVitality : 0f;
 
         public AlienType PlanetAlienType => definition != null ? definition.alienType : AlienType.Earth;
 
@@ -72,11 +86,6 @@ namespace Gameplay
             }
             _targetScale = visualRoot.localScale;
 
-            /*if (needs == null)
-            {
-                needs = GetComponent<PlanetNeeds>();
-            }*/
-
             if(alienSwarmView == null)
             {
                 alienSwarmView = GetComponentInChildren<AlienSwarmView>();
@@ -92,15 +101,17 @@ namespace Gameplay
                 ApplyDefinition();
             }
 
-            //UpdateVisualState();
+            RefreshAlienMood();
         }
 
         private void OnEnable()
         {
-            if (selectionState == null){
-                selectionState = UnityEngine.Object.FindFirstObjectByType<SelectionState>();
+            if (selectionState == null)
+            {
+                selectionState = FindFirstObjectByType<SelectionState>();
             }
-            if (selectionState != null){
+            if (selectionState != null)
+            {
                 selectionState.OnChanged += HandleSelectionChanged;
                 UpdateSelectionVisuals();
             }
@@ -155,46 +166,36 @@ namespace Gameplay
 
             if (_isGrowing) return;
 
-            float decayMult = difficulty != null ? difficulty.elementDecayMultiplier : 1f;
-
-            /*if(needs != null)
-            {
-                needs.Tick(dt, decayMult);
-            }*/
-
-            //UpdatePopulation(dt);
-            //UpdateVisualState();
+            if (choreographyActive) TickChoreography(dt);
         }
 
-        //restore one matching need slot on this planet
-        /*public bool RestoreNeed(ElementPose element)
+        private void TickChoreography(float dt)
         {
-            if (needs == null)
-            {
-                Debug.LogWarning("[Planet] RestoreNeed called but PlanetNeeds is missing.");
-                return false;
-            }
-            bool restored = needs.RestoreNeed(element);
-            if (restored)
-            {
-                UpdateVisualState();
-            }
-            return restored;
-        }
-        public float GetStabilityRatio()
-        {
-            if (needs == null) return 0f;
+            float difficultyMultiplier = difficulty != null ? difficulty.elementDecayMultiplier : 1f;
 
-            return needs.GetStabilityRatio();
+            vitality -= passiveDecayPerSecond * difficultyMultiplier * dt;
+            vitality = Mathf.Clamp(vitality, 0f, maxVitality);
+
+            RefreshAlienMood();
         }
-        public bool IsStable()
+        public void ActivateChoreography()
         {
-            return GetStabilityRatio() >= healthyThreshold;
+            choreographyActive = true;
+            RefreshAlienMood();
+            Debug.Log($"[Planet] Planet {planetIndex} choreography activated");
         }
-        public bool IsUnstable()
+        public void DeactivateChoreography()
         {
-            return GetStabilityRatio() < unstableThreshold;
-        }*/
+            choreographyActive = false;
+            RefreshAlienMood();
+            Debug.Log($"[Planet] Planet {planetIndex} choreography deactivated");
+        }
+
+        public void SetVitality(float amount)
+        {
+            vitality = Mathf.Clamp(amount, 0f, maxVitality);
+            RefreshAlienMood();
+        }
 
         public void AddStarterPopulation(float amount)
         {
@@ -215,6 +216,59 @@ namespace Gameplay
 
             population = Mathf.Clamp(amount, 0f, definition.populationCap);
         }
+        public void AddPopulation(float amount)
+        {
+            if (definition == null)
+                return;
+
+            population += amount;
+            population = Mathf.Clamp(population, 0f, definition.populationCap);
+        }
+
+        public void ApplyJudgement(PromptJudge.JudgementResult result)
+        {
+            if (!choreographyActive) return;
+
+            switch (result.quality)
+            {
+                case PromptJudge.HitQuality.Perfect:
+                    vitality += perfectVitalityGain;
+                    AddPopulation(perfectPopulationGain);
+                    break;
+
+                case PromptJudge.HitQuality.Good:
+                    vitality += goodVitalityGain;
+                    AddPopulation(goodPopulationGain);
+                    break;
+
+                case PromptJudge.HitQuality.WrongPose:
+                    vitality -= wrongPoseVitalityLoss;
+                    AddPopulation(-wrongPosePopulationLoss);
+                    break;
+
+                case PromptJudge.HitQuality.NoInput:
+                    vitality -= noInputVitalityLoss;
+                    AddPopulation(-noInputPopulationLoss);
+                    break;
+            }
+
+            vitality = Mathf.Clamp(vitality, 0f, maxVitality);
+
+            RefreshAlienMood();
+
+            Debug.Log(
+                $"[Planet] Lane/Planet {planetIndex} got {result.quality}. " +
+                $"Vitality={vitality:F1}/{maxVitality}, Population={population:F1}"
+            );
+        }
+        public bool IsDead()
+        {
+            return vitality <= 0f;
+        }
+        public bool IsStruggling()
+        {
+            return VitalityNormalized < angryVitalityThreshold;
+        }
         private void ApplyDefinition()
         {
             if (definition == null)
@@ -228,62 +282,11 @@ namespace Gameplay
                 spriteRenderer.sprite = definition.planetSprite;
             }
 
-            /*if (needs != null)
-            {
-                needs.InitialiseFromDefinition(definition);
-            }*/
-
             population = Mathf.Clamp(definition.startingPopulation, 0f, definition.populationCap);
 
             UpdateSelectionVisuals();
-            //UpdateVisualState();
+            RefreshAlienMood();
         }
-
-        /*private void UpdatePopulation(float dt)
-        {
-            if (definition == null)
-                return;
-
-            float stability = GetStabilityRatio();
-
-            if (stability >= healthyThreshold)
-            {
-                float growthMultiplier = 1f;
-                if (difficulty != null)
-                {
-                    growthMultiplier = difficulty.populationGrowthMultiplier;
-                }
-
-                if (population <= 0f)
-                {
-                    population = definition.startingPopulation;
-                }
-
-                population += populationGrowthPerSecond * growthMultiplier * dt;
-            }
-            else if (stability < unstableThreshold)
-            {
-                population -= populationDeclinePerSecond * dt;
-            }
-
-            population = Mathf.Clamp(population, 0f, definition.populationCap);
-        }*/
-        /*private void UpdateVisualState()
-        {
-            if (spriteRenderer == null)
-                return;
-
-            float stability = GetStabilityRatio();
-            spriteRenderer.color = Color.Lerp(dyingColor, healthyColor, stability);
-
-            bool shouldBeAngry = stability < healthyThreshold;
-            if(alienSwarmView != null && shouldBeAngry != _aliensCurrentlyAngry)
-            {
-                _aliensCurrentlyAngry = shouldBeAngry;
-                alienSwarmView.SetAliensAngry(shouldBeAngry);
-            }
-        }*/
-
         private void UpdateSelectionVisuals()
         {
             if (spriteRenderer == null || definition == null || selectionState == null) return;
@@ -299,6 +302,20 @@ namespace Gameplay
             if (resourceUI != null)
             {
                 resourceUI.SetVisible(isSelected);
+            }
+        }
+
+        private void RefreshAlienMood()
+        {
+            if (alienSwarmView == null)
+                return;
+
+            bool shouldBeAngry = choreographyActive && VitalityNormalized < angryVitalityThreshold;
+
+            if (shouldBeAngry != _aliensCurrentlyAngry)
+            {
+                _aliensCurrentlyAngry = shouldBeAngry;
+                alienSwarmView.SetAliensAngry(shouldBeAngry);
             }
         }
 
@@ -318,21 +335,6 @@ namespace Gameplay
                 _isGrowing = false;
                 Debug.Log("[Planet] Growth complete");
             }
-        } 
-
-        public void AddPopulation(float amount)
-        {
-            if (definition == null) return;
-
-            population += amount;
-            population = Mathf.Clamp(population, 0f, definition.populationCap);
-            //UpdateVisualState();
-        }
-
-        public void ApplySequenceReward(float populationBonus, ElementPose pose)
-        {
-            AddPopulation(populationBonus);  
-            //RestoreNeed(pose);              
         }
     }
 }

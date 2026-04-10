@@ -1,12 +1,21 @@
 using Gameplay;
+using Gameplay.Choreography;
 using InputLayer;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+
+[System.Serializable] public class LaneUnlockData
+{
+    public int laneIndex;
+    public int requiredPadIndex;
+}
 
 public class LevelOneController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private PlanetManager planetManager;
+    [SerializeField] private PromptQueue promptQueue;
     [SerializeField] private DanceMatInputProvider danceMatInputProvider;
     [SerializeField] private DanceMatSelectionController danceMatSelectionController;
     [SerializeField] private SelectionState selectionState;
@@ -22,13 +31,19 @@ public class LevelOneController : MonoBehaviour
     [SerializeField] private int maxPlanets = 4;
     [SerializeField] private float repeatSpawnDelay = 15f;
 
+    [Header("Lane Unlock Order")]
+    [SerializeField] private LaneUnlockData[] laneUnlockOrder;
+
     [Header("Planet Setup")]
     [SerializeField] private int starterPopulationAmount = 10;
 
-    private bool waitingForSpawnPad;
-    private bool spawnPadPressed;
-    private int spawnPadIndex = -1;
+    private bool waitingForSpecificPad;
+    private bool requiredPadPressed;
+    private int requiredPadIndex = -1;
     private UFO currentUFO;
+    private int nextUnlockStep = 0;
+
+    private readonly List<int> unlockedLanes = new();
 
     private void OnEnable()
     {
@@ -45,15 +60,23 @@ public class LevelOneController : MonoBehaviour
     private void Start()
     {
         Time.timeScale = 1f;
+
+        if (promptQueue != null)
+        {
+            promptQueue.StopGeneration();
+            promptQueue.SetActiveLanes(unlockedLanes);
+            promptQueue.ClearAll();
+        }
+
         StartCoroutine(RunLevelFlow());
     }
 
     private void HandlePadPressed(int idx)
     {
-        if (!waitingForSpawnPad) return;
+        if (!waitingForSpecificPad) return;
+        if (idx != requiredPadIndex) return;
 
-        spawnPadPressed = true;
-        spawnPadIndex = idx;
+        requiredPadPressed = true;
     }
 
     private IEnumerator RunLevelFlow()
@@ -66,74 +89,64 @@ public class LevelOneController : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
-        // First guided tutorial spawn
-        yield return RunPlanetArrivalSequence(
-            "Please make us a planet. Jump on a pad to spawn it!"
-        );
+        yield return IntroduceNextPlanet();
 
         if (danceMatSelectionController != null)
             danceMatSelectionController.SetSelectionEnabled(true);
 
-        BeginGameplayPhase();
+        if (promptQueue != null && unlockedLanes.Count > 0)
+        {
+            promptQueue.SetActiveLanes(unlockedLanes);
+            promptQueue.BeginGeneration();
+        }
 
-        // Repeating spawns
         StartCoroutine(RecurringPlanetSpawnLoop());
     }
 
     private IEnumerator RecurringPlanetSpawnLoop()
     {
-        while (true)
+        while (nextUnlockStep < maxPlanets && nextUnlockStep < laneUnlockOrder.Length)
         {
             yield return new WaitForSeconds(repeatSpawnDelay);
 
-            if (planetManager == null) continue;
-            if (planetManager.PlanetCount >= maxPlanets) continue;
-
-            yield return RunPlanetArrivalSequence(
-                "We want a planet too! Jump on a pad to create one!"
-            );
+            yield return IntroduceNextPlanet();
         }
     }
 
-    private IEnumerator RunPlanetArrivalSequence(string ufoMessage)
+    private IEnumerator IntroduceNextPlanet()
     {
-        if (planetManager == null || planetManager.PlanetCount >= maxPlanets)
-            yield break;
+        if (planetManager == null || planetManager.PlanetCount >= maxPlanets) yield break;
 
+        if(nextUnlockStep >=laneUnlockOrder.Length) yield break;
 
         Transform spawnPoint = GetNextPlanetSpawnPoint();
-        if (spawnPoint == null)
-        {
-            yield break;
-        }
+        if (spawnPoint == null) yield break;
 
-        // Spawn UFO and do intro fly-in
-        if (ufoPrefab != null && ufoSpawnPoint != null && ufoIntroPoint != null)
+        LaneUnlockData unlock = laneUnlockOrder[nextUnlockStep];
+
+        string message = $"Jump on pad {unlock.requiredPadIndex} to create this planet!";
+
+        if(ufoPrefab != null && ufoSpawnPoint != null && ufoIntroPoint!= null)
         {
             currentUFO = Instantiate(ufoPrefab, ufoSpawnPoint.position, Quaternion.identity);
-            yield return currentUFO.PlayEntranceSequence(ufoIntroPoint.position, ufoMessage);
+            yield return currentUFO.PlayEntranceSequence(ufoIntroPoint.position, message);
         }
-
-        // Wait for pad press
-        yield return WaitForSpawnPadPress();
+        yield return WaitForSpecificPadPress(unlock.requiredPadIndex);
 
         if (currentUFO != null)
             currentUFO.HideMessage();
 
-        // Spawn planet at chosen location
-        //FOR BETA: Circle through all definitions
-        Planet newPlanet = planetManager.SpawnPlanetAt(spawnPoint.position, planetManager.availableDefinitions[planetManager.PlanetCount]);
+        Planet newPlanet = planetManager.SpawnPlanetAt(
+            spawnPoint.position,
+            planetManager.availableDefinitions[planetManager.PlanetCount]
+        );
+        if (newPlanet == null) yield break;
 
-        if (newPlanet == null)
-        {
-            Debug.Log("[LevelOneController] newPlanet is null");
-            yield break;
-        }
+        newPlanet.SetPlanetIndex(unlock.laneIndex);
 
-        // Wait for growth
         yield return new WaitUntil(() => !newPlanet.IsGrowing);
+        newPlanet.ActivateChoreography();
 
-        // UFO moves to planet
         if (currentUFO != null)
         {
             Vector3 ufoTarget = newPlanet.transform.position + new Vector3(0f, 3f, 0f);
@@ -145,29 +158,38 @@ public class LevelOneController : MonoBehaviour
 
         AddStarterPopulation(newPlanet);
 
+        unlockedLanes.Add(unlock.laneIndex);
+
+        if (promptQueue != null)
+        {
+            promptQueue.SetActiveLanes(unlockedLanes);
+
+            if (!promptQueue.IsGenerating)
+                promptQueue.BeginGeneration();
+        }
+
         yield return new WaitForSeconds(0.3f);
 
-        // UFO exits
         if (currentUFO != null && ufoExitPoint != null)
         {
             currentUFO.HideMessage();
             yield return currentUFO.FlyTo(ufoExitPoint.position, 1f, 25f);
-
             Destroy(currentUFO.gameObject);
         }
 
-        yield return new WaitForSeconds(0.4f);
+        currentUFO = null;
+        nextUnlockStep++;
     }
-
-    private IEnumerator WaitForSpawnPadPress()
+    private IEnumerator WaitForSpecificPadPress(int padIndex)
     {
-        waitingForSpawnPad = true;
-        spawnPadPressed = false;
-        spawnPadIndex = -1;
+        waitingForSpecificPad = true;
+        requiredPadIndex = padIndex;
+        requiredPadPressed = false;
 
-        yield return new WaitUntil(() => spawnPadPressed);
+        yield return new WaitUntil(() => requiredPadPressed);
 
-        waitingForSpawnPad = false;
+        waitingForSpecificPad = false;
+        requiredPadIndex = -1;
     }
 
     private Transform GetNextPlanetSpawnPoint()
@@ -187,10 +209,5 @@ public class LevelOneController : MonoBehaviour
     {
         if (planet == null) return;
         planet.AddStarterPopulation(starterPopulationAmount);
-    }
-
-    private void BeginGameplayPhase()
-    {
-        Debug.Log($"[LevelOneController] Intro finished. Normal gameplay begins. timeScale={Time.timeScale}");
     }
 }

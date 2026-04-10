@@ -155,7 +155,6 @@ MonoBehaviour:
   maxPoseConfidence: 0.9
   stabilityMs: 200
   perfectWindow: 0.45
-  logThresholdsOnEnable: 1
 --- !u!4 &64651962
 Transform:
   m_ObjectHideFlags: 0
@@ -787,51 +786,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Mediapipe.Runtime::Mediapipe.Unity.PoseLandmarkerResultAnnotationController
   annotation: {fileID: 1119485327}
   _visualizeZ: 0
---- !u!1 &411293886
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 411293887}
-  - component: {fileID: 411293888}
-  m_Layer: 0
-  m_Name: DataCollector
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &411293887
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 411293886}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.18181, y: -3.4245, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 545700348}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &411293888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 411293886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34a45f96a5f8bab45b04c28814077fb4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PoseDataCollector
-  statusText: {fileID: 0}
 --- !u!1 &545700347
 GameObject:
   m_ObjectHideFlags: 0
@@ -869,7 +823,6 @@ Transform:
   - {fileID: 250756404}
   - {fileID: 887063825}
   - {fileID: 1414206231}
-  - {fileID: 411293887}
   - {fileID: 733875700}
   - {fileID: 64651962}
   - {fileID: 1434389956}
@@ -971,13 +924,12 @@ MonoBehaviour:
   hitZoneY: 0
   hitZoneThreshold: 0.5
   promptPrefab: {fileID: 926613821937977704, guid: 49cfaf71d55284b3fb6c1b8a300f4003, type: 3}
-  promptBeatSpacing: 2
-  spawnOffset: {x: -6, y: 8, z: 0}
+  spawnOffset: {x: -6, y: 6, z: 0}
   laneOffsets:
-  - {x: -8, y: 0, z: 0}
-  - {x: -6, y: 0, z: 0}
-  - {x: -4, y: 0, z: 0}
-  - {x: -2, y: 0, z: 0}
+  - {x: -3, y: 0, z: 0}
+  - {x: -1, y: 0, z: 0}
+  - {x: 1, y: 0, z: 0}
+  - {x: 3, y: 0, z: 0}
   autoStartGeneration: 1
   unitsPerBeat: 1
   beatSpeedMultiplier: 1
@@ -1167,7 +1119,7 @@ MonoBehaviour:
   screen: {fileID: 328449559}
   runningMode: 0
   _poseLandmarkerResultAnnotationController: {fileID: 328449560}
-  dataCollector: {fileID: 411293888}
+  dataCollector: {fileID: 0}
   poseState: {fileID: 1793061302}
   poseClassifierComponent: {fileID: 589382564}
   tutorialStartHidden: 0
@@ -1563,7 +1515,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1204960138}
   - component: {fileID: 1204960139}
-  - component: {fileID: 1204960140}
   m_Layer: 0
   m_Name: Level1Controller
   m_TagString: Untagged
@@ -1601,6 +1552,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelOneController
   planetManager: {fileID: 967029054}
+  promptQueue: {fileID: 733875701}
   danceMatInputProvider: {fileID: 1346458579}
   danceMatSelectionController: {fileID: 1414206232}
   selectionState: {fileID: 2047366721}
@@ -1615,19 +1567,16 @@ MonoBehaviour:
   - {fileID: 997610265}
   maxPlanets: 4
   repeatSpawnDelay: 15
+  laneUnlockOrder:
+  - laneIndex: 0
+    requiredPadIndex: 1
+  - laneIndex: 1
+    requiredPadIndex: 2
+  - laneIndex: 2
+    requiredPadIndex: 3
+  - laneIndex: 3
+    requiredPadIndex: 4
   starterPopulationAmount: 10
---- !u!114 &1204960140
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1204960137}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff80efe0caab91e4d9253bc29c241694, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SceneLoader
 --- !u!1 &1230970975
 GameObject:
   m_ObjectHideFlags: 0
