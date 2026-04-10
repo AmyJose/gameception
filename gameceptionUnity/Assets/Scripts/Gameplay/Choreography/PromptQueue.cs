@@ -39,9 +39,6 @@ namespace Gameplay.Choreography
         [SerializeField] private int generationIntervalBeats = 10;
         [SerializeField] private int promptsPerSequence = 4;
 
-        [Header("Difficulty Settings")]
-        [SerializeField] private float difficultyRamp = 0.002f; // per beat
-        [SerializeField] private float maxSpeedMultiplier = 2.5f;
         // Events
         public event Action<PromptData> OnPromptEnteredZone;
         public event Action<PromptData> OnPromptExitedZone;
@@ -122,12 +119,7 @@ namespace Gameplay.Choreography
         {
             if (beatClock == null) return;
 
-            // Calculate the exact distance based on the smooth floating-point beat.
-            // If multiplier is 2, it multiplies the final distance, keeping it perfectly smooth.
-            float difficultyFactor = 1f + beatClock.CurrentBeat * difficultyRamp;
-            difficultyFactor = Mathf.Min(difficultyFactor, maxSpeedMultiplier);
-
-            _totalScrollDistance = beatClock.CurrentBeat * unitsPerBeat * beatSpeedMultiplier * difficultyFactor;
+            _totalScrollDistance = beatClock.CurrentBeat * unitsPerBeat * beatSpeedMultiplier;
 
             // Move the prompts every single frame
             UpdatePrompts();
