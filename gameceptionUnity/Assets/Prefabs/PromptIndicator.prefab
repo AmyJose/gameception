@@ -147,6 +147,7 @@ MonoBehaviour:
   hitZoneColor: {r: 0, g: 1, b: 0, a: 0.9}
   missColor: {r: 1, g: 0, b: 0, a: 0.9}
   successColor: {r: 1, g: 1, b: 1, a: 0.7}
+  midHitColor: {r: 1, g: 1, b: 0, a: 0.9}
   scaleInHitZone: 2
   normalScale: 1
 --- !u!1 &9012965705986994610

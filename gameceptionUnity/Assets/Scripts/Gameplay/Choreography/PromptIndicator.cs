@@ -140,7 +140,8 @@ namespace Gameplay.Choreography
 
         private void UpdateScale()
         {
-            float targetScale = _isInHitZone ? scaleInHitZone : normalScale;
+            float shrinkFactor = 0.5f;
+            float targetScale = (_isInHitZone ? scaleInHitZone : normalScale)*shrinkFactor;
             transform.localScale = Vector3.one * targetScale;
         }
 

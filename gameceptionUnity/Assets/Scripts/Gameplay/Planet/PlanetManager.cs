@@ -23,6 +23,7 @@ namespace Gameplay
         [SerializeField] private SelectionState selectionState;
 
         [SerializeField] private DanceMatSelectionController danceMatSelectionController;
+        [SerializeField] private float xOffset = 2.0f;
 
         private readonly List<Planet> planets = new();
         public int PlanetCount => planets.Count;
@@ -142,7 +143,7 @@ namespace Gameplay
             if (count == 0) return;
 
             float totalWidth = (count - 1) * spacing;
-            float startX = centerPosition.x - totalWidth / 2f;
+            float startX = (centerPosition.x + xOffset) - totalWidth / 2f;
 
             for (int i = 0; i < count; i++)
             {
