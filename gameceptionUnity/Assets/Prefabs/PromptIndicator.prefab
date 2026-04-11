@@ -142,13 +142,13 @@ MonoBehaviour:
   waterSprite: {fileID: 21300000, guid: 98d673921f18df041a16a3b4953fd650, type: 3}
   fireSprite: {fileID: 21300000, guid: 86f2ef379c3a6654f9ecb0ebafed6f65, type: 3}
   iceSprite: {fileID: 21300000, guid: 2bcd956c1b5e3b94291d1c08fd5c0606, type: 3}
-  backgroundRenderer: {fileID: 6723285944216071819}
+  backgroundRenderer: {fileID: 0}
   normalColor: {r: 1, g: 1, b: 1, a: 0.7}
   hitZoneColor: {r: 0, g: 1, b: 0, a: 0.9}
   missColor: {r: 1, g: 0, b: 0, a: 0.9}
   successColor: {r: 1, g: 1, b: 1, a: 0.7}
   midHitColor: {r: 1, g: 1, b: 0, a: 0.9}
-  scaleInHitZone: 2
+  scaleInHitZone: 1.7
   normalScale: 1
 --- !u!1 &9012965705986994610
 GameObject:
@@ -166,7 +166,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7447569657510433807
 Transform:
   m_ObjectHideFlags: 0
