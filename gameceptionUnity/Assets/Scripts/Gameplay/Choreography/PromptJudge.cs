@@ -18,7 +18,7 @@ namespace Gameplay.Choreography
         [SerializeField] private float minPoseConfidence = 0.85f;
         [SerializeField] private float maxPoseConfidence = 0.86f;
         [SerializeField] private long stabilityMs = 200;
-        [SerializeField] private float perfectWindow = 0.45f;
+        [SerializeField] private float perfectWindow = 0.5f;
 
 
         public event Action<JudgementResult> OnJudged;
@@ -107,16 +107,16 @@ namespace Gameplay.Choreography
                 if (!prompt.success &&
                     poseState.CurrentPose == prompt.requiredPose &&
                     poseState.Confidence >= minPoseConfidence &&
-                    abs >= perfectWindow)
+                    abs < perfectWindow)
                 {
                     prompt.success = true;
                     EmitSuccess(id, prompt, offset);
                 }
-                else if (!prompt.success && offset > perfectWindow) // Missed the window
+                /*else if (!prompt.success && offset > perfectWindow) // Missed the window
                 {
                     EmitFailure(id, prompt);
                     prompt.success = true; // Mark as evaluated to prevent multiple failure emissions
-                }
+                }*/
 
             }
         }
