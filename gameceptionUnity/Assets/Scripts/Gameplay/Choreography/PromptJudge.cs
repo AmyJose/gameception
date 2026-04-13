@@ -107,7 +107,7 @@ namespace Gameplay.Choreography
                 if (!prompt.success &&
                     poseState.CurrentPose == prompt.requiredPose &&
                     poseState.Confidence >= minPoseConfidence &&
-                    abs < perfectWindow)
+                    abs >= perfectWindow)
                 {
                     prompt.success = true;
                     EmitSuccess(id, prompt, offset);
@@ -117,6 +117,7 @@ namespace Gameplay.Choreography
                     EmitFailure(id, prompt);
                     prompt.success = true; // Mark as evaluated to prevent multiple failure emissions
                 }
+                
             }
         }
         private void HandlePromptInZone(PromptQueue.PromptData data)
@@ -212,10 +213,10 @@ namespace Gameplay.Choreography
 
             float distanceToCenter = Mathf.Abs(offset);
             if (hitZone != null){
-            // {
-            //     bool isPerfect = Mathf.Abs(offset) <= perfectWindow * 0.5f;
-            //     hitZone.TriggerFeedback(true); //green flash
-            // }
+            {
+                bool isPerfect = Mathf.Abs(offset) <= perfectWindow * 0.5f;
+                hitZone.TriggerFeedback(true); //green flash
+            }
             if (distanceToCenter <= 0.1f)
                 {
                     hitZone.TriggerFeedback(true);
