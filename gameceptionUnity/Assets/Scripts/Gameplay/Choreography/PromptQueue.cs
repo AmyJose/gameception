@@ -20,7 +20,8 @@ namespace Gameplay.Choreography
         [Header("Spawn")]
         [SerializeField] private PromptIndicator promptPrefab;
         [SerializeField] public Vector3 spawnOffset = Vector3.zero;
-        [SerializeField] private Vector3[] laneOffsets = new Vector3[4]
+        [SerializeField]
+        private Vector3[] laneOffsets = new Vector3[4]
         {
             new Vector3(-8f, 0f, 0f),  // Lane 0: Left
             new Vector3(-6f, 0f, 0f),  // Lane 1
@@ -137,7 +138,7 @@ namespace Gameplay.Choreography
 
             int sequenceId = _nextSequenceId++;
             _currentSequenceStartBeat = startBeat;
-            
+
             BuildSequenceLaneOrder();
 
             int promptsThisSequence = Mathf.Min(promptsPerSequence, _sequenceLaneOrder.Count);
@@ -154,7 +155,7 @@ namespace Gameplay.Choreography
             _sequenceLaneOrder.Clear();
             _sequenceLaneOrder.AddRange(_activeLanes);
 
-            for(int i=0; i<_sequenceLaneOrder.Count; i++)
+            for (int i = 0; i < _sequenceLaneOrder.Count; i++)
             {
                 int j = UnityEngine.Random.Range(i, _sequenceLaneOrder.Count);
                 (_sequenceLaneOrder[i], _sequenceLaneOrder[j]) = (_sequenceLaneOrder[j], _sequenceLaneOrder[i]);
@@ -331,7 +332,7 @@ namespace Gameplay.Choreography
         {
             _activeLanes.Clear();
 
-            foreach(var lane in lanes)
+            foreach (var lane in lanes)
             {
                 if (lane < 0 || lane >= laneOffsets.Length) continue;
                 if (_activeLanes.Contains(lane)) continue;
@@ -355,6 +356,11 @@ namespace Gameplay.Choreography
             {
                 Debug.Log($"[PromptQueue] Removed active lane {lane}");
             }
+        }
+
+        public bool IsActiveLane(int lane)
+        {
+            return _activeLanes.Contains(lane);
         }
     }
 }

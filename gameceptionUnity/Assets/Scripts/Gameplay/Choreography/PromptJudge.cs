@@ -12,7 +12,7 @@ namespace Gameplay.Choreography
         [SerializeField] private PoseState poseState;
         [SerializeField] private SelectionState selectionState;
         [SerializeField] private PromptQueue promptQueue;
-        [SerializeField] private SyncHitZone hitZone; 
+        [SerializeField] private SyncHitZone hitZone;
 
         [Header("Thresholds")]
         [SerializeField] private float minPoseConfidence = 0.85f;
@@ -117,7 +117,7 @@ namespace Gameplay.Choreography
                     EmitFailure(id, prompt);
                     prompt.success = true; // Mark as evaluated to prevent multiple failure emissions
                 }
-                
+
             }
         }
         private void HandlePromptInZone(PromptQueue.PromptData data)
@@ -161,7 +161,7 @@ namespace Gameplay.Choreography
 
         private void HandlePromptExit(PromptQueue.PromptData data)
         {
-            if (!_activePrompts.TryGetValue(data.id, out var prompt))
+            if (!_activePrompts.TryGetValue(data.id, out var prompt) && !promptQueue.IsActiveLane(data.laneIndex))
                 return;
 
             if (!prompt.success)
@@ -212,12 +212,13 @@ namespace Gameplay.Choreography
             UpdateSequenceProgress(prompt.sequenceId, result.quality);
 
             float distanceToCenter = Mathf.Abs(offset);
-            if (hitZone != null){
+            if (hitZone != null)
             {
-                bool isPerfect = Mathf.Abs(offset) <= perfectWindow * 0.5f;
-                hitZone.TriggerFeedback(true); //green flash
-            }
-            if (distanceToCenter <= 0.1f)
+                {
+                    bool isPerfect = Mathf.Abs(offset) <= perfectWindow * 0.5f;
+                    hitZone.TriggerFeedback(true); //green flash
+                }
+                if (distanceToCenter <= 0.1f)
                 {
                     hitZone.TriggerFeedback(true);
                 }
@@ -331,5 +332,7 @@ namespace Gameplay.Choreography
             var list = new System.Collections.Generic.List<int>(selectionState.Selected);
             return list[list.Count - 1];
         }
+
+
     }
 }
