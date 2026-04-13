@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using InputLayer;
 using UnityEngine;
-
 namespace Gameplay.Choreography
 {
     // Listens to PromptQueue.OnPromptEnteredZone and evaluate pose immediately, emitting a result, and tracks sequence completion
@@ -13,6 +12,7 @@ namespace Gameplay.Choreography
         [SerializeField] private PoseState poseState;
         [SerializeField] private SelectionState selectionState;
         [SerializeField] private PromptQueue promptQueue;
+        [SerializeField] private SyncHitZone hitZone; 
 
         [Header("Thresholds")]
         [SerializeField] private float minPoseConfidence = 0.85f;
@@ -100,17 +100,22 @@ namespace Gameplay.Choreography
                 float abs = Mathf.Abs(offset);
 
                 // Track best timing
-                if (abs < Mathf.Abs(prompt.bestOffset))
-                    prompt.bestOffset = offset;
+                // if (abs < Mathf.Abs(prompt.bestOffset))
+                //     prompt.bestOffset = offset;
 
                 // Check pose
                 if (!prompt.success &&
                     poseState.CurrentPose == prompt.requiredPose &&
-                    poseState.Confidence >= minPoseConfidence)
+                    poseState.Confidence >= minPoseConfidence &&
+                    abs < perfectWindow)
                 {
                     prompt.success = true;
-
                     EmitSuccess(id, prompt, offset);
+                }
+                else if (!prompt.success && offset > perfectWindow) // Missed the window
+                {
+                    EmitFailure(id, prompt);
+                    prompt.success = true; // Mark as evaluated to prevent multiple failure emissions
                 }
             }
         }
@@ -204,6 +209,18 @@ namespace Gameplay.Choreography
               $"Timing: {result.timing} (Offset: {offset:F2}) | Pose: {result.detectedPose}| Confidence: {poseState.Confidence:F2}");
             OnJudged?.Invoke(result);
             UpdateSequenceProgress(prompt.sequenceId, result.quality);
+
+            float distanceToCenter = Mathf.Abs(offset);
+            if (hitZone != null){
+            // {
+            //     bool isPerfect = Mathf.Abs(offset) <= perfectWindow * 0.5f;
+            //     hitZone.TriggerFeedback(true); //green flash
+            // }
+            if (distanceToCenter <= 0.1f)
+                {
+                    hitZone.TriggerFeedback(true);
+                }
+            }
         }
 
         private void EmitFailure(int id, ActivePrompt prompt)
@@ -222,6 +239,11 @@ namespace Gameplay.Choreography
               $"Pose: {result.detectedPose}");
             OnJudged?.Invoke(result);
             UpdateSequenceProgress(prompt.sequenceId, result.quality);
+
+            if (hitZone != null)
+            {
+                hitZone.TriggerFeedback(false); //red flash
+            }
         }
 
         private PoseTiming EvaluateTimingFromOffset(float offset)

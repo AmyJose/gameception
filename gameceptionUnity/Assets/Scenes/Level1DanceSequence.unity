@@ -151,6 +151,7 @@ MonoBehaviour:
   poseState: {fileID: 1793061302}
   selectionState: {fileID: 2047366721}
   promptQueue: {fileID: 733875701}
+  hitZone: {fileID: 1177607476}
   minPoseConfidence: 0.85
   maxPoseConfidence: 0.9
   stabilityMs: 200
@@ -875,7 +876,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Choreography.PromptQueue
   promptJudge: {fileID: 64651961}
   hitZoneY: 0
-  hitZoneThreshold: 0.5
+  hitZoneThreshold: 0.6
   promptPrefab: {fileID: 926613821937977704, guid: 49cfaf71d55284b3fb6c1b8a300f4003, type: 3}
   spawnOffset: {x: -6, y: 6, z: 0}
   laneOffsets:
@@ -1597,7 +1598,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 50, y: 1}
+  m_Size: {x: 50, y: 1.2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
