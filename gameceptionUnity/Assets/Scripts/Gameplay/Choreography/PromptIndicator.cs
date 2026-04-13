@@ -1,5 +1,6 @@
 using InputLayer;
 using UnityEngine;
+using TMPro;
 
 namespace Gameplay.Choreography
 {
@@ -26,7 +27,7 @@ namespace Gameplay.Choreography
         [SerializeField] private float normalScale = 1f;
 
         [Header("Text Feedback")]
-        [SerializeField] private TMPro.TextMeshPro feedbackText;
+        [SerializeField] private TMPro.TextMeshProUGUI feedbackText;
 
         private int _promptId;
         private ElementPose _pose;
@@ -91,27 +92,6 @@ namespace Gameplay.Choreography
 
             // Update scale for emphasis
             UpdateScale();
-        }
-
-        public void SetMissed()
-        {
-            // if (_missed || _succeeded) return;
-
-            _missed = true;
-            backgroundRenderer.color = missColor;
-            transform.localScale = Vector3.one * normalScale;
-
-            Debug.Log($"❌ [PromptIndicator {_promptId}] MISS:red");
-        }
-
-        public void SetSucceeded()
-        {
-            // if (_succeeded || _missed) return;
-
-            _succeeded = true;
-            backgroundRenderer.color = successColor;
-
-            Debug.Log($"[PromptIndicator {_promptId}] SUCCESS: green");
         }
 
 
