@@ -25,6 +25,9 @@ namespace Gameplay.Choreography
         [SerializeField] private float scaleInHitZone = 1.15f; // grows when in hit zone
         [SerializeField] private float normalScale = 1f;
 
+        [Header("Text Feedback")]
+        [SerializeField] private TMPro.TextMeshPro feedbackText;
+
         private int _promptId;
         private ElementPose _pose;
         private float _initialYPosition;
@@ -116,20 +119,34 @@ namespace Gameplay.Choreography
         {
             if (backgroundRenderer != null)
                 backgroundRenderer.color = new Color(0f, 1f, 0f, 1f); // green
+
+            ShowFeedbackText("PERFECT!", new Color(0f, 1f, 0f, 1f));
         }
 
         public void SetFail()
         {
             if (backgroundRenderer != null)
                 backgroundRenderer.color = new Color(1f, 0f, 0f, 1f); // Red
+
+            ShowFeedbackText("MISS!", new Color(1f, 0f, 0f, 1f));
         }
 
         public void SetMidHit()
         {
             if (backgroundRenderer != null)
                 backgroundRenderer.color = midHitColor; // Yellow
-        }
 
+            ShowFeedbackText("GOOD!", new Color(1f, 1f, 0f, 1f));
+        }
+        
+        private void ShowFeedbackText(string text, Color color)
+        {
+            if (feedbackText == null) return;
+            
+            feedbackText.text = text;
+            feedbackText.color = color;
+            feedbackText.gameObject.SetActive(true);
+        }
 
 
         public float GetInitialYPosition() => _initialYPosition;
