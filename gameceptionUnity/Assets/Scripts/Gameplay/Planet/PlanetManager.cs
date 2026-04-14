@@ -74,12 +74,22 @@ namespace Gameplay
                 return null;
             }
 
-            Planet newPlanet = Instantiate(planetPrefab, worldPosition, Quaternion.identity, transform);
+            PlanetDefinition chosenDefinition = definitionOverride != null ? definitionOverride : ChooseDefinitionForSpawn();
+
+            int nextIndex = planets.Count;
+            Vector3 spawnPos = worldPosition;
+
+            if (nextIndex < spawnPositions.Count)
+            {
+                spawnPos = centerPosition + spawnPositions[nextIndex];
+            }
+
+            Planet newPlanet = Instantiate(planetPrefab, spawnPos, Quaternion.identity, transform);
             newPlanet.name = $"Planet_{planets.Count}";
 
-            PlanetDefinition chosenDefinition = definitionOverride != null
-                ? definitionOverride
-                : ChooseDefinitionForSpawn();
+            // PlanetDefinition chosenDefinition = definitionOverride != null
+            //     ? definitionOverride
+            //     : ChooseDefinitionForSpawn();
 
             if (chosenDefinition != null)
             {
@@ -100,6 +110,7 @@ namespace Gameplay
 
             return newPlanet;
         }
+
         private void RefreshPlanetIndices()
         {
             for (int i=0; i<planets.Count; i++)
@@ -137,20 +148,29 @@ namespace Gameplay
                 p.SetDifficulty(profile);
             }
         }
+
+        [Header("Custom Layout")]
+        [SerializeField] private List<Vector3> spawnPositions = new List<Vector3>();
+
         public void ArrangePlanets()
         {
             int count = planets.Count;
             if (count == 0) return;
 
-            float totalWidth = (count - 1) * spacing;
-            float startX = (centerPosition.x + xOffset) - totalWidth / 2f;
+        //     float totalWidth = (count - 1) * spacing;
+        //     float startX = (centerPosition.x + xOffset) - totalWidth / 2f;
 
             for (int i = 0; i < count; i++)
             {
                 if (planets[i]  == null) continue;
+                if (i < spawnPositions.Count)
+                {
+                    planets[i].transform.position = centerPosition + spawnPositions[i];
+                }
 
-                float x = startX + i * spacing;
-                planets[i].transform.position = new Vector3(x, centerPosition.y, centerPosition.z);
+        //         float x = startX + i * spacing;
+        //         planets[i].transform.position = new Vector3(x, centerPosition.y, centerPosition.z);
+
             }
         }
 

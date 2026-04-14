@@ -959,6 +959,11 @@ MonoBehaviour:
   selectionState: {fileID: 2047366721}
   danceMatSelectionController: {fileID: 1414206232}
   xOffset: 2
+  spawnPositions:
+  - {x: 4.26, y: 3, z: 0}
+  - {x: -0.3, y: 0.79, z: 0}
+  - {x: 7.29, y: -0.25, z: 0}
+  - {x: 2.57, y: -2.9, z: 0}
 --- !u!1 &997610264
 GameObject:
   m_ObjectHideFlags: 0
