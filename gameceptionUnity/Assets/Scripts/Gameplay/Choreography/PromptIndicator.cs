@@ -29,6 +29,12 @@ namespace Gameplay.Choreography
         [Header("Text Feedback")]
         [SerializeField] private TMPro.TextMeshProUGUI feedbackText;
 
+        [Header("Audio Feedback")]
+        [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioClip perfectSound;
+        [SerializeField] private AudioClip goodSound;
+        [SerializeField] private AudioClip missSound;
+
         private int _promptId;
         private ElementPose _pose;
         private float _initialYPosition;
@@ -100,6 +106,9 @@ namespace Gameplay.Choreography
             if (backgroundRenderer != null)
                 backgroundRenderer.color = new Color(0f, 1f, 0f, 1f); // green
 
+            if (audioSource != null && perfectSound != null)
+                audioSource.PlayOneShot(perfectSound);
+
             ShowFeedbackText("PERFECT!", new Color(0f, 1f, 0f, 1f));
         }
 
@@ -108,6 +117,9 @@ namespace Gameplay.Choreography
             if (backgroundRenderer != null)
                 backgroundRenderer.color = new Color(1f, 0f, 0f, 1f); // Red
 
+            if (audioSource != null && missSound != null)
+                audioSource.PlayOneShot(missSound);
+
             ShowFeedbackText("MISS!", new Color(1f, 0f, 0f, 1f));
         }
 
@@ -115,6 +127,9 @@ namespace Gameplay.Choreography
         {
             if (backgroundRenderer != null)
                 backgroundRenderer.color = midHitColor; // Yellow
+
+            if (audioSource != null && goodSound != null)
+                audioSource.PlayOneShot(goodSound);
 
             ShowFeedbackText("GOOD!", new Color(1f, 1f, 0f, 1f));
         }
@@ -126,6 +141,28 @@ namespace Gameplay.Choreography
             feedbackText.text = text;
             feedbackText.color = color;
             feedbackText.gameObject.SetActive(true);
+
+            StartCoroutine(FadeOutFeedbackText());
+        }
+
+        private System.Collections.IEnumerator FadeOutFeedbackText()
+        {
+            yield return new WaitForSeconds(1f);
+            
+            float elapsedTime = 0f;
+            float fadeDuration = 0.5f;
+            Color originalColor = feedbackText.color;
+            
+            while (elapsedTime < fadeDuration)
+            {
+                elapsedTime += Time.deltaTime;
+                float alpha = Mathf.Lerp(0.5f, 0f, elapsedTime / fadeDuration);
+                feedbackText.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+                yield return null;
+            }
+            
+            feedbackText.gameObject.SetActive(false);
+            feedbackText.color = originalColor; // Reset for next use
         }
 
 
