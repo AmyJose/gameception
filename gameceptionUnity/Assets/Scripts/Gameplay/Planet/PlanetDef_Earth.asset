@@ -21,9 +21,9 @@ MonoBehaviour:
     weight: 0.75
   - pose: 2
     weight: 0.05
-  - pose: 0
+  - pose: 3
     weight: 0.05
-  - pose: 0
+  - pose: 4
     weight: 0.15
   offThemeChance: 0.15
   maxSamePoseStreak: 2
