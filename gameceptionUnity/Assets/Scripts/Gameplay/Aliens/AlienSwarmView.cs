@@ -8,14 +8,12 @@ public class AlienSwarmView : MonoBehaviour
     [SerializeField] private Planet planet;
     [SerializeField] private Transform container;
     [SerializeField] private AlienLibrary alienLibrary;
-    [SerializeField] private SpriteRenderer planetSpriteRenderer;
     [SerializeField] private BeatClock beatClock;
     [SerializeField] private int populationPerSprite = 2;
     [SerializeField] private int maxSprites = 30;
 
     [SerializeField] private float edgeOffset = 0.5f;
     [SerializeField] private float jitter = 0.05f;
-    [SerializeField] private float radiusMultiplier = 0.1f;
     [SerializeField] private float bobHeight = 1;
     [SerializeField] private float bobDurationBeats = 0.5f;
 
@@ -171,15 +169,14 @@ public class AlienSwarmView : MonoBehaviour
     {
         float localRadius = 1f;
 
-        if (planetSpriteRenderer != null)
+        if (planet != null)
         {
-            float worldRadius = planetSpriteRenderer.bounds.extents.x;
+            float worldRadius = planet.GetBodyRadiusWorld();
+            float parentScaleX = container != null ? container.lossyScale.x : transform.lossyScale.x;
 
-            float parentScaleX = transform.lossyScale.x;
-
-            localRadius = (worldRadius / Mathf.Max(parentScaleX, 0.0001f)) * radiusMultiplier;
-
+            localRadius = worldRadius / Mathf.Max(parentScaleX, 0.0001f);
         }
+
         float angle = Random.value * Mathf.PI * 2f;
         float r = localRadius + edgeOffset + Random.Range(-jitter, jitter);
 
@@ -202,13 +199,34 @@ public class AlienSwarmView : MonoBehaviour
     {
         float localRadius = 1f;
 
-        if (planetSpriteRenderer != null)
+        if (planet != null)
         {
-            float worldRadius = planetSpriteRenderer.bounds.extents.x;
-            float parentScaleX = transform.lossyScale.x;
-            localRadius = (worldRadius / Mathf.Max(parentScaleX, 0.0001f)) * radiusMultiplier;
+            float worldRadius = planet.GetBodyRadiusWorld();
+            float parentScaleX = container != null ? container.lossyScale.x : transform.lossyScale.x;
+
+            localRadius = worldRadius / Mathf.Max(parentScaleX, 0.0001f);
         }
 
         return localRadius + edgeOffset + Random.Range(-jitter, jitter);
+    }
+    private void OnDrawGizmosSelected()
+    {
+        if (container == null) return;
+
+        float localRadius = GetSpawnRadius();
+        Gizmos.color = Color.yellow;
+
+        const int steps = 64;
+        Vector3 prev = container.TransformPoint(new Vector3(localRadius, 0f, 0f));
+
+        for (int i = 1; i <= steps; i++)
+        {
+            float a = (i / (float)steps) * Mathf.PI * 2f;
+            Vector3 localPoint = new Vector3(Mathf.Cos(a) * localRadius, Mathf.Sin(a) * localRadius, 0f);
+            Vector3 worldPoint = container.TransformPoint(localPoint);
+
+            Gizmos.DrawLine(prev, worldPoint);
+            prev = worldPoint;
+        }
     }
 }

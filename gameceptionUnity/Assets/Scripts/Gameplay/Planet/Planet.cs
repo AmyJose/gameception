@@ -18,8 +18,6 @@ namespace Gameplay
         [SerializeField] private int planetIndex; // for now same as lane id.
 
         [Header("References")]
-        [SerializeField] private PlanetResourceUI resourceUI;
-        [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private Transform visualRoot;
         [SerializeField] private AlienSwarmView alienSwarmView;
 
@@ -47,9 +45,6 @@ namespace Gameplay
         [SerializeField] private float lateTimingMultiplier = 1.0f;
 
         [Header("Visual Deterioration")]
-        [SerializeField] private Color healthyColor = Color.white;
-        [SerializeField] private Color strugglingColor = new Color(0.75f, 0.75f, 0.75f, 1f);
-        [SerializeField] private Color dyingColor = new Color(0.45f, 0.45f, 0.45f, 1f);
         [SerializeField] private float healthyScaleMultiplier = 1f;
         [SerializeField] private float dyingScaleMultiplier = 0.9f;
 
@@ -66,6 +61,9 @@ namespace Gameplay
         private bool _starterPop;
         private bool _aliensCurrentlyAngry = false;
 
+        private PlanetVisualBase _currentVisual;
+        private GameObject _currentVisualInstance;
+
         public PlanetDefinition Definition => definition;
         public float Population => population;
         public bool IsGrowing => _isGrowing;
@@ -77,16 +75,22 @@ namespace Gameplay
 
         public AlienType PlanetAlienType => definition != null ? definition.alienType : AlienType.Earth;
 
-        private void Awake()
-        {   
-            if (spriteRenderer == null)
+        public float GetBodyRadiusWorld()
+        {
+            if (_currentVisual == null)
             {
-                spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+                Debug.LogWarning($"[Planet] {name} has no active visual. Using fallback radius.");
+                return 0.5f;
             }
 
+            return _currentVisual.GetBodyRadiusWorld();
+        }
+
+        private void Awake()
+        {
             if (selectionState == null)
             {
-                selectionState = UnityEngine.Object.FindFirstObjectByType<SelectionState>();
+                selectionState = FindFirstObjectByType<SelectionState>();
             }
 
             if (visualRoot == null)
@@ -174,13 +178,6 @@ namespace Gameplay
             HandleGrowth(dt);
 
             if (_isGrowing) return;
-
-            if (choreographyActive) TickChoreography(dt);
-        }
-
-        private void TickChoreography(float dt)
-        {
-           //no passive drain
         }
         public void ActivateChoreography()
         {
@@ -200,6 +197,7 @@ namespace Gameplay
         {
             vitality = Mathf.Clamp(amount, 0f, maxVitality);
             RefreshAlienMood();
+            RefreshDeteriorationVisuals();
         }
 
         public void AddStarterPopulation(float amount)
@@ -269,32 +267,56 @@ namespace Gameplay
                 return;
             }
 
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.sprite = definition.planetSprite;
-            }
-
             population = Mathf.Clamp(definition.startingPopulation, 0f, definition.populationCap);
 
+            RebuildVisual();
             UpdateSelectionVisuals();
             RefreshAlienMood();
             RefreshDeteriorationVisuals();
         }
+        private void RebuildVisual()
+        {
+            if(visualRoot == null)
+            {
+                Debug.LogWarning("[Planet] Cannot rebuild visual: visualRoot is missing.");
+                return;
+            }
+            for(int i = visualRoot.childCount -1; i>=0; i--)
+            {
+                Destroy(visualRoot.GetChild(i).gameObject);
+            }
+            _currentVisual = null;
+            _currentVisualInstance = null;
+
+            if (definition == null || definition.visualPrefab == null)
+            {
+                Debug.LogWarning($"[Planet] {name} has no visual prefab in its definition.");
+                return;
+            }
+
+            _currentVisualInstance = Instantiate(definition.visualPrefab, visualRoot);
+            _currentVisualInstance.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            _currentVisualInstance.transform.localScale = Vector3.one;
+
+            _currentVisual = _currentVisualInstance.GetComponent<PlanetVisualBase>();
+
+            if (_currentVisual == null)
+            {
+                Debug.LogError($"[Planet] Visual prefab '{definition.visualPrefab.name}' is missing a PlanetVisualBase component.");
+                return;
+            }
+
+            _currentVisual.Initialize(definition);
+        }
         private void UpdateSelectionVisuals()
         {
-            if (spriteRenderer == null || definition == null || selectionState == null) return;
+            if (definition == null || selectionState == null) return;
 
             bool isSelected = selectionState.IsSelected(planetIndex);
 
-            Sprite targetSprite = isSelected && definition.selectedPlanetSprite != null
-                ? definition.selectedPlanetSprite
-                : definition.planetSprite;
-
-            spriteRenderer.sprite = targetSprite;
-
-            if (resourceUI != null)
+            if (_currentVisual != null)
             {
-                resourceUI.SetVisible(isSelected);
+                _currentVisual.SetSelected(isSelected);
             }
         }
 
@@ -313,24 +335,12 @@ namespace Gameplay
         }
         private void RefreshDeteriorationVisuals()
         {
-            if (spriteRenderer == null)
-                return;
-
             float t = VitalityNormalized;
 
-            Color targetColor;
-            if (t >= 0.5f)
+            if (_currentVisual != null)
             {
-                float lerp = Mathf.InverseLerp(0.5f, 1f, t);
-                targetColor = Color.Lerp(strugglingColor, healthyColor, lerp);
+                _currentVisual.SetVitality(t);
             }
-            else
-            {
-                float lerp = Mathf.InverseLerp(0f, 0.5f, t);
-                targetColor = Color.Lerp(dyingColor, strugglingColor, lerp);
-            }
-
-            spriteRenderer.color = targetColor;
 
             if (visualRoot != null && !_isGrowing)
             {
@@ -346,13 +356,17 @@ namespace Gameplay
             _growTimer += dt;
             float t = Mathf.Clamp01(_growTimer / growDuration);
 
-            visualRoot.localScale = Vector3.Lerp(Vector3.zero, _targetScale, t);
+            float curvedT = growCurve.Evaluate(t);
+            visualRoot.localScale = Vector3.Lerp(Vector3.zero, _targetScale, curvedT);
 
             if (t >= 1f)
             {
                 visualRoot.localScale = _targetScale;
                 visualRoot.localRotation = Quaternion.identity;
                 _isGrowing = false;
+
+                RefreshDeteriorationVisuals();
+
                 Debug.Log("[Planet] Growth complete");
             }
         }

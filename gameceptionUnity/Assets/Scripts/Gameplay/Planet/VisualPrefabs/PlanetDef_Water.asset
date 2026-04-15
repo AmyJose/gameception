@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a28bad643da14bb48ba4c38580eaaf7e, type: 3}
-  m_Name: PlanetDef_Earth
+  m_Name: PlanetDef_Water
   m_EditorClassIdentifier: Assembly-CSharp::PlanetDefinition
-  planetSprite: {fileID: 21300000, guid: 16b718a6c47225d43b7ea0ef46ea9f9c, type: 3}
-  selectedPlanetSprite: {fileID: 21300000, guid: f845f5a5f5094d245b91f023b0d9c030, type: 3}
+  planetSprite: {fileID: 1679449643175690445, guid: d2ce719cd26a40b48941b73351482d17, type: 3}
+  selectedPlanetSprite: {fileID: 21300000, guid: c61f46c83e42ea84596f2be40696af55, type: 3}
+  visualPrefab: {fileID: 2462154173540053033, guid: b2f222c0b0e812348a59e956a9069c5a, type: 3}
   startingPopulation: 0
   populationCap: 100
   promptPoseWeights:
   - pose: 1
-    weight: 0.75
-  - pose: 2
-    weight: 0.05
-  - pose: 0
-    weight: 0.05
-  - pose: 0
     weight: 0.15
+  - pose: 2
+    weight: 0.75
+  - pose: 3
+    weight: 0.05
+  - pose: 4
+    weight: 0.05
   offThemeChance: 0.15
   maxSamePoseStreak: 2
   samePoseWeightPenalty: 0.6
-  alienType: 2
-  requiredNeeds: 030000000200000001000000
+  alienType: 1

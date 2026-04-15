@@ -930,6 +930,7 @@ Transform:
   - {fileID: 250756404}
   - {fileID: 1414206231}
   - {fileID: 733875700}
+  - {fileID: 1779290180}
   - {fileID: 64651962}
   - {fileID: 1434389956}
   - {fileID: 863662619}
@@ -1375,6 +1376,7 @@ MonoBehaviour:
   beatClock: {fileID: 1130057111}
   generationIntervalBeats: 10
   promptsPerSequence: 4
+  promptSelector: {fileID: 1779290181}
 --- !u!4 &750123599 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6458756254599614175, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
@@ -3308,6 +3310,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1105226405}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1779290179
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1779290180}
+  - component: {fileID: 1779290181}
+  m_Layer: 0
+  m_Name: PromptSelector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1779290180
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779290179}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.61783, y: 0.44697, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 545700348}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1779290181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779290179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba14635b79524434484bab990be8bde4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PromptSelector
+  planetManager: {fileID: 0}
+  debugMode: 0
 --- !u!1 &1793061300
 GameObject:
   m_ObjectHideFlags: 0
@@ -3884,9 +3932,41 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1868742733}
     m_Modifications:
+    - target: {fileID: 734264129970620386, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -4066559052782185188, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
+    - target: {fileID: 3840786475781865285, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -4066559052782185188, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
     - target: {fileID: 4885302867056860949, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
       propertyPath: m_Name
       value: HUDAnchor
+      objectReference: {fileID: 0}
+    - target: {fileID: 6069207444001527532, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_text
+      value: TIMER
+      objectReference: {fileID: 0}
+    - target: {fileID: 6069207444001527532, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
+    - target: {fileID: 6069207444001527532, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -4066559052782185188, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
+    - target: {fileID: 6069207444001527532, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6159219565489142658, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: scorePrefix
+      value: 'SCORE: '
+      objectReference: {fileID: 0}
+    - target: {fileID: 6159219565489142658, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: timerPrefix
+      value: 'TIME: '
       objectReference: {fileID: 0}
     - target: {fileID: 6159219565489142658, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
       propertyPath: scoreManager
@@ -3934,6 +4014,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6458756254599614175, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8430807326498540458, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_text
+      value: score
+      objectReference: {fileID: 0}
+    - target: {fileID: 8430807326498540458, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
+    - target: {fileID: 8430807326498540458, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -4066559052782185188, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
+    - target: {fileID: 8430807326498540458, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_hasFontAssetChanged
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
