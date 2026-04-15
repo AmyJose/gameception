@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlanetDefinition
   planetSprite: {fileID: 21300000, guid: 4200590f1c3debd438bc9ae122369c06, type: 3}
   selectedPlanetSprite: {fileID: 21300000, guid: 6a8ccfc31c261994e8923517b7aedfbe, type: 3}
+  visualPrefab: {fileID: 8950516227827520227, guid: 2faa9bd1f678d224bbd1628406ae540b, type: 3}
   startingPopulation: 0
   populationCap: 100
   promptPoseWeights:
@@ -29,4 +30,3 @@ MonoBehaviour:
   maxSamePoseStreak: 2
   samePoseWeightPenalty: 0.6
   alienType: 0
-  requiredNeeds: 010000000300000003000000

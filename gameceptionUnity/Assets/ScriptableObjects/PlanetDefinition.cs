@@ -15,6 +15,7 @@ public class PlanetDefinition : ScriptableObject
 {
     public Sprite planetSprite;
     public Sprite selectedPlanetSprite;
+    public GameObject visualPrefab;
 
     public float startingPopulation = 5f;
     public float populationCap = 100f;
@@ -27,5 +28,4 @@ public class PlanetDefinition : ScriptableObject
     [Range(0f, 1f)] public float samePoseWeightPenalty = 0.6f;
 
     public AlienType alienType;
-    public List<ElementPose> requiredNeeds = new();
 }

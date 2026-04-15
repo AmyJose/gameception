@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4645923925486781507}
   - component: {fileID: 2421352814427187259}
   - component: {fileID: 7791890636379242194}
-  - component: {fileID: 7568736135621607141}
   m_Layer: 0
   m_Name: Planet
   m_TagString: Untagged
@@ -29,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1120777604323684103}
@@ -52,23 +51,25 @@ MonoBehaviour:
   difficulty: {fileID: 11400000, guid: b35e8d0df4dcce3479bacb894a29c502, type: 2}
   selectionState: {fileID: 0}
   planetIndex: 0
-  resourceUI: {fileID: 0}
-  spriteRenderer: {fileID: 2934997472566962085}
   visualRoot: {fileID: 1120777604323684103}
   alienSwarmView: {fileID: 0}
   population: 0
   choreographyActive: 0
   vitality: 60
   maxVitality: 100
-  passiveDecayPerSecond: 2
-  perfectVitalityGain: 12
-  goodVitalityGain: 7
-  wrongPoseVitalityLoss: 8
-  noInputVitalityLoss: 12
-  perfectPopulationGain: 2
-  goodPopulationGain: 1
-  wrongPosePopulationLoss: 0.5
-  noInputPopulationLoss: 1
+  perfectVitalityBase: 10
+  goodVitalityBase: 6
+  wrongPoseVitalityBase: -8
+  noInputVitalityBase: -12
+  perfectPopulationBase: 4
+  goodPopulationBase: 2
+  wrongPosePopulationBase: -2
+  noInputPopulationBase: -4
+  perfectTimingMultiplier: 1.2
+  earlyTimingMultiplier: 1
+  lateTimingMultiplier: 1
+  healthyScaleMultiplier: 1
+  dyingScaleMultiplier: 0.9
   angryVitalityThreshold: 0.4
   growDuration: 0.5
   growCurve:
@@ -110,30 +111,13 @@ MonoBehaviour:
   planet: {fileID: 2421352814427187259}
   container: {fileID: 7096330909747885456}
   alienLibrary: {fileID: 11400000, guid: 75d9f3ad390dc334cbc2a9ee0a055da3, type: 2}
-  planetSpriteRenderer: {fileID: 2934997472566962085}
   beatClock: {fileID: 0}
   populationPerSprite: 2
   maxSprites: 30
   edgeOffset: 0
-  jitter: 0.2
-  radiusMultiplier: 0.575
+  jitter: 0.02
   bobHeight: 1
   bobDurationBeats: 0.5
---- !u!114 &7568736135621607141
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1971155481452933183}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ded045c37e8b9374289cef30b80279b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlanetView
-  planetRenderer: {fileID: 2934997472566962085}
-  planet: {fileID: 0}
-  planetGlowing: {fileID: 0}
 --- !u!1 &2173057697115594395
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,102 +144,11 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4645923925486781507}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &8713938942086236444
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6004266471518070468}
-  - component: {fileID: 2934997472566962085}
-  m_Layer: 0
-  m_Name: Sprite
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6004266471518070468
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8713938942086236444}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 0}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1120777604323684103}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &2934997472566962085
-SpriteRenderer:
-  serializedVersion: 2
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8713938942086236444}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 857426379
-  m_SortingLayer: 5
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 0ccccea2fe690f347990cf14c62473d1, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 19.2, y: 10.8}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_SpriteSortPoint: 0
 --- !u!1 &9180247528601739203
 GameObject:
   m_ObjectHideFlags: 0
@@ -284,7 +177,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 6004266471518070468}
+  m_Children: []
   m_Father: {fileID: 4645923925486781507}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

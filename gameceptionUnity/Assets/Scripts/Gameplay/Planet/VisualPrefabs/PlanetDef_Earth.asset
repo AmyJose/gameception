@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a28bad643da14bb48ba4c38580eaaf7e, type: 3}
   m_Name: PlanetDef_Earth
   m_EditorClassIdentifier: Assembly-CSharp::PlanetDefinition
-  planetSprite: {fileID: 21300000, guid: 16b718a6c47225d43b7ea0ef46ea9f9c, type: 3}
+  planetSprite: {fileID: 21300000, guid: 4c153bd04fd20934b92eef53abc0082b, type: 3}
   selectedPlanetSprite: {fileID: 21300000, guid: f845f5a5f5094d245b91f023b0d9c030, type: 3}
+  visualPrefab: {fileID: 3062117082898887814, guid: e6adff4b6fed52a4e8870ccb136a0518, type: 3}
   startingPopulation: 0
   populationCap: 100
   promptPoseWeights:
@@ -29,4 +30,3 @@ MonoBehaviour:
   maxSamePoseStreak: 2
   samePoseWeightPenalty: 0.6
   alienType: 2
-  requiredNeeds: 030000000200000001000000

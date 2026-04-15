@@ -17,7 +17,7 @@ public class AlienWalker : MonoBehaviour
     }
     private void TestBob()
     {
-        TriggerBeatBob(2.5f, 0.5f);
+        TriggerBeatBob(1.25f, 0.5f);
     }
 
     public void Initialise(Transform center, float startAngleDeg, float orbitRadius, float speedDegPerSec, float rotationOffsetDeg = -90f)
