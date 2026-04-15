@@ -16,5 +16,17 @@ MonoBehaviour:
   selectedPlanetSprite: {fileID: 21300000, guid: 6a8ccfc31c261994e8923517b7aedfbe, type: 3}
   startingPopulation: 0
   populationCap: 100
+  promptPoseWeights:
+  - pose: 1
+    weight: 0.1
+  - pose: 2
+    weight: 0.05
+  - pose: 3
+    weight: 0.8
+  - pose: 4
+    weight: 0.05
+  offThemeChance: 0.15
+  maxSamePoseStreak: 2
+  samePoseWeightPenalty: 0.6
   alienType: 0
   requiredNeeds: 010000000300000003000000

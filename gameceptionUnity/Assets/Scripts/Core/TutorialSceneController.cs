@@ -22,8 +22,10 @@ public class TutorialSceneController : MonoBehaviour
 
     [Header("Pose Detection")]
     [SerializeField] private PoseDetectionRunner poseDetectionRunner;
+    [SerializeField] private PoseState poseState;
     [SerializeField] private TMP_Text countdownText;
     [SerializeField] private TMP_Text objectiveText;
+    [SerializeField, Range(0f, 1f)] private float minPoseConfidence = 0.75f;
 
     [Header("Ready Selection")]
     [SerializeField] private int readyPadIndex = 0;
@@ -36,6 +38,10 @@ public class TutorialSceneController : MonoBehaviour
 
     [Header("Debug")]
     [SerializeField] private bool allowKeyboardDebug = true;
+    [SerializeField] private bool verbosePoseDebug = true;
+
+    [Header("Pose Hold Tolerance")]
+    [SerializeField, Min(0f)] private float holdLossPerSecondOnMismatch = 0.5f;
 
     [Header("Next Tutorial Section")]
     [SerializeField] private GameObject choreographyTutorialRoot;
@@ -44,6 +50,7 @@ public class TutorialSceneController : MonoBehaviour
     private string currentExpectedPoseId;
     private float currentRequiredHoldTime;
     private float currentHoldTimer;
+    private float _nextHoldDebugTime;
 
     public event Action<string> OnPoseStepStarted;
     public event Action<string> OnPoseStepCompleted;
@@ -58,7 +65,7 @@ public class TutorialSceneController : MonoBehaviour
     }
     private void OnDisable()
     {
-        if(selectionState != null)
+        if (selectionState != null)
         {
             selectionState.OnChanged -= HandleSelectionChanged;
         }
@@ -94,14 +101,36 @@ public class TutorialSceneController : MonoBehaviour
             if (poseMatched)
             {
                 currentHoldTimer += Time.deltaTime;
+
+                if (verbosePoseDebug && Time.time >= _nextHoldDebugTime)
+                {
+                    _nextHoldDebugTime = Time.time + 0.25f;
+                    Debug.Log($"[Tutorial] HOLD progress for {currentExpectedPoseId}: {currentHoldTimer:F2}/{currentRequiredHoldTime:F2}");
+                }
+
                 if (currentHoldTimer >= currentRequiredHoldTime)
                 {
+                    if (verbosePoseDebug)
+                    {
+                        Debug.Log($"[Tutorial] HOLD COMPLETE for {currentExpectedPoseId}");
+                    }
+
                     currentPoseMatched = true;
                 }
             }
             else
             {
-                currentHoldTimer = 0f;
+                if (currentHoldTimer > 0f)
+                {
+                    float previous = currentHoldTimer;
+                    currentHoldTimer = Mathf.Max(0f, currentHoldTimer - Time.deltaTime * holdLossPerSecondOnMismatch);
+
+                    if (verbosePoseDebug)
+                    {
+                        Debug.Log($"[Tutorial] HOLD decayed for {currentExpectedPoseId}: {previous:F2} -> {currentHoldTimer:F2}. " +
+                                  $"CurrentPose={poseState?.CurrentPose}, Confidence={poseState?.Confidence:F2}");
+                    }
+                }
             }
         }
     }
@@ -154,11 +183,25 @@ public class TutorialSceneController : MonoBehaviour
         currentExpectedPoseId = step.poseId;
         currentRequiredHoldTime = step.holdDuration;
         currentHoldTimer = 0f;
+        _nextHoldDebugTime = Time.time;
         currentPoseMatched = false;
+
+        if (verbosePoseDebug)
+        {
+            Debug.Log($"[Tutorial] Step start expected={currentExpectedPoseId}, hold={currentRequiredHoldTime}");
+            Debug.Log($"[Tutorial] Waiting for pose match: {step.poseId}");
+        }
 
         SetObjective($"Hold the pose: {step.poseId}");
 
+
+
         yield return new WaitUntil(() => currentPoseMatched);
+
+        if (verbosePoseDebug)
+        {
+            Debug.Log($"[Tutorial] Wait finished for pose: {step.poseId}");
+        }
 
         currentExpectedPoseId = null;
         currentHoldTimer = 0f;
@@ -232,8 +275,46 @@ public class TutorialSceneController : MonoBehaviour
 
     private bool EvaluateCurrentPose(string poseId)
     {
-        // Replace with actual pose-check logic later.
-        return false;
+        if (poseState == null || string.IsNullOrWhiteSpace(poseId))
+        {
+            if (verbosePoseDebug && poseState == null)
+            {
+                Debug.LogWarning("[Tutorial] PoseState reference is null. Cannot evaluate pose.");
+            }
+            return false;
+        }
+
+        ElementPose expectedPose = ParsePoseId(poseId);
+        if (expectedPose == ElementPose.None)
+        {
+            if (verbosePoseDebug)
+            {
+                Debug.LogWarning($"[Tutorial] Could not parse expected pose id '{poseId}'.");
+            }
+            return false;
+        }
+
+        return poseState.CurrentPose == expectedPose && poseState.Confidence >= minPoseConfidence;
+    }
+
+    private ElementPose ParsePoseId(string poseId)
+    {
+        string normalized = poseId.Trim();
+        if (normalized.Length == 0)
+            return ElementPose.None;
+
+        if (Enum.TryParse(normalized, true, out ElementPose parsed))
+            return parsed;
+
+        switch (normalized.ToLowerInvariant())
+        {
+            case "air": return ElementPose.Ice;
+            case "earth": return ElementPose.Earth;
+            case "fire": return ElementPose.Fire;
+            case "water": return ElementPose.Water;
+            default:
+                return ElementPose.None;
+        }
     }
 
     public void ForceCompleteCurrentPose()
