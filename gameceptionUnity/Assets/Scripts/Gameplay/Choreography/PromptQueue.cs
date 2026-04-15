@@ -39,6 +39,8 @@ namespace Gameplay.Choreography
         [SerializeField] private int generationIntervalBeats = 10;
         [SerializeField] private int promptsPerSequence = 4;
 
+        [SerializeField] private PromptSelector promptSelector;
+
         // Events
         public event Action<PromptData> OnPromptEnteredZone;
         public event Action<PromptData> OnPromptExitedZone;
@@ -171,7 +173,7 @@ namespace Gameplay.Choreography
 
             int laneIndex = _sequenceLaneOrder[indexInSequence];
 
-            ElementPose pose = GetRandomPose();
+            ElementPose pose = promptSelector.SelectPromptForLane(laneIndex);
 
             var indicator = Instantiate(promptPrefab, transform);
             indicator.Initialize(pose, _nextPromptId);
