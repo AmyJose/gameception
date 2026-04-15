@@ -20,6 +20,10 @@ public class TutorialSceneController : MonoBehaviour
     [SerializeField] private AlienSpeechBubble speechBubble;
     [SerializeField] private SelectionState selectionState;
 
+    [Header("Alien Visuals")]
+    [SerializeField] private SpriteRenderer alienSpriteRenderer;
+    [SerializeField] private List<Sprite> poseSprites;
+
     [Header("Pose Detection")]
     [SerializeField] private PoseDetectionRunner poseDetectionRunner;
     [SerializeField] private PoseState poseState;
@@ -169,6 +173,11 @@ public class TutorialSceneController : MonoBehaviour
 
     private IEnumerator RunPoseStep(PoseTutorialStep step, int index, int total)
     {
+        if (alienSpriteRenderer != null && poseSprites != null && poseSprites.Count >= index)
+        {
+            alienSpriteRenderer.sprite = poseSprites[index - 1];
+        }
+        
         currentExpectedPoseId = null;
         currentPoseMatched = false;
         currentHoldTimer = 0f;
@@ -210,6 +219,8 @@ public class TutorialSceneController : MonoBehaviour
         yield return SpeakAndPause("Nice!", 0.5f);
 
         OnPoseStepCompleted?.Invoke(step.poseId);
+
+        
     }
 
     private IEnumerator RunCountdown(float seconds)
