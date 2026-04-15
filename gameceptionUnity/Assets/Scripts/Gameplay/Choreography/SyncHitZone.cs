@@ -7,6 +7,7 @@ public class SyncHitZone : MonoBehaviour
 {
     [SerializeField] private PromptQueue queue;
     [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private SpriteRenderer centerLineRenderer;
     [SerializeField] private float boxWidth = 74f;
     private Coroutine flashCoroutine;
 
@@ -20,6 +21,13 @@ public class SyncHitZone : MonoBehaviour
         //Scales the box to be exactly the size of the threshold math
         float boxHeight = queue.hitZoneThreshold * 2f;
         spriteRenderer.size = new Vector2(boxWidth, boxHeight); 
+
+        // Center line at exact hit zone Y (thin vertical line)
+        if (centerLineRenderer != null)
+        {
+            centerLineRenderer.size = new Vector2(boxWidth, 0.1f);  // Thin horizontal line
+            centerLineRenderer.sortingOrder = spriteRenderer.sortingOrder + 1;
+        }
     }
 
     public void TriggerFeedback(bool isSuccess)
