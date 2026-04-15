@@ -2705,9 +2705,41 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1868742733}
     m_Modifications:
+    - target: {fileID: 734264129970620386, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -4066559052782185188, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
+    - target: {fileID: 3840786475781865285, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -4066559052782185188, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
     - target: {fileID: 4885302867056860949, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
       propertyPath: m_Name
       value: HUDAnchor
+      objectReference: {fileID: 0}
+    - target: {fileID: 6069207444001527532, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_text
+      value: TIMER
+      objectReference: {fileID: 0}
+    - target: {fileID: 6069207444001527532, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
+    - target: {fileID: 6069207444001527532, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -4066559052782185188, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
+    - target: {fileID: 6069207444001527532, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6159219565489142658, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: scorePrefix
+      value: 'SCORE: '
+      objectReference: {fileID: 0}
+    - target: {fileID: 6159219565489142658, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: timerPrefix
+      value: 'TIME: '
       objectReference: {fileID: 0}
     - target: {fileID: 6159219565489142658, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
       propertyPath: scoreManager
@@ -2755,6 +2787,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6458756254599614175, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8430807326498540458, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_text
+      value: score
+      objectReference: {fileID: 0}
+    - target: {fileID: 8430807326498540458, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
+    - target: {fileID: 8430807326498540458, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -4066559052782185188, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
+    - target: {fileID: 8430807326498540458, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
+      propertyPath: m_hasFontAssetChanged
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
