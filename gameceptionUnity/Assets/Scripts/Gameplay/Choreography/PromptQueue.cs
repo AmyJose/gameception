@@ -78,6 +78,7 @@ namespace Gameplay.Choreography
         private bool _isGenerating = false;
         public bool IsGenerating => _isGenerating;
         public IReadOnlyList<int> ActiveLanes => _activeLanes;
+        public int LaneCount => laneOffsets != null ? laneOffsets.Length : 0;
 
         private void OnEnable()
         {
@@ -361,6 +362,28 @@ namespace Gameplay.Choreography
         public bool IsActiveLane(int lane)
         {
             return _activeLanes.Contains(lane);
+        }
+
+        public bool TryGetLaneCenterLocalPosition(int laneIndex, out Vector3 centerLocal)
+        {
+            centerLocal = Vector3.zero;
+
+            if (laneOffsets == null) return false;
+            if (laneIndex < 0 || laneIndex >= laneOffsets.Length) return false;
+
+            centerLocal = spawnOffset + laneOffsets[laneIndex];
+            return true;
+        }
+
+        public bool TryGetLaneBoundaryLocalX(int boundaryIndex, out float boundaryX)
+        {
+            boundaryX = 0f;
+
+            if (!TryGetLaneCenterLocalPosition(boundaryIndex, out var leftCenter)) return false;
+            if (!TryGetLaneCenterLocalPosition(boundaryIndex + 1, out var rightCenter)) return false;
+
+            boundaryX = (leftCenter.x + rightCenter.x) * 0.5f;
+            return true;
         }
     }
 }

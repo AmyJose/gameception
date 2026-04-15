@@ -520,6 +520,8 @@ MonoBehaviour:
     holdDuration: 5
   countdownSeconds: 3
   allowKeyboardDebug: 1
+  verbosePoseDebug: 1
+  holdLossPerSecondOnMismatch: 0.5
   choreographyTutorialRoot: {fileID: 503462914}
 --- !u!4 &368910267
 Transform:
@@ -840,11 +842,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8660398946776273385, guid: 8b714ce8ca8704a7590141330e37d700, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.11
+      value: -0.14
       objectReference: {fileID: 0}
     - target: {fileID: 8660398946776273385, guid: 8b714ce8ca8704a7590141330e37d700, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.02
+      value: -0.78
       objectReference: {fileID: 0}
     - target: {fileID: 8660398946776273385, guid: 8b714ce8ca8704a7590141330e37d700, type: 3}
       propertyPath: m_LocalPosition.z
