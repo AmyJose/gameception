@@ -38,6 +38,7 @@ namespace Gameplay.Choreography
         [Header("Generation")]
         [SerializeField] private int generationIntervalBeats = 10;
         [SerializeField] private int promptsPerSequence = 4;
+        [SerializeField] private int extraLaneRepeatsPerSequence = 2;
 
         [SerializeField] private PromptSelector promptSelector;
 
@@ -156,8 +157,16 @@ namespace Gameplay.Choreography
         private void BuildSequenceLaneOrder()
         {
             _sequenceLaneOrder.Clear();
+            //Base behaviour: one prompt per active lane
             _sequenceLaneOrder.AddRange(_activeLanes);
 
+            // Extra 'structural' difficulty: allow duplicates
+            for (int i = 0; i < extraLaneRepeatsPerSequence; i++)
+            {
+                int repeatedLane = _activeLanes[UnityEngine.Random.Range(0, _activeLanes.Count)];
+                _sequenceLaneOrder.Add(repeatedLane);
+            }
+            //Shuffle final lane order
             for (int i = 0; i < _sequenceLaneOrder.Count; i++)
             {
                 int j = UnityEngine.Random.Range(i, _sequenceLaneOrder.Count);
@@ -364,6 +373,25 @@ namespace Gameplay.Choreography
         public bool IsActiveLane(int lane)
         {
             return _activeLanes.Contains(lane);
+        }
+
+        public int GetActiveLaneCount()
+        {
+            return _activeLanes.Count;
+        }
+
+        public void SetGenerationIntervalBeats(int beats)
+        {
+            generationIntervalBeats = Mathf.Max(1, beats);
+        }
+
+        public void SetPromptsPerSequence(int count)
+        {
+            promptsPerSequence = Mathf.Max(1, count);
+        }
+        public void SetExtraLaneRepeatsPerSequence(int count)
+        {
+            extraLaneRepeatsPerSequence = Mathf.Max(0, count);
         }
 
         public bool TryGetLaneCenterLocalPosition(int laneIndex, out Vector3 centerLocal)
