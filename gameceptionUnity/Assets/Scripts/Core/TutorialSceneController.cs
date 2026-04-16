@@ -22,9 +22,17 @@ public class TutorialSceneController : MonoBehaviour
     [SerializeField] private AlienSpeechBubble speechBubble;
     [SerializeField] private SelectionState selectionState;
 
+    [Serializable]
+    public class PoseSpritePair
+    {
+        public Sprite alien;
+        public Sprite element;
+    }
+
     [Header("Alien Visuals")]
-    [SerializeField] private SpriteRenderer alienSpriteRenderer;
-    [SerializeField] private List<Sprite> poseSprites;
+    [SerializeField] private SpriteRenderer alienSpriteRenderer1;
+    [SerializeField] private SpriteRenderer alienSpriteRenderer2;
+    [SerializeField] private List<PoseSpritePair> poseSpritePairs;
 
     [Header("Pose Detection")]
     [SerializeField] private PoseDetectionRunner poseDetectionRunner;
@@ -177,10 +185,18 @@ public class TutorialSceneController : MonoBehaviour
 
     private IEnumerator RunPoseStep(PoseTutorialStep step, int index, int total)
     {
-        if (alienSpriteRenderer != null && poseSprites != null && poseSprites.Count >= index)
-        {
-            alienSpriteRenderer.sprite = poseSprites[index - 1];
-        }
+        // if (alienSpriteRenderer != null && poseSprites != null && poseSprites.Count >= index)
+        // {
+        //     alienSpriteRenderer.sprite = poseSprites[index - 1];
+        // }
+
+        if (poseSpritePairs != null && poseSpritePairs.Count >= index)
+    {
+        PoseSpritePair pair = poseSpritePairs[index - 1];
+        
+        if (alienSpriteRenderer1 != null) alienSpriteRenderer1.sprite = pair.alien;
+        if (alienSpriteRenderer2 != null) alienSpriteRenderer2.sprite = pair.element;
+    }
 
         currentExpectedPoseId = null;
         currentPoseMatched = false;
