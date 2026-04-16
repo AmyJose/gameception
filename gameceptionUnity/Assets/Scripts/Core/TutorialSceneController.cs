@@ -1,3 +1,4 @@
+using Gameplay;
 using InputLayer;
 using System;
 using System.Collections;
@@ -5,6 +6,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class TutorialSceneController : MonoBehaviour
 {
@@ -265,6 +267,8 @@ public class TutorialSceneController : MonoBehaviour
     {
         if (choreographyTutorialRoot != null)
             choreographyTutorialRoot.SetActive(true);
+
+        SceneManager.LoadScene("Level1DanceSequence");
     }
 
     private void SetObjective(string text)
