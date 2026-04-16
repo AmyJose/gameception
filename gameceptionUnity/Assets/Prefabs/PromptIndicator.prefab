@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5484747182022871459
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9130634404487962239}
+  m_Layer: 0
+  m_Name: FeedbackSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9130634404487962239
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5484747182022871459}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 5, y: -4, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 197692634625582373}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7212944702422761430
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,6 +258,7 @@ Transform:
   - {fileID: 7447569657510433807}
   - {fileID: 1931567787691266131}
   - {fileID: 5698051769459686393}
+  - {fileID: 9130634404487962239}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &926613821937977704
@@ -254,7 +286,10 @@ MonoBehaviour:
   midHitColor: {r: 1, g: 1, b: 0, a: 0.9}
   scaleInHitZone: 1.7
   normalScale: 1
-  feedbackText: {fileID: 2820133810704699045}
+  successPrefab: {fileID: 3366393576688562372, guid: 23f0914aa2492a34981ba88c8e066931, type: 3}
+  failPrefab: {fileID: 2713779776154782385, guid: a63cd621ad8c60f4a92d8327c3cc4397, type: 3}
+  midHitPrefab: {fileID: 7799667515327862433, guid: 00c192a1d493cb340943afb03ae90103, type: 3}
+  spawnPoint: {fileID: 9130634404487962239}
   audioSource: {fileID: 4831911684895333962}
   perfectSound: {fileID: 8300000, guid: 42aeddd6c34807e4e9c4d0426c1eef85, type: 3}
   goodSound: {fileID: 8300000, guid: 48081b519b3bc054a8339897ffe74073, type: 3}

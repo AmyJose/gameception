@@ -98,7 +98,7 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
             ElementPose.Fire => Color.red,
             ElementPose.Ice => Color.cyan,
             ElementPose.Water => Color.blue,
-            _ => Color.yellow
+            _ => Color.white
         };
 
         if (_poseLandmarkerResultAnnotationController == null)
@@ -241,6 +241,17 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
                     if (taskApi.TryDetectForVideo(image, GetCurrentTimestampMillisec(), imageProcessingOptions, ref result))
                     {
                         _poseLandmarkerResultAnnotationController.DrawNow(result);
+
+                        if (poseClassifier == null)
+                        {
+                            Debug.LogWarning("[PoseDetectionRunner] poseClassifier is null in VIDEO mode");
+                        }
+                        else
+                        {
+                            var videoClassification = poseClassifier.Classify(result);
+                            Debug.Log($"[PoseDetectionRunner] VIDEO pose classified as: {videoClassification.pose}");
+                            UpdateSkeletonColor(videoClassification.pose);
+                        }
                     }
                     else
                     {

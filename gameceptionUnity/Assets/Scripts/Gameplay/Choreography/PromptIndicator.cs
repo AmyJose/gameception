@@ -27,7 +27,10 @@ namespace Gameplay.Choreography
         [SerializeField] private float normalScale = 1f;
 
         [Header("Text Feedback")]
-        [SerializeField] private TMPro.TextMeshProUGUI feedbackText;
+        [SerializeField] private GameObject successPrefab;
+        [SerializeField] private GameObject failPrefab;
+        [SerializeField] private GameObject midHitPrefab;
+        [SerializeField] private Transform spawnPoint;
 
         [Header("Audio Feedback")]
         [SerializeField] private AudioSource audioSource;
@@ -109,7 +112,7 @@ namespace Gameplay.Choreography
             if (audioSource != null && perfectSound != null)
                 audioSource.PlayOneShot(perfectSound);
 
-            ShowFeedbackText("PERFECT!", new Color(0f, 1f, 0f, 1f));
+            SpawnFeedback(successPrefab);
         }
 
         public void SetFail()
@@ -120,7 +123,7 @@ namespace Gameplay.Choreography
             if (audioSource != null && missSound != null)
                 audioSource.PlayOneShot(missSound);
 
-            ShowFeedbackText("MISS!", new Color(1f, 0f, 0f, 1f));
+            SpawnFeedback(failPrefab);
         }
 
         public void SetMidHit()
@@ -131,38 +134,15 @@ namespace Gameplay.Choreography
             if (audioSource != null && goodSound != null)
                 audioSource.PlayOneShot(goodSound);
 
-            ShowFeedbackText("GOOD!", new Color(1f, 1f, 0f, 1f));
-        }
-        
-        private void ShowFeedbackText(string text, Color color)
-        {
-            if (feedbackText == null) return;
-            
-            feedbackText.text = text;
-            feedbackText.color = color;
-            feedbackText.gameObject.SetActive(true);
-
-            StartCoroutine(FadeOutFeedbackText());
+            SpawnFeedback(midHitPrefab);
         }
 
-        private System.Collections.IEnumerator FadeOutFeedbackText()
+        private void SpawnFeedback(GameObject prefab)
         {
-            yield return new WaitForSeconds(1f);
-            
-            float elapsedTime = 0f;
-            float fadeDuration = 0.5f;
-            Color originalColor = feedbackText.color;
-            
-            while (elapsedTime < fadeDuration)
-            {
-                elapsedTime += Time.deltaTime;
-                float alpha = Mathf.Lerp(0.5f, 0f, elapsedTime / fadeDuration);
-                feedbackText.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
-                yield return null;
-            }
-            
-            feedbackText.gameObject.SetActive(false);
-            feedbackText.color = originalColor; // Reset for next use
+            if (prefab == null) return;
+
+            GameObject instance = Instantiate(prefab, spawnPoint != null ? spawnPoint.position : transform.position, Quaternion.identity);
+            Destroy(instance, 1f);
         }
 
 
