@@ -1304,7 +1304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee88d43ace5064348b535cec1f7e9ea1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuSceneController
-  tutorialSceneName: Tutorial_beta_scene
+  tutorialSceneName: Tutorial_User_Testing
   mainMenuSceneName: Start
   playSceneName: Level1DanceSequence
 --- !u!4 &2081968891

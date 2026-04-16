@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class TutorialSceneController : MonoBehaviour
 {
@@ -169,6 +170,8 @@ public class TutorialSceneController : MonoBehaviour
         SetObjective("Choreography tutorial coming next...");
 
         OnTutorialFinished?.Invoke();
+
+        SceneManager.LoadScene("Level1DanceSequence");
     }
 
     private IEnumerator RunPoseStep(PoseTutorialStep step, int index, int total)
@@ -177,7 +180,7 @@ public class TutorialSceneController : MonoBehaviour
         {
             alienSpriteRenderer.sprite = poseSprites[index - 1];
         }
-        
+
         currentExpectedPoseId = null;
         currentPoseMatched = false;
         currentHoldTimer = 0f;
@@ -220,7 +223,7 @@ public class TutorialSceneController : MonoBehaviour
 
         OnPoseStepCompleted?.Invoke(step.poseId);
 
-        
+
     }
 
     private IEnumerator RunCountdown(float seconds)
