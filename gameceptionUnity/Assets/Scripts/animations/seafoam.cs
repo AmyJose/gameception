@@ -1,22 +1,22 @@
 using UnityEngine;
 
-public class SeafoamScroll : MonoBehaviour
+public partial class SeafoamScroll : MonoBehaviour
 {
-    [SerializeField] private float scrollSpeed = 0.06f;
+    [SerializeField] private float scrollSpeed = 0.5f;
+    private MeshRenderer meshRenderer;
     private Material mat;
 
     void Start()
     {
-        // This gets a unique instance of the material, which is correct for scrolling
         mat = GetComponent<SpriteRenderer>().material;
     }
 
     void Update()
     {
-        // Calculate the offset
+        // offset based on time
         float offset = Time.time * scrollSpeed;
         
-        // Use mainTextureOffset to work correctly with SpriteRenderers
+        // apply offset to texture's X axis
         mat.mainTextureOffset = new Vector2(offset, 0);
     }
 }
