@@ -274,10 +274,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Choreography.UI.PromptIndicator
   iconRenderer: {fileID: 9215154517909459216}
-  earthSprite: {fileID: 21300000, guid: 09bb7a07cb7c7e340b3041fd93c1a176, type: 3}
-  waterSprite: {fileID: 21300000, guid: 98d673921f18df041a16a3b4953fd650, type: 3}
-  fireSprite: {fileID: 21300000, guid: 86f2ef379c3a6654f9ecb0ebafed6f65, type: 3}
-  iceSprite: {fileID: 21300000, guid: 2bcd956c1b5e3b94291d1c08fd5c0606, type: 3}
+  earthSprite: {fileID: 21300000, guid: ad652a630229d4348b14d06ea170d96e, type: 3}
+  waterSprite: {fileID: 21300000, guid: 2370913df0e595d459677787ffb55f3f, type: 3}
+  fireSprite: {fileID: 21300000, guid: eb5d29e0f095db04292bee65010ca3a1, type: 3}
+  iceSprite: {fileID: 21300000, guid: fb8f0b6ef2a023c4e8b0f48fc6524b3d, type: 3}
   backgroundRenderer: {fileID: 6723285944216071819}
   normalColor: {r: 1, g: 1, b: 1, a: 0.7}
   hitZoneColor: {r: 0, g: 1, b: 0, a: 0.9}
