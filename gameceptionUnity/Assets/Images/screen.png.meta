@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 09bb7a07cb7c7e340b3041fd93c1a176
+guid: b938f088d82919d429527e37c59e5993
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3387714852178781895
-    second: iconearth_0
+      213: 8762952677643603340
+    second: screen_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -49,9 +49,9 @@ TextureImporter:
   spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 9
-  spritePivot: {x: 0.47503132, y: 0.11036377}
-  spritePixelsToUnits: 40
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -97,19 +97,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -126,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: iconearth_0
+      name: screen_0
       rect:
         serializedVersion: 2
-        x: 309
-        y: 100
-        width: 1139
-        height: 748
+        x: 112
+        y: 48
+        width: 789
+        height: 889
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 93991937a4b6cf0d0800000000000000
-      internalID: -3387714852178781895
+      spriteID: c8d418e38034c9970800000000000000
+      internalID: 8762952677643603340
       vertices: []
       indices: 
       edges: []
@@ -152,7 +139,7 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -161,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      iconearth_0: -3387714852178781895
+      screen_0: 8762952677643603340
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
