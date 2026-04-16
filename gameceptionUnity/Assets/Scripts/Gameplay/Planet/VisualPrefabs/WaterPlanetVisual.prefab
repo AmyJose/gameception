@@ -291,7 +291,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6206445604028474311}
   - component: {fileID: 1335767237629127435}
-  - component: {fileID: 1009822693585026399}
+  - component: {fileID: 6862255436364448853}
   m_Layer: 0
   m_Name: SeafoamRenderer
   m_TagString: Untagged
@@ -364,7 +364,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 1
   m_Sprite: {fileID: 4698822815076463166, guid: f8a321265260d6d4583692955f037785, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.54901963}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -373,7 +373,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &1009822693585026399
+--- !u!114 &6862255436364448853
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -382,9 +382,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 4937931660912593255}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 101b993b29cdbbc4e8c306aeb48b1aa8, type: 3}
+  m_Script: {fileID: 11500000, guid: 49f8757096e955b4c9685b9038edfffd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BackgroundScroll
+  m_EditorClassIdentifier: Assembly-CSharp::seafoam
   scrollSpeed: 0.06
 --- !u!1 &8893745688572494904
 GameObject:

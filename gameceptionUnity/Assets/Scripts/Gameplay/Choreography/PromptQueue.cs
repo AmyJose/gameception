@@ -38,6 +38,7 @@ namespace Gameplay.Choreography
         [Header("Generation")]
         [SerializeField] private int generationIntervalBeats = 10;
         [SerializeField] private int promptsPerSequence = 4;
+        [SerializeField] private int extraLaneRepeatsPerSequence = 2;
 
         [SerializeField] private PromptSelector promptSelector;
 
@@ -80,6 +81,7 @@ namespace Gameplay.Choreography
         private bool _isGenerating = false;
         public bool IsGenerating => _isGenerating;
         public IReadOnlyList<int> ActiveLanes => _activeLanes;
+        public int LaneCount => laneOffsets != null ? laneOffsets.Length : 0;
 
         private void OnEnable()
         {
@@ -155,8 +157,16 @@ namespace Gameplay.Choreography
         private void BuildSequenceLaneOrder()
         {
             _sequenceLaneOrder.Clear();
+            //Base behaviour: one prompt per active lane
             _sequenceLaneOrder.AddRange(_activeLanes);
 
+            // Extra 'structural' difficulty: allow duplicates
+            for (int i = 0; i < extraLaneRepeatsPerSequence; i++)
+            {
+                int repeatedLane = _activeLanes[UnityEngine.Random.Range(0, _activeLanes.Count)];
+                _sequenceLaneOrder.Add(repeatedLane);
+            }
+            //Shuffle final lane order
             for (int i = 0; i < _sequenceLaneOrder.Count; i++)
             {
                 int j = UnityEngine.Random.Range(i, _sequenceLaneOrder.Count);
@@ -363,6 +373,47 @@ namespace Gameplay.Choreography
         public bool IsActiveLane(int lane)
         {
             return _activeLanes.Contains(lane);
+        }
+
+        public int GetActiveLaneCount()
+        {
+            return _activeLanes.Count;
+        }
+
+        public void SetGenerationIntervalBeats(int beats)
+        {
+            generationIntervalBeats = Mathf.Max(1, beats);
+        }
+
+        public void SetPromptsPerSequence(int count)
+        {
+            promptsPerSequence = Mathf.Max(1, count);
+        }
+        public void SetExtraLaneRepeatsPerSequence(int count)
+        {
+            extraLaneRepeatsPerSequence = Mathf.Max(0, count);
+        }
+
+        public bool TryGetLaneCenterLocalPosition(int laneIndex, out Vector3 centerLocal)
+        {
+            centerLocal = Vector3.zero;
+
+            if (laneOffsets == null) return false;
+            if (laneIndex < 0 || laneIndex >= laneOffsets.Length) return false;
+
+            centerLocal = spawnOffset + laneOffsets[laneIndex];
+            return true;
+        }
+
+        public bool TryGetLaneBoundaryLocalX(int boundaryIndex, out float boundaryX)
+        {
+            boundaryX = 0f;
+
+            if (!TryGetLaneCenterLocalPosition(boundaryIndex, out var leftCenter)) return false;
+            if (!TryGetLaneCenterLocalPosition(boundaryIndex + 1, out var rightCenter)) return false;
+
+            boundaryX = (leftCenter.x + rightCenter.x) * 0.5f;
+            return true;
         }
     }
 }
