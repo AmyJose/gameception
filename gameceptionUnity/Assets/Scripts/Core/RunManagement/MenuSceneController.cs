@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class MenuSceneController : MonoBehaviour
 {
-    [SerializeField] private string tutorialSceneName = "Tutorial_beta_scene";
+    [SerializeField] private string tutorialSceneName = "Tutorial_User_Testing";
     [SerializeField] private string mainMenuSceneName = "Start";
     [SerializeField] private string playSceneName = "Level1DanceSequence";
 
