@@ -65,6 +65,30 @@ namespace Rhythm
             StartClock();
         }
 
+        public void SetBpm(double newBpm)
+        {
+            if (!_running)
+            {
+                bpm = newBpm;
+                _beatInterval = 60.0 / bpm;
+                return;
+            }
+
+            // Current song time under old BPM
+            double currentSongTime = AudioSettings.dspTime - _dspStart + beatOffsetSeconds;
+
+            // Compute current beat position before changing BPM
+            double currentBeat = currentSongTime / _beatInterval;
+
+            // Apply new BPM
+            bpm = newBpm;
+            _beatInterval = 60.0 / bpm;
+
+            // Recalculate dspStart so beat position stays continuous
+            _dspStart = AudioSettings.dspTime - (currentBeat * _beatInterval) + beatOffsetSeconds;
+        }
+
+
 
         private void Update()
         {
