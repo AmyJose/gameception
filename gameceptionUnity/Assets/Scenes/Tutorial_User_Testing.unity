@@ -221,8 +221,8 @@ Transform:
   m_GameObject: {fileID: 336051880}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.88, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 26.3, y: 13.6, z: 0}
+  m_LocalScale: {x: 2.693433, y: 2.693433, z: 2.6923413}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1596741972}
@@ -326,8 +326,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Sample text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
-  m_sharedMaterial: {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ed8a4b93038f95344879106d86eb17f3, type: 2}
+  m_sharedMaterial: {fileID: 5888184441765795590, guid: ed8a4b93038f95344879106d86eb17f3, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -424,7 +424,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
+  - {fileID: 5888184441765795590, guid: ed8a4b93038f95344879106d86eb17f3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -464,8 +464,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.244, y: -0.999}
-  m_SizeDelta: {x: 15.225, y: 6.997}
+  m_AnchoredPosition: {x: 30.7, y: 11.4}
+  m_SizeDelta: {x: 40.959, y: 26.45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &368910265
 GameObject:
@@ -498,9 +498,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TutorialSceneController
   speechBubble: {fileID: 1596741971}
   selectionState: {fileID: 1025710956}
+  alienSpriteRenderer: {fileID: 1353357650}
+  poseSprites:
+  - {fileID: 21300000, guid: 7f05dbf3f97cea54c8d5a99bcb7beb86, type: 3}
+  - {fileID: 21300000, guid: c82bd52e6ea0efe4a9ccdc123c799642, type: 3}
+  - {fileID: 21300000, guid: c02c846eb5f460a4ca8964859bbcca37, type: 3}
+  - {fileID: 21300000, guid: 8313b7b033689a447b9503953172d7aa, type: 3}
   poseDetectionRunner: {fileID: 184578138}
+  poseState: {fileID: 1825261778}
   countdownText: {fileID: 1002929563}
   objectiveText: {fileID: 1376567004}
+  minPoseConfidence: 0.75
   readyPadIndex: 0
   requireOnlyThisPadSelected: 0
   poseSteps:
@@ -518,6 +526,8 @@ MonoBehaviour:
     holdDuration: 5
   countdownSeconds: 3
   allowKeyboardDebug: 1
+  verbosePoseDebug: 1
+  holdLossPerSecondOnMismatch: 0.5
   choreographyTutorialRoot: {fileID: 503462914}
 --- !u!4 &368910267
 Transform:
@@ -838,11 +848,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8660398946776273385, guid: 8b714ce8ca8704a7590141330e37d700, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.11
+      value: -0.14
       objectReference: {fileID: 0}
     - target: {fileID: 8660398946776273385, guid: 8b714ce8ca8704a7590141330e37d700, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.02
+      value: -0.78
       objectReference: {fileID: 0}
     - target: {fileID: 8660398946776273385, guid: 8b714ce8ca8704a7590141330e37d700, type: 3}
       propertyPath: m_LocalPosition.z
@@ -875,6 +885,10 @@ PrefabInstance:
     - target: {fileID: 8660398946776273385, guid: 8b714ce8ca8704a7590141330e37d700, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8660398946776273385, guid: 8b714ce8ca8704a7590141330e37d700, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1231,8 +1245,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Count
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
-  m_sharedMaterial: {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
+  m_sharedMaterial: {fileID: -4066559052782185188, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1329,7 +1343,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
+  - {fileID: -4066559052782185188, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1674,6 +1688,11 @@ MonoBehaviour:
   overrideAllowedPadCount: 1
   allowedPadCount: 1
   selectionEnabled: 1
+--- !u!212 &1353357650 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 7059199131960691583, guid: 8b714ce8ca8704a7590141330e37d700, type: 3}
+  m_PrefabInstance: {fileID: 692774407}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1376567003
 GameObject:
   m_ObjectHideFlags: 0
@@ -1714,8 +1733,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Obj Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
-  m_sharedMaterial: {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ed8a4b93038f95344879106d86eb17f3, type: 2}
+  m_sharedMaterial: {fileID: 5888184441765795590, guid: ed8a4b93038f95344879106d86eb17f3, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1812,7 +1831,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2147374, guid: 0161d805a3764c089bef00bfe00793f5, type: 2}
+  - {fileID: 5888184441765795590, guid: ed8a4b93038f95344879106d86eb17f3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2140,7 +2159,7 @@ Transform:
   m_GameObject: {fileID: 1596741970}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 15, y: 10, z: 0}
+  m_LocalPosition: {x: 0.5, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2391,8 +2410,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2fc0a4cda9812246849a8a770090f31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputLayer.MLPPoseClassifier
-  modelAsset: {fileID: 5022602860645237092, guid: 60ae02037034a4da38f4eec383da61d5, type: 3}
-  scalerJson: {fileID: 4900000, guid: e2be859e21ca84097b80b13333a42af9, type: 3}
+  modelAsset: {fileID: 5022602860645237092, guid: 8c4d5142720bf479388d0d077cc028be, type: 3}
+  scalerJson: {fileID: 4900000, guid: 5c71b03cddf314cc79013d13cad664a9, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

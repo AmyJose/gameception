@@ -39,6 +39,8 @@ namespace Gameplay.Choreography
         [SerializeField] private int generationIntervalBeats = 10;
         [SerializeField] private int promptsPerSequence = 4;
 
+        [SerializeField] private PromptSelector promptSelector;
+
         // Events
         public event Action<PromptData> OnPromptEnteredZone;
         public event Action<PromptData> OnPromptExitedZone;
@@ -78,6 +80,7 @@ namespace Gameplay.Choreography
         private bool _isGenerating = false;
         public bool IsGenerating => _isGenerating;
         public IReadOnlyList<int> ActiveLanes => _activeLanes;
+        public int LaneCount => laneOffsets != null ? laneOffsets.Length : 0;
 
         private void OnEnable()
         {
@@ -171,7 +174,7 @@ namespace Gameplay.Choreography
 
             int laneIndex = _sequenceLaneOrder[indexInSequence];
 
-            ElementPose pose = GetRandomPose();
+            ElementPose pose = promptSelector.SelectPromptForLane(laneIndex);
 
             var indicator = Instantiate(promptPrefab, transform);
             indicator.Initialize(pose, _nextPromptId);
@@ -361,6 +364,28 @@ namespace Gameplay.Choreography
         public bool IsActiveLane(int lane)
         {
             return _activeLanes.Contains(lane);
+        }
+
+        public bool TryGetLaneCenterLocalPosition(int laneIndex, out Vector3 centerLocal)
+        {
+            centerLocal = Vector3.zero;
+
+            if (laneOffsets == null) return false;
+            if (laneIndex < 0 || laneIndex >= laneOffsets.Length) return false;
+
+            centerLocal = spawnOffset + laneOffsets[laneIndex];
+            return true;
+        }
+
+        public bool TryGetLaneBoundaryLocalX(int boundaryIndex, out float boundaryX)
+        {
+            boundaryX = 0f;
+
+            if (!TryGetLaneCenterLocalPosition(boundaryIndex, out var leftCenter)) return false;
+            if (!TryGetLaneCenterLocalPosition(boundaryIndex + 1, out var rightCenter)) return false;
+
+            boundaryX = (leftCenter.x + rightCenter.x) * 0.5f;
+            return true;
         }
     }
 }
