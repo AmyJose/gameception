@@ -63,5 +63,8 @@ TagManager:
   - name: alien
     uniqueID: 2283412773
     locked: 0
+  - name: ufo
+    uniqueID: 1878885545
+    locked: 0
   m_RenderingLayers:
   - Default
