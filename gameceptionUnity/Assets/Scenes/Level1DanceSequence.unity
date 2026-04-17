@@ -2377,13 +2377,13 @@ MonoBehaviour:
   repeatSpawnDelay: 15
   laneUnlockOrder:
   - laneIndex: 0
-    requiredPadIndex: 1
+    requiredPadIndex: 0
   - laneIndex: 1
-    requiredPadIndex: 2
+    requiredPadIndex: 1
   - laneIndex: 2
-    requiredPadIndex: 3
+    requiredPadIndex: 2
   - laneIndex: 3
-    requiredPadIndex: 4
+    requiredPadIndex: 3
   starterPopulationAmount: 10
 --- !u!1 &1230970975
 GameObject:

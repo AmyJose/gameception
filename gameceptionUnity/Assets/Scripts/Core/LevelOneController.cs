@@ -124,7 +124,7 @@ public class LevelOneController : MonoBehaviour
 
         LaneUnlockData unlock = laneUnlockOrder[nextUnlockStep];
 
-        string message = $"Jump on pad {unlock.requiredPadIndex} to create this planet!";
+        string message = $"Jump on pad {unlock.requiredPadIndex + 1} to create this planet!";
 
         if(ufoPrefab != null && ufoSpawnPoint != null && ufoIntroPoint!= null)
         {
