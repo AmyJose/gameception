@@ -56,6 +56,7 @@ namespace Gameplay.Choreography
         }
 
         public enum HitQuality { Perfect, Good, WrongPose, NoInput }
+        public enum PadSelection {WrongPad, NoInput}
         public enum PoseTiming { Early, Perfect, Late }
 
         private struct SequenceStatus
@@ -103,8 +104,9 @@ namespace Gameplay.Choreography
                 // if (abs < Mathf.Abs(prompt.bestOffset))
                 //     prompt.bestOffset = offset;
 
-                // Check pose
+                // Check pose and pad
                 if (!prompt.success &&
+                    selectionState.IsSelected(prompt.laneIndex) &&
                     poseState.CurrentPose == prompt.requiredPose &&
                     poseState.Confidence >= minPoseConfidence &&
                     abs < perfectWindow)
@@ -226,7 +228,9 @@ namespace Gameplay.Choreography
         }
 
         private void EmitFailure(int id, ActivePrompt prompt)
-        {
+        {   
+            
+
             var result = new JudgementResult
             {
                 promptId = id,
