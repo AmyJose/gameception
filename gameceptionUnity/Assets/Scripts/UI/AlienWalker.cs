@@ -6,6 +6,8 @@ public class AlienWalker : MonoBehaviour
     [SerializeField] private float angleDeg;
     [SerializeField] private float radius = 1f;
     [SerializeField] private float angularSpeedDegPerSec = 20f;
+    [SerializeField] private float bobHeight = 0.6f;
+    [SerializeField] private float bobDuration = 0.5f;
 
     [SerializeField] private float spriteRotationOffset = -90f;
     [SerializeField] private Transform orbitCenter;
@@ -17,7 +19,7 @@ public class AlienWalker : MonoBehaviour
     }
     private void TestBob()
     {
-        TriggerBeatBob(1.25f, 0.5f);
+        TriggerBeatBob(bobHeight, bobDuration);
     }
 
     public void Initialise(Transform center, float startAngleDeg, float orbitRadius, float speedDegPerSec, float rotationOffsetDeg = -90f)
