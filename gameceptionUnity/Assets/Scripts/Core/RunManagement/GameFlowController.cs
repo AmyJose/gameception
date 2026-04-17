@@ -31,8 +31,8 @@ namespace Gameplay
 
         [Header("Run Settings")]
         [SerializeField] private bool autoStartRun = true;
-        [SerializeField] private float runDurationSeconds = 120f;
-        [SerializeField] private float startDelaySeconds = 1f;
+        [SerializeField] private float runDurationSeconds = 300f;
+        [SerializeField] private float startDelaySeconds = 1.5f;
 
         [Header("Scene Flow")]
         [SerializeField] private string resultsSceneName = "ResultsScene";

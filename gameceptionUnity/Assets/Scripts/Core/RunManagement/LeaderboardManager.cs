@@ -1,8 +1,10 @@
 using Firebase;
 using Firebase.Database;
 using Firebase.Extensions;
+using Gameplay;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -20,13 +22,27 @@ public class LeaderboardManager : MonoBehaviour
         public int score;
         public long timestamp;
 
+        public int promptsHit;
+        public int promptsMissed;
+        public int longestStreak;
+        public int sequencesCompleted;
+        public float accuracy;
+        public float runDuration;
+
         public ScoreEntry() { }
 
-        public ScoreEntry(string name, int score)
+        public ScoreEntry(string name, RunResults results)
         {
             this.name = name;
-            this.score = score;
+            this.score = results.finalScore;
             this.timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+            this.promptsHit = results.promptsHit;
+            this.promptsMissed = results.promptsMissed;
+            this.longestStreak = results.longestStreak;
+            this.sequencesCompleted = results.sequencesCompleted;
+            this.accuracy = results.accuracy;
+            this.runDuration = results.runDuration;
         }
     }
     private void Awake()
@@ -54,7 +70,7 @@ public class LeaderboardManager : MonoBehaviour
     }
     public bool IsReady => _db != null;
 
-    public void SubmitScore(string playerName, int playerScore, Action<bool> onComplete = null)
+    public void SubmitScore(string playerName, RunResults results, Action<bool> onComplete = null)
     {
         if (_db == null)
         {
@@ -66,33 +82,63 @@ public class LeaderboardManager : MonoBehaviour
         string safeName = string.IsNullOrWhiteSpace(playerName) ? "Player" : playerName.Trim();
 
         string key = _db.Child("leaderboard").Child("scores").Push().Key;
+        ScoreEntry entry = new ScoreEntry(safeName, results);
 
-        ScoreEntry entry = new ScoreEntry(safeName, playerScore);
         string json = JsonUtility.ToJson(entry);
 
-        var writeTask = _db.Child("leaderboard").Child("scores").Child(key).SetRawJsonValueAsync(json);
-        Debug.Log("[LeaderboardManager] SetRawJsonValueAsync called.");
+        _db.Child("leaderboard").Child("scores").Child(key).SetRawJsonValueAsync(json)
+            .ContinueWithOnMainThread(task =>
+            {
+                if (task.IsFaulted || task.IsCanceled)
+                {
+                    Debug.LogError("[LeaderboardManager] Failed to submit score: " + task.Exception);
+                    onComplete?.Invoke(false);
+                    return;
+                }
 
-        writeTask.ContinueWithOnMainThread(task =>
+                Debug.Log($"[LeaderboardManager] Score submitted: {safeName} - {entry.score}");
+                onComplete?.Invoke(true);
+            });
+    }
+    public void LoadTopScores(Action<List<ScoreEntry>> onLoaded, int limit = 10)
+    {
+        if (_db == null)
         {
-            Debug.Log("[LeaderboardManager] Submit callback reached.");
+            Debug.LogWarning("[LeaderboardManager] Database reference is null.");
+            onLoaded?.Invoke(new List<ScoreEntry>());
+            return;
+        }
 
-            if (task.IsCanceled)
+        _db.Child("leaderboard").Child("scores")
+            .OrderByChild("score")
+            .LimitToLast(limit)
+            .GetValueAsync()
+            .ContinueWithOnMainThread(task =>
             {
-                Debug.LogError("[LeaderboardManager] Submit was canceled.");
-                onComplete?.Invoke(false);
-                return;
-            }
+                List<ScoreEntry> results = new List<ScoreEntry>();
 
-            if (task.IsFaulted)
-            {
-                Debug.LogError("[LeaderboardManager] Submit faulted: " + task.Exception);
-                onComplete?.Invoke(false);
-                return;
-            }
+                if (task.IsFaulted || task.IsCanceled)
+                {
+                    Debug.LogError("[LeaderboardManager] Failed to load scores: " + task.Exception);
+                    onLoaded?.Invoke(results);
+                    return;
+                }
 
-            Debug.Log($"[LeaderboardManager] Score submitted successfully: {safeName} - {playerScore}");
-            onComplete?.Invoke(true);
-        });
+                DataSnapshot snapshot = task.Result;
+
+                foreach (var child in snapshot.Children)
+                {
+                    string json = child.GetRawJsonValue();
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        ScoreEntry entry = JsonUtility.FromJson<ScoreEntry>(json);
+                        if (entry != null)
+                            results.Add(entry);
+                    }
+                }
+
+                results.Sort((a, b) => b.score.CompareTo(a.score));
+                onLoaded?.Invoke(results);
+            });
     }
 }

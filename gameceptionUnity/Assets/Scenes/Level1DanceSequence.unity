@@ -466,8 +466,8 @@ MonoBehaviour:
   promptQueue: {fileID: 733875701}
   scoreManager: {fileID: 1818512631}
   autoStartRun: 1
-  runDurationSeconds: 120
-  startDelaySeconds: 1
+  runDurationSeconds: 300
+  startDelaySeconds: 1.5
   resultsSceneName: Results
 --- !u!4 &177462653
 Transform:
