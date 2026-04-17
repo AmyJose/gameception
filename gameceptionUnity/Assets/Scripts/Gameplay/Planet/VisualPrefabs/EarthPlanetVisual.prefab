@@ -272,8 +272,8 @@ MonoBehaviour:
   - {fileID: 5986423797595151718}
   effectsToToggleWhenLowVitality: []
   healthyColor: {r: 1, g: 1, b: 1, a: 1}
-  strugglingColor: {r: 0.78, g: 0.78, b: 0.78, a: 1}
-  dyingColor: {r: 0.48, g: 0.48, b: 0.48, a: 1}
+  strugglingColor: {r: 1, g: 1, b: 1, a: 1}
+  dyingColor: {r: 1, g: 1, b: 1, a: 1}
   tintDecorationsWithVitality: 1
   disableSwayWhenVeryLow: 0
   swayDisableThreshold: 0.15

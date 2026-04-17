@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlanetDef_Earth
   m_EditorClassIdentifier: Assembly-CSharp::PlanetDefinition
   planetSprite: {fileID: 21300000, guid: 4c153bd04fd20934b92eef53abc0082b, type: 3}
-  selectedPlanetSprite: {fileID: 21300000, guid: f845f5a5f5094d245b91f023b0d9c030, type: 3}
+  selectedPlanetSprite: {fileID: 21300000, guid: c2229e53913bc5448a5595001ca36cc5, type: 3}
   visualPrefab: {fileID: 3062117082898887814, guid: e6adff4b6fed52a4e8870ccb136a0518, type: 3}
   startingPopulation: 0
   populationCap: 100
