@@ -119,6 +119,11 @@ public class LevelOneController : MonoBehaviour
 
         if(nextUnlockStep >=laneUnlockOrder.Length) yield break;
 
+        if (promptQueue != null)
+        {
+            promptQueue.StopGeneration();
+        }
+
         Transform spawnPoint = GetNextPlanetSpawnPoint();
         if (spawnPoint == null) yield break;
 
@@ -175,6 +180,14 @@ public class LevelOneController : MonoBehaviour
             currentUFO.HideMessage();
             yield return currentUFO.FlyTo(ufoExitPoint.position, 1f, 25f);
             Destroy(currentUFO.gameObject);
+        }
+
+        if (promptQueue != null)
+        {
+            promptQueue.SetActiveLanes(unlockedLanes);
+
+            if (!promptQueue.IsGenerating)
+                promptQueue.BeginGeneration();
         }
 
         currentUFO = null;
