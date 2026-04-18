@@ -7,6 +7,7 @@ namespace Gameplay
         [Header("Core Renderers")]
         [SerializeField] private SpriteRenderer basePlanetRenderer;
         [SerializeField] private SpriteRenderer seafoamRenderer;
+        [SerializeField] private GameObject selectionGlowObject;
 
         private PlanetDefinition _definition;
         private bool _isSelected;
@@ -21,30 +22,29 @@ namespace Gameplay
                 return;
             }
 
-            ApplySprite();
+            if (basePlanetRenderer != null && _definition.planetSprite != null)
+            {
+                basePlanetRenderer.sprite = _definition.planetSprite;
+            }
+
+            if (selectionGlowObject != null)
+            {
+                selectionGlowObject.SetActive(false);
+            }
         }
 
         public override void SetSelected(bool isSelected)
         {
             _isSelected = isSelected;
-            ApplySprite();
+            if (selectionGlowObject != null)
+            {
+                selectionGlowObject.SetActive(isSelected);
+            }
         }
 
         public override void SetVitality(float normalizedVitality)
         {
             
-        }
-
-        private void ApplySprite()
-        {
-            if (basePlanetRenderer == null || _definition == null)
-                return;
-
-            Sprite targetSprite = _isSelected && _definition.selectedPlanetSprite != null
-                ? _definition.selectedPlanetSprite
-                : _definition.planetSprite;
-
-            basePlanetRenderer.sprite = targetSprite;
         }
     }
 }
