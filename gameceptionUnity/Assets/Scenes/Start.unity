@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 397070257}
   - component: {fileID: 397070256}
   - component: {fileID: 397070258}
+  - component: {fileID: 397070259}
   m_Layer: 0
   m_Name: Firebase
   m_TagString: Untagged
@@ -177,6 +178,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LeaderboardManager
   databaseUrl: https://groove-galaxy-6d5c7-default-rtdb.europe-west1.firebasedatabase.app/
+--- !u!114 &397070259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397070255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fb49c59f995e784c813784a658a4f9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FirebaseAuthController
 --- !u!1 &667667552
 GameObject:
   m_ObjectHideFlags: 0

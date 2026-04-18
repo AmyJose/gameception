@@ -32,17 +32,23 @@ namespace Gameplay
 
         private IEnumerator SubmitWhenReady()
         {
-            // wait for Firebase + Leaderboard
-            while (LeaderboardManager.Instance == null || !LeaderboardManager.Instance.IsReady)
+            while (!FirebaseInitializer.IsFirebaseReady)
             {
                 yield return null;
             }
-
-            if (_scoreSubmitted) yield break;
+            while (FirebaseAuthController.Instance == null || !FirebaseAuthController.Instance.IsSignedIn)
+            {
+                yield return null;
+            }
+            while(LeaderboardSubmissionService.Instance == null)
+            {
+                yield return null;
+            }
+            if(_scoreSubmitted) yield break;
 
             RunResults results = RunResultsStore.LastResults;
 
-            if (results == null)
+            if(results == null)
             {
                 Debug.LogWarning("[ResultsSceneController] No results to submit.");
                 yield break;
@@ -50,9 +56,9 @@ namespace Gameplay
 
             string playerName = PlayerSession.HasName ? PlayerSession.PlayerName : "Player";
 
-            Debug.Log("[ResultsSceneController] Auto-submitting score...");
+            Debug.Log("[ResultsSceneController] Auto-submitting score via Cloud Function...");
 
-            LeaderboardManager.Instance.SubmitScore(playerName, results, success =>
+            LeaderboardSubmissionService.Instance.SubmitScore(playerName, results, success =>
             {
                 if (success)
                 {
