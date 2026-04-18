@@ -8,18 +8,33 @@ public class MenuSceneController : MonoBehaviour
     [SerializeField] private string mainMenuSceneName = "Start";
     [SerializeField] private string playSceneName = "Level1DanceSequence";
     [SerializeField] private TMP_InputField nameInputField;
+    [SerializeField] private GameObject namePopup;
 
-    public void StartGame()
+    public void OnStartClicked()
+    {
+        namePopup.SetActive(true);
+    }
+
+    private void Start()
+    {
+        namePopup.SetActive(false);
+    }
+
+    public void OnConfirmName()
     {
         string name = "Player";
-        if (nameInputField != null && !string.IsNullOrWhiteSpace(nameInputField.text))
+
+        if (!string.IsNullOrWhiteSpace(nameInputField.text))
         {
             name = nameInputField.text.Trim();
         }
 
         PlayerSession.PlayerName = name;
 
-        GoToPlayScene();
+        PlayerPrefs.SetString("player_name", name);
+        PlayerPrefs.Save();
+
+        SceneManager.LoadScene(tutorialSceneName);
     }
 
     public void GoToTutorial()

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Firebase.Functions;
 using Firebase.Extensions;
@@ -9,6 +10,7 @@ public class LeaderboardSubmissionService : MonoBehaviour
     public static LeaderboardSubmissionService Instance { get; private set; }
 
     private FirebaseFunctions _functions;
+    public bool IsReady => _functions != null;
 
     private void Awake()
     {
@@ -22,7 +24,7 @@ public class LeaderboardSubmissionService : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    private System.Collections.IEnumerator Start()
+    private IEnumerator Start()
     {
         while (!FirebaseInitializer.IsFirebaseReady)
             yield return null;
@@ -57,7 +59,14 @@ public class LeaderboardSubmissionService : MonoBehaviour
             .CallAsync(data)
             .ContinueWithOnMainThread(task =>
             {
-                if (task.IsCanceled || task.IsFaulted)
+                if (task.IsCanceled)
+                {
+                    Debug.LogError("[Functions] submitScore canceled.");
+                    onComplete?.Invoke(false);
+                    return;
+                }
+
+                if (task.IsFaulted)
                 {
                     Debug.LogError("[Functions] submitScore failed: " + task.Exception);
                     onComplete?.Invoke(false);

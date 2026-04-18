@@ -15,6 +15,7 @@ namespace Gameplay
         [SerializeField] private TMP_Text missesText;
         [SerializeField] private TMP_Text streakText;
         [SerializeField] private TMP_Text sequencesText;
+        [SerializeField] private TMP_Text playerName;
 
         [Header("Scene Names")]
         [SerializeField] private string mainMenuSceneName = "Start";
@@ -36,19 +37,23 @@ namespace Gameplay
             {
                 yield return null;
             }
+
             while (FirebaseAuthController.Instance == null || !FirebaseAuthController.Instance.IsSignedIn)
             {
                 yield return null;
             }
-            while(LeaderboardSubmissionService.Instance == null)
+
+            while (LeaderboardSubmissionService.Instance == null || !LeaderboardSubmissionService.Instance.IsReady)
             {
                 yield return null;
             }
-            if(_scoreSubmitted) yield break;
+
+            if (_scoreSubmitted)
+                yield break;
 
             RunResults results = RunResultsStore.LastResults;
 
-            if(results == null)
+            if (results == null)
             {
                 Debug.LogWarning("[ResultsSceneController] No results to submit.");
                 yield break;
@@ -82,6 +87,7 @@ namespace Gameplay
                 return;
             }
 
+            if (playerName != null) playerName.text = PlayerSession.PlayerName;
             if (scoreText != null) scoreText.text = $"Score: {_results.finalScore}";
             if (accuracyText != null) accuracyText.text = $"Accuracy: {_results.accuracy:P1}";
             if (hitsText != null) hitsText.text = $"Hits: {_results.promptsHit}";

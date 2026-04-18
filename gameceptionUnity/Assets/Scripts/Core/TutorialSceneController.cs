@@ -151,7 +151,8 @@ public class TutorialSceneController : MonoBehaviour
 
     private IEnumerator RunTutorialRoutine()
     {
-        yield return SpeakAndPause("Hey you! We need your help!", 1.0f);
+        string intro = "Hey " + PlayerSession.PlayerName + "! We need your help!";
+        yield return SpeakAndPause(intro, 1.0f);
         yield return SpeakAndPause("First, we need to calibrate our camera system.", 1.0f);
 
         ActivatePoseDetection();
