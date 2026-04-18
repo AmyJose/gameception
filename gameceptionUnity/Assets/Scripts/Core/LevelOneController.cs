@@ -155,7 +155,8 @@ public class LevelOneController : MonoBehaviour
         if (currentUFO != null)
         {
             Vector3 ufoTarget = newPlanet.transform.position + new Vector3(0f, 3f, 0f);
-            yield return currentUFO.FlyTo(ufoTarget, 1.2f, 20f);
+            // yield return currentUFO.FlyTo(ufoTarget, 1.2f, 20f);
+            yield return currentUFO.PlayFlyToPlanetSequence(ufoTarget, 1.2f, 20f);
             currentUFO.StartBobbing();
         }
 
@@ -177,9 +178,10 @@ public class LevelOneController : MonoBehaviour
 
         if (currentUFO != null && ufoExitPoint != null)
         {
-            currentUFO.HideMessage();
-            yield return currentUFO.FlyTo(ufoExitPoint.position, 1f, 25f);
-            Destroy(currentUFO.gameObject);
+            // currentUFO.HideMessage();
+            // yield return currentUFO.FlyTo(ufoExitPoint.position, 1f, 25f);
+            yield return currentUFO.PlayExitSequence(ufoExitPoint.position, 1f, 25f);
+            // Destroy(currentUFO.gameObject);
         }
 
         if (promptQueue != null)
