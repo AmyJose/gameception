@@ -258,10 +258,7 @@ MonoBehaviour:
   alienOrbitRadiusWorld: 1.3
   basePlanetRenderer: {fileID: 7579000151803470289}
   seafoamRenderer: {fileID: 1335767237629127435}
-<<<<<<< Updated upstream
   selectionGlowObject: {fileID: 264927968822810469}
-=======
->>>>>>> Stashed changes
 --- !u!114 &2881009853273955734
 MonoBehaviour:
   m_ObjectHideFlags: 0

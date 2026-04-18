@@ -51,9 +51,9 @@ MonoBehaviour:
   visualRoot: {fileID: 7622261706106677638}
   pauseBeforeMessage: 0.4
   audioSource: {fileID: 3767126996102695529}
-  enterSound: {fileID: 8300000, guid: 188e3044abee91b4bb1381c4d2e009ea, type: 3}
-  flyOnPlanetSound: {fileID: 8300000, guid: b9c3e2a1f081d21409326857ccc01fb6, type: 3}
-  exitSound: {fileID: 8300000, guid: 6051c46728da2ba4cb230aadb06e9058, type: 3}
+  enterSound: {fileID: 8300000, guid: 24da141cb697a544cb3545ea6e5da051, type: 3}
+  flyOnPlanetSound: {fileID: 8300000, guid: 0c0caab010e14da4bbc47eac8871f64f, type: 3}
+  exitSound: {fileID: 8300000, guid: d693963f5a26e90438e3a41ae0e5b006, type: 3}
   bobAmplitude: 0.12
   bobFrequency: 0.8
 --- !u!82 &3767126996102695529
