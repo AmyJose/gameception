@@ -1317,6 +1317,72 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!1 &712276111
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 712276112}
+  - component: {fileID: 712276113}
+  m_Layer: 0
+  m_Name: LaneHighlights
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &712276112
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 712276111}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 733875700}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &712276113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 712276111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32ff35f5a1ba14756b845e281b658b5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Choreography.LaneHighlightVisuals
+  promptQueue: {fileID: 733875701}
+  selectionState: {fileID: 2047366721}
+  defaultHighlightColor: {r: 1, g: 1, b: 1, a: 0.29803923}
+  minY: -10
+  maxY: 10
+  laneConfigs:
+  - highlightColor: {r: 0.54509807, g: 0.9098039, b: 1, a: 1}
+    prefab: {fileID: 0}
+    xOffsetPixels: -0.08
+    widthOffsetPixels: 0
+  - highlightColor: {r: 1, g: 0.7294118, b: 0.57254905, a: 1}
+    prefab: {fileID: 0}
+    xOffsetPixels: -0.08
+    widthOffsetPixels: 0
+  - highlightColor: {r: 0.77254903, g: 0.9843137, b: 0.53333336, a: 1}
+    prefab: {fileID: 0}
+    xOffsetPixels: -0.08
+    widthOffsetPixels: 0
+  - highlightColor: {r: 0.6901961, g: 0.8, b: 1, a: 1}
+    prefab: {fileID: 0}
+    xOffsetPixels: -0.08
+    widthOffsetPixels: 0
 --- !u!1 &733875699
 GameObject:
   m_ObjectHideFlags: 0
@@ -1346,7 +1412,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 712276112}
   m_Father: {fileID: 545700348}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &733875701
