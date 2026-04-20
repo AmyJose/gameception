@@ -9,6 +9,7 @@ namespace Gameplay.Choreography
     {
         public Color highlightColor = new Color(1f, 1f, 1f, 0.3f);
         public GameObject prefab;
+        public Sprite sprite;
         public float xOffsetPixels = -0.08f;
         public float widthOffsetPixels = 0f;
     }
@@ -36,6 +37,7 @@ namespace Gameplay.Choreography
                 selectionState.OnChanged += OnSelectionChanged;
             
             CreateHighlights();
+            UpdateHighlights();
         }
 
         private void OnDisable()
@@ -76,14 +78,29 @@ namespace Gameplay.Choreography
                     highlightObj.transform.SetParent(transform, false);
 
                     SpriteRenderer sr = highlightObj.AddComponent<SpriteRenderer>();
-                    sr.sprite = CreateWhiteSprite();
-                    sr.drawMode = SpriteDrawMode.Sliced;
+
+                    if (config.sprite != null)
+                    {
+                        sr.sprite = config.sprite;
+                    }
+                    else
+                    {
+                        sr.sprite = CreateWhiteSprite();
+                    }
+
+                    sr.drawMode = SpriteDrawMode.Sliced; 
                     sr.color = config.highlightColor;
                     sr.sortingOrder = -10;
+                    
+                    // sr.sprite = CreateWhiteSprite();
+                    // sr.drawMode = SpriteDrawMode.Sliced;
+                    // sr.color = config.highlightColor;
+                    // sr.sortingOrder = -10;
 
                     _spriteRenderers[i] = sr;
                 }
 
+                highlightObj.SetActive(false);
                 _highlights[i] = highlightObj;
             }
         }
