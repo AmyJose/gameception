@@ -136,7 +136,7 @@ namespace Gameplay.Choreography
                 int beatOffsetInSequence = beat.beatIndex - _currentSequenceStartBeat;
 
                 // Check if this beat should spawn based on spacing
-                int promptBeatSpacing = GetCurrentSpacing();
+                int promptBeatSpacing = 2;
                 if (beatOffsetInSequence % promptBeatSpacing == 0)
                 {
                     if (TryGetScriptedIntroPose(beat.dspSongTime, out var scriptedPose))

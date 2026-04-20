@@ -589,7 +589,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -644,8 +644,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.015686275, g: 0.9098039, b: 1, a: 0.34901962}
-      key1: {r: 0.015686275, g: 0.9098039, b: 1, a: 0.34901962}
+      key0: {r: 0, g: 0.98039216, b: 0.91764706, a: 0.34901962}
+      key1: {r: 0, g: 0.98039216, b: 0.91764706, a: 0.34901962}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -1224,7 +1224,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1279,8 +1279,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.015686275, g: 0.9098039, b: 1, a: 0.34901962}
-      key1: {r: 0.015686275, g: 0.9098039, b: 1, a: 0.34901962}
+      key0: {r: 0, g: 0.98039216, b: 0.91764706, a: 0.34901962}
+      key1: {r: 0, g: 0.98039216, b: 0.91764706, a: 0.34901962}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -1379,7 +1379,7 @@ MonoBehaviour:
   promptsPerSequence: 4
   extraLaneRepeatsPerSequence: 2
   promptSelector: {fileID: 1779290181}
-  scriptedIntroSequence: {fileID: 0}
+  scriptedIntroSequence: {fileID: 11400000, guid: 6833d863739f64937a335e046fa8a66d, type: 2}
   scriptedIntroDurationMinutes: 0
   loopScriptedIntroSequence: 1
 --- !u!4 &750123599 stripped
@@ -1445,7 +1445,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1500,8 +1500,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.015686275, g: 0.9098039, b: 1, a: 0.34901962}
-      key1: {r: 0.015686275, g: 0.9098039, b: 1, a: 0.34901962}
+      key0: {r: 0, g: 0.98039216, b: 0.91764706, a: 0.34901962}
+      key1: {r: 0, g: 0.98039216, b: 0.91764706, a: 0.34901962}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -1586,6 +1586,7 @@ MonoBehaviour:
   promptQueue: {fileID: 733875701}
   beatClock: {fileID: 1130057111}
   difficulty: 0.2
+  maxDifficulty: 0.85
   baseIncreasePerSequence: 0.02
   performanceInfluence: 0.3
   targetAccuracy: 0.75
@@ -1646,9 +1647,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 863662618}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d99c4293418db48f0abe3c35379ab072, type: 3}
+  m_Script: {fileID: 11500000, guid: bbf6ff4412fa202408ca8a0a8605373b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Choreography.LaneDividerVisuals
+  promptQueue: {fileID: 733875701}
+  lineMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  lineColor: {r: 0, g: 0.9811321, b: 0.91846603, a: 0.35}
+  lineWidth: 0.06
+  hitZoneRenderer: {fileID: 0}
+  sortingOrderOffset: 2
+  minY: -8
+  maxY: 8
+  zOffset: 0
+  singleLaneHalfWidth: 1
 --- !u!1 &878431677
 GameObject:
   m_ObjectHideFlags: 0
@@ -1707,7 +1718,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1762,8 +1773,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.015686275, g: 0.9098039, b: 1, a: 0.34901962}
-      key1: {r: 0.015686275, g: 0.9098039, b: 1, a: 0.34901962}
+      key0: {r: 0, g: 0.98039216, b: 0.91764706, a: 0.34901962}
+      key1: {r: 0, g: 0.98039216, b: 0.91764706, a: 0.34901962}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -3203,7 +3214,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3258,8 +3269,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.015686275, g: 0.9098039, b: 1, a: 0.34901962}
-      key1: {r: 0.015686275, g: 0.9098039, b: 1, a: 0.34901962}
+      key0: {r: 0, g: 0.98039216, b: 0.91764706, a: 0.34901962}
+      key1: {r: 0, g: 0.98039216, b: 0.91764706, a: 0.34901962}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
