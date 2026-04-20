@@ -55,6 +55,21 @@ namespace Gameplay
         [SerializeField] private float growDuration = 1.5f;
         [SerializeField] private AnimationCurve growCurve = null;
 
+        [Header("Feedback")]
+        [SerializeField] private ElementBurst elementBurstPrefab;
+        [SerializeField] private Transform burstSpawnPoint;
+
+        [Header("Element Icons")]
+        [SerializeField] private Sprite fireIcon;
+        [SerializeField] private Sprite waterIcon;
+        [SerializeField] private Sprite earthIcon;
+        [SerializeField] private Sprite iceIcon;
+
+        [SerializeField] private Color fireColor = new Color32(250,172,140,255);
+        [SerializeField] private Color waterColor = new Color32(110,254,247,255);
+        [SerializeField] private Color earthColor = new Color32(211, 243, 132, 255);
+        [SerializeField] private Color iceColor = new Color32(224,204,253,255);
+
         private Vector3 _targetScale;
         private float _growTimer;
         private bool _isGrowing;
@@ -241,6 +256,8 @@ namespace Gameplay
 
             AddPopulation(populationDelta);
 
+            PlayElementFeedback(result);
+
             RefreshAlienMood();
             RefreshDeteriorationVisuals();
 
@@ -250,6 +267,52 @@ namespace Gameplay
                 $"Population delta={populationDelta:+0.0;-0.0;0.0}, " +
                 $"Vitality={vitality:F1}/{maxVitality}, Population={population:F1}"
             );
+        }
+        private void PlayElementFeedback(PromptJudge.JudgementResult result)
+        {
+            // Only show for successful hits
+            if (result.quality != PromptJudge.HitQuality.Perfect &&
+                result.quality != PromptJudge.HitQuality.Good)
+                return;
+
+            if (elementBurstPrefab == null || burstSpawnPoint == null)
+                return;
+
+            Sprite icon = GetIconForPose(result.detectedPose);
+            Color colour = GetColorForPose(result.detectedPose);
+
+            if (icon == null)
+                return;
+
+            ElementBurst burst = Instantiate(
+                elementBurstPrefab,
+                burstSpawnPoint.position,
+                Quaternion.identity
+            );
+
+            burst.Play(icon, colour);
+        }
+        private Color GetColorForPose(ElementPose pose)
+        {
+            switch (pose)
+            {
+                case ElementPose.Fire: return fireColor;
+                case ElementPose.Water: return waterColor;
+                case ElementPose.Earth: return earthColor;
+                case ElementPose.Ice: return iceColor;
+                default: return Color.white;
+            }
+        }
+        private Sprite GetIconForPose(ElementPose pose)
+        {
+            switch (pose)
+            {
+                case ElementPose.Fire: return fireIcon;
+                case ElementPose.Water: return waterIcon;
+                case ElementPose.Earth: return earthIcon;
+                case ElementPose.Ice: return iceIcon;
+                default: return null;
+            }
         }
         public bool IsDead()
         {

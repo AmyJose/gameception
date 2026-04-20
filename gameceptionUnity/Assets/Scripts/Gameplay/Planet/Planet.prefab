@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1817412153346869149
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6745421893664396440}
+  m_Layer: 0
+  m_Name: burstSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6745421893664396440
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1817412153346869149}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4645923925486781507}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1971155481452933183
 GameObject:
   m_ObjectHideFlags: 0
@@ -33,6 +64,7 @@ Transform:
   m_Children:
   - {fileID: 1120777604323684103}
   - {fileID: 7096330909747885456}
+  - {fileID: 6745421893664396440}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2421352814427187259
@@ -96,6 +128,16 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  elementBurstPrefab: {fileID: 6267153624571779914, guid: b04196d4bd50605449ec4980f34f970c, type: 3}
+  burstSpawnPoint: {fileID: 6745421893664396440}
+  fireIcon: {fileID: 21300000, guid: 86f2ef379c3a6654f9ecb0ebafed6f65, type: 3}
+  waterIcon: {fileID: 21300000, guid: 98d673921f18df041a16a3b4953fd650, type: 3}
+  earthIcon: {fileID: 21300000, guid: 09bb7a07cb7c7e340b3041fd93c1a176, type: 3}
+  iceIcon: {fileID: 21300000, guid: 2bcd956c1b5e3b94291d1c08fd5c0606, type: 3}
+  fireColor: {r: 0.98039216, g: 0.6745098, b: 0.54901963, a: 1}
+  waterColor: {r: 0.43137255, g: 0.99607843, b: 0.96862745, a: 1}
+  earthColor: {r: 0.827451, g: 0.9529412, b: 0.5176471, a: 1}
+  iceColor: {r: 0.8784314, g: 0.8, b: 0.99215686, a: 1}
 --- !u!114 &7791890636379242194
 MonoBehaviour:
   m_ObjectHideFlags: 0
