@@ -12,7 +12,7 @@ public class AdaptiveDifficultyController : MonoBehaviour
 
     [Header("Difficulty")]
     [SerializeField] private float difficulty = 0f;              // 0 = easiest, 1 = hardest
-    [SerializeField, Range(0f, 1f)] private float maxDifficulty = 0.85f;
+    [SerializeField, Range(0f, 1f)] private float maxDifficulty = 0.80f;
     [SerializeField] private float baseIncreasePerSequence = 0.02f;
     [SerializeField] private float performanceInfluence = 0.30f;
     [SerializeField] private float targetAccuracy = 0.75f;
