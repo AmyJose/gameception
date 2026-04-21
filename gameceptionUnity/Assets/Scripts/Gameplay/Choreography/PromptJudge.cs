@@ -55,8 +55,7 @@ namespace Gameplay.Choreography
             public float accuracy;
         }
 
-        public enum HitQuality { Perfect, Good, WrongPose, NoInput }
-        public enum PadSelection {WrongPad, NoInput}
+        public enum HitQuality { Perfect, Good, WrongPose, WrongPlanet, NoInput }
         public enum PoseTiming { Early, Perfect, Late }
 
         private struct SequenceStatus
@@ -104,9 +103,12 @@ namespace Gameplay.Choreography
                 // if (abs < Mathf.Abs(prompt.bestOffset))
                 //     prompt.bestOffset = offset;
 
-                // Check pose and pad
+                int selectedPad = GetSelectedPad();
+                bool hasSelection = selectedPad != -1;
+
                 if (!prompt.success &&
-                    selectionState.IsSelected(prompt.laneIndex) &&
+                    hasSelection &&
+                    selectedPad == prompt.laneIndex &&
                     poseState.CurrentPose == prompt.requiredPose &&
                     poseState.Confidence >= minPoseConfidence &&
                     abs < perfectWindow)
@@ -228,8 +230,8 @@ namespace Gameplay.Choreography
         }
 
         private void EmitFailure(int id, ActivePrompt prompt)
-        {   
-            
+        {
+            HitQuality failureQuality = EvaluateFailureReason(prompt);
 
             var result = new JudgementResult
             {
@@ -238,17 +240,19 @@ namespace Gameplay.Choreography
                 laneIndex = prompt.laneIndex,
                 detectedPose = poseState.CurrentPose,
                 selectedPad = GetSelectedPad(),
-                quality = HitQuality.NoInput,
+                quality = failureQuality,
                 timing = PoseTiming.Late
             };
+
             Debug.Log($"[PromptJudge - MISS] Seq {result.sequenceId} | Prompt {id}: {result.quality} | " +
-              $"Pose: {result.detectedPose}");
+              $"Pose: {result.detectedPose} | SelectedPad: {result.selectedPad} | ExpectedLane: {result.laneIndex}");
+
             OnJudged?.Invoke(result);
             UpdateSequenceProgress(prompt.sequenceId, result.quality);
 
             if (hitZone != null)
             {
-                hitZone.TriggerFeedback(false); //red flash
+                hitZone.TriggerFeedback(false);
             }
         }
 
@@ -258,6 +262,29 @@ namespace Gameplay.Choreography
                 return PoseTiming.Perfect;
 
             return offset > 0 ? PoseTiming.Early : PoseTiming.Late;
+        }
+        private HitQuality EvaluateFailureReason(ActivePrompt prompt)
+        {
+            int selectedPad = GetSelectedPad();
+
+            bool hasSelection = selectedPad != -1;
+            bool correctPlanetSelected = selectedPad == prompt.laneIndex;
+            bool poseMatches = poseState.CurrentPose == prompt.requiredPose;
+            bool hasEnoughConfidence = poseState.Confidence >= minPoseConfidence;
+
+            // No planet selected OR wrong planet selected = WrongPlanet
+            if (!hasSelection || !correctPlanetSelected)
+                return HitQuality.WrongPlanet;
+
+            // Correct planet but wrong pose
+            if (!poseMatches)
+                return HitQuality.WrongPose;
+
+            // Correct planet + pose, but low confidence
+            if (!hasEnoughConfidence)
+                return HitQuality.NoInput;
+
+            return HitQuality.NoInput;
         }
 
         //Updates progress when a prompt is judged

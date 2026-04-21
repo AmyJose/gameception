@@ -34,7 +34,6 @@ namespace Gameplay.Choreography.UI
 
         private void HandleJudged(PromptJudge.JudgementResult result)
         {
-            // Finds prompt by ID
             var prompts = queue.GetComponentsInChildren<PromptIndicator>();
             PromptIndicator found = null;
 
@@ -49,44 +48,24 @@ namespace Gameplay.Choreography.UI
 
             if (found == null) return;
 
-            /*if (result.quality == PromptJudge.HitQuality.Perfect)
-            {
-                found.SetSuccess();
-                Destroy(found.gameObject, 4f);
-                Debug.Log($"✅ Prompt {result.promptId} SUCCESS");
-            }
-            else if (result.quality == PromptJudge.HitQuality.Good)
-            {
-                found.SetMidHit();
-                Destroy(found.gameObject, 4f);
-                Debug.Log($"✅ Prompt {result.promptId} GOOD HIT");
-            }
-            else
-            {
-                found.SetFail();
-                Debug.Log($"❌ Prompt {result.promptId} FAIL");
-            }*/
             if (result.quality == PromptJudge.HitQuality.WrongPose ||
-                result.quality == PromptJudge.HitQuality.NoInput)
+                result.quality == PromptJudge.HitQuality.NoInput ||
+                result.quality == PromptJudge.HitQuality.WrongPlanet)
             {
                 found.SetFail();
                 Debug.Log($"❌ Prompt {result.promptId} FAIL: {result.quality}");
             }
+            else if (result.quality == PromptJudge.HitQuality.Perfect &&
+                     result.timing == PromptJudge.PoseTiming.Perfect)
+            {
+                found.SetSuccess();
+                Debug.Log($"💎 Prompt {result.promptId} PERFECT HIT");
+            }
             else
             {
-                if (result.timing == PromptJudge.PoseTiming.Perfect &&
-                    result.quality == PromptJudge.HitQuality.Perfect)
-                {
-                    found.SetSuccess();
-                    Debug.Log($"💎 Prompt {result.promptId} PERFECT HIT");
-                }
-                else
-                {
-                    found.SetMidHit();
-                    Debug.Log($"✅ Prompt {result.promptId} GOOD HIT ({result.timing})");
-                }
+                found.SetMidHit();
+                Debug.Log($"✅ Prompt {result.promptId} GOOD HIT ({result.timing})");
             }
-
         }
     }
 }

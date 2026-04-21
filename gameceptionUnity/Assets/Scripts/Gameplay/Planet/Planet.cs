@@ -58,6 +58,12 @@ namespace Gameplay
         [Header("Feedback")]
         [SerializeField] private ElementBurst elementBurstPrefab;
         [SerializeField] private Transform burstSpawnPoint;
+        [SerializeField] private GameObject goodFeedbackPrefab;
+        [SerializeField] private GameObject missFeedbackPrefab;
+        [SerializeField] private GameObject perfectFeedbackPrefab;
+        [SerializeField] private GameObject wrongPlanetFeedbackPrefab;
+        [SerializeField] private Transform judgementFeedbackSpawnPoint;
+        [SerializeField] private float judgementFeedbackLifetime = 1f;
 
         [Header("Element Icons")]
         [SerializeField] private Sprite fireIcon;
@@ -257,6 +263,7 @@ namespace Gameplay
             AddPopulation(populationDelta);
 
             PlayElementFeedback(result);
+            SpawnJudgementFeedback(result);
 
             RefreshAlienMood();
             RefreshDeteriorationVisuals();
@@ -267,6 +274,44 @@ namespace Gameplay
                 $"Population delta={populationDelta:+0.0;-0.0;0.0}, " +
                 $"Vitality={vitality:F1}/{maxVitality}, Population={population:F1}"
             );
+        }
+        private void SpawnJudgementFeedback(PromptJudge.JudgementResult result)
+        {
+            GameObject prefabToSpawn = null;
+
+            if (result.quality == PromptJudge.HitQuality.WrongPlanet)
+            {
+                prefabToSpawn = wrongPlanetFeedbackPrefab;
+                Debug.Log("[Planet] WrongPlanet prefab");
+            }
+            else if (result.quality == PromptJudge.HitQuality.WrongPose ||
+                     result.quality == PromptJudge.HitQuality.NoInput)
+            {
+                prefabToSpawn = missFeedbackPrefab;
+                Debug.Log("[Planet] Miss prefab");
+            }
+            else if (result.quality == PromptJudge.HitQuality.Perfect &&
+                     result.timing == PromptJudge.PoseTiming.Perfect)
+            {
+                prefabToSpawn = perfectFeedbackPrefab;
+                Debug.Log("[Planet] Perfect prefab");
+            }
+            else
+            {
+                prefabToSpawn = goodFeedbackPrefab;
+                Debug.Log("[Planet] good prefab");
+            }
+
+            if (prefabToSpawn == null)
+                return;
+
+            Vector3 spawnPos = judgementFeedbackSpawnPoint != null
+                ? judgementFeedbackSpawnPoint.position
+                : transform.position;
+
+            GameObject instance = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
+            Debug.Log("[Planet]Feedback instantiated");
+            Destroy(instance, judgementFeedbackLifetime);
         }
         private void PlayElementFeedback(PromptJudge.JudgementResult result)
         {
