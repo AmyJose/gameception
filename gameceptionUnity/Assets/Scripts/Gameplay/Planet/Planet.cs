@@ -164,7 +164,7 @@ namespace Gameplay
         public void SetPlanetIndex(int index)
         {
             planetIndex = index;
-            UpdateSelectionVisuals();
+            RefreshVisualState();
         }
 
         public void SetDefinition(PlanetDefinition newDefinition)
@@ -282,24 +282,20 @@ namespace Gameplay
             if (result.quality == PromptJudge.HitQuality.WrongPlanet)
             {
                 prefabToSpawn = wrongPlanetFeedbackPrefab;
-                Debug.Log("[Planet] WrongPlanet prefab");
             }
             else if (result.quality == PromptJudge.HitQuality.WrongPose ||
                      result.quality == PromptJudge.HitQuality.NoInput)
             {
                 prefabToSpawn = missFeedbackPrefab;
-                Debug.Log("[Planet] Miss prefab");
             }
             else if (result.quality == PromptJudge.HitQuality.Perfect &&
                      result.timing == PromptJudge.PoseTiming.Perfect)
             {
-                prefabToSpawn = perfectFeedbackPrefab;
-                Debug.Log("[Planet] Perfect prefab");
+                prefabToSpawn = perfectFeedbackPrefab;;
             }
             else
             {
                 prefabToSpawn = goodFeedbackPrefab;
-                Debug.Log("[Planet] good prefab");
             }
 
             if (prefabToSpawn == null)
@@ -310,7 +306,6 @@ namespace Gameplay
                 : transform.position;
 
             GameObject instance = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
-            Debug.Log("[Planet]Feedback instantiated");
             Destroy(instance, judgementFeedbackLifetime);
         }
         private void PlayElementFeedback(PromptJudge.JudgementResult result)
@@ -378,9 +373,7 @@ namespace Gameplay
             population = Mathf.Clamp(definition.startingPopulation, 0f, definition.populationCap);
 
             RebuildVisual();
-            UpdateSelectionVisuals();
-            RefreshAlienMood();
-            RefreshDeteriorationVisuals();
+            RefreshVisualState();
         }
         private void RebuildVisual()
         {
@@ -415,6 +408,7 @@ namespace Gameplay
             }
 
             _currentVisual.Initialize(definition);
+            UpdateSelectionVisuals();
         }
         private void UpdateSelectionVisuals()
         {
@@ -427,7 +421,12 @@ namespace Gameplay
                 _currentVisual.SetSelected(isSelected);
             }
         }
-
+        public void RefreshVisualState()
+        {
+            UpdateSelectionVisuals();
+            RefreshAlienMood();
+            RefreshDeteriorationVisuals();
+        }
         private void RefreshAlienMood()
         {
             if (alienSwarmView == null)

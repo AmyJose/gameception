@@ -103,12 +103,10 @@ namespace Gameplay.Choreography
                 // if (abs < Mathf.Abs(prompt.bestOffset))
                 //     prompt.bestOffset = offset;
 
-                int selectedPad = GetSelectedPad();
-                bool hasSelection = selectedPad != -1;
+                bool correctPlanetSelected = selectionState != null && selectionState.IsSelected(prompt.laneIndex);
 
                 if (!prompt.success &&
-                    hasSelection &&
-                    selectedPad == prompt.laneIndex &&
+                    correctPlanetSelected &&
                     poseState.CurrentPose == prompt.requiredPose &&
                     poseState.Confidence >= minPoseConfidence &&
                     abs < perfectWindow)
@@ -210,8 +208,6 @@ namespace Gameplay.Choreography
                 timing = EvaluateTimingFromOffset(offset)
             };
 
-            Debug.Log($"[PromptJudge - HIT] Seq {result.sequenceId} | Prompt {id}: {result.quality} | " +
-              $"Timing: {result.timing} (Offset: {offset:F2}) | Pose: {result.detectedPose}| Confidence: {poseState.Confidence:F2}");
             OnJudged?.Invoke(result);
             UpdateSequenceProgress(prompt.sequenceId, result.quality);
 
@@ -265,22 +261,20 @@ namespace Gameplay.Choreography
         }
         private HitQuality EvaluateFailureReason(ActivePrompt prompt)
         {
-            int selectedPad = GetSelectedPad();
-
-            bool hasSelection = selectedPad != -1;
-            bool correctPlanetSelected = selectedPad == prompt.laneIndex;
+            bool hasAnySelection = selectionState != null && selectionState.Selected.Count > 0;
+            bool correctPlanetSelected = selectionState != null && selectionState.IsSelected(prompt.laneIndex);
             bool poseMatches = poseState.CurrentPose == prompt.requiredPose;
             bool hasEnoughConfidence = poseState.Confidence >= minPoseConfidence;
 
-            // No planet selected OR wrong planet selected = WrongPlanet
-            if (!hasSelection || !correctPlanetSelected)
+            // No planet selected OR required planet not selected
+            if (!hasAnySelection || !correctPlanetSelected)
                 return HitQuality.WrongPlanet;
 
-            // Correct planet but wrong pose
+            // Correct planet selected, but wrong pose
             if (!poseMatches)
                 return HitQuality.WrongPose;
 
-            // Correct planet + pose, but low confidence
+            // Correct planet and pose, but low confidence
             if (!hasEnoughConfidence)
                 return HitQuality.NoInput;
 
@@ -359,9 +353,7 @@ namespace Gameplay.Choreography
         }
         private int GetSelectedPad()
         {
-            if (selectionState?.Selected.Count == 0) return -1;
-            var list = new System.Collections.Generic.List<int>(selectionState.Selected);
-            return list[list.Count - 1];
+            return selectionState != null ? selectionState.GetSingleSelected() : -1;
         }
 
 
