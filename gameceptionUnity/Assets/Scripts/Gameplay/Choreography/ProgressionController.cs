@@ -105,9 +105,9 @@ namespace Gameplay.Choreography
                 beatClock.SetBpm(targetBpm);
 
                 var promptBand = GetPromptBand(_currentDifficulty);
-                promptQueue.SetGenerationIntervalBeats(promptBand.generationIntervalBeats);
-                promptQueue.SetPromptsPerSequence(promptBand.PromptsPerSequence);
-                promptQueue.SetExtraLaneRepeatsPerSequence(promptBand.minExtraLaneRepeatsPerSequence);
+                // promptQueue.SetGenerationIntervalBeats(promptBand.generationIntervalBeats);
+                // promptQueue.SetPromptsPerSequence(promptBand.PromptsPerSequence);
+                // promptQueue.SetExtraLaneRepeatsPerSequence(promptBand.minExtraLaneRepeatsPerSequence);
 
                 Debug.Log($"[Progression] Difficulty -> {_currentDifficulty}, BPM={targetBpm}, Prompts: interval={promptBand.generationIntervalBeats}, perSeq={promptBand.PromptsPerSequence}");
             }

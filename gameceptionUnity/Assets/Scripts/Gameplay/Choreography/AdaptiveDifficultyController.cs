@@ -126,8 +126,8 @@ public class AdaptiveDifficultyController : MonoBehaviour
         );
         extraRepeats = Mathf.Clamp(extraRepeats, 0, maxExtraLaneRepeats);
 
-        promptQueue.SetPromptsPerSequence(promptsPerSequence);
-        promptQueue.SetExtraLaneRepeatsPerSequence(extraRepeats);
+        // promptQueue.SetPromptsPerSequence(promptsPerSequence);
+        // promptQueue.SetExtraLaneRepeatsPerSequence(extraRepeats);
 
         Debug.Log(
             $"[AdaptiveDifficulty] Prompts/Seq={promptsPerSequence}, ExtraRepeats={extraRepeats}"
