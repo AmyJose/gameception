@@ -1,2 +1,15 @@
 fileFormatVersion: 2
 guid: 0aefffd3d053041ef89663b4f13e6002
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - planetRenderer: {instanceID: 0}
+  - warningIcon: {fileID: 989609067417872137, guid: 3b2428372c192534db8e97dae8a14004, type: 3}
+  - alienVisualRoot: {instanceID: 0}
+  - alienVisualPrefab: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
