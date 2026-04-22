@@ -62,6 +62,9 @@ namespace Gameplay.Choreography
         [SerializeField] private float scriptedIntroDurationSeconds = 0f;
         [SerializeField] private bool loopScriptedIntroSequence = true;
 
+        [Header("Lane Restrictions")]
+        [SerializeField] private bool blockOppositeLanePerSequence = true;
+
         // Events
         public event Action<PromptData> OnPromptEnteredZone;
         public event Action<PromptData> OnPromptExitedZone;
@@ -90,6 +93,13 @@ namespace Gameplay.Choreography
 
         private readonly List<int> _activeLanes = new();
         private readonly List<int> _sequenceLaneOrder = new();
+        private readonly List<int> _sequenceAllowedLanes = new();
+
+        private static readonly int[][] OppositeLanePairs =
+        {
+            new[] { 0, 3 }, // Left / Right
+            new[] { 1, 2 }  // Up / Down
+        };
 
         private float _totalScrollDistance = 0f;
         private int _nextPromptId = 0;
@@ -156,7 +166,6 @@ namespace Gameplay.Choreography
                     }
                     else
                     {
-                        Debug.Log("Random generation started");
                         SpawnOnePrompt(beat.beatIndex);
                     }
                     _promptsSpawnedThisSequence++;
@@ -197,12 +206,20 @@ namespace Gameplay.Choreography
         {
             _sequenceLaneOrder.Clear();
 
+            _sequenceAllowedLanes.Clear();
+            _sequenceAllowedLanes.AddRange(_activeLanes);
+
+            if (blockOppositeLanePerSequence)
+            {
+                ApplyOppositeLaneExclusionForSequence(_sequenceAllowedLanes);
+            }
+
             if (keepLanePromptsConsecutive)
             {
                 // Build groups (keep lane prompts together)
                 var laneGroups = new List<List<int>>();
 
-                foreach (int laneIndex in _activeLanes)
+                foreach (int laneIndex in _sequenceAllowedLanes)
                 {
                     int count = laneConfigs[laneIndex].promptsPerSequence;
                     var group = new List<int>();
@@ -231,7 +248,7 @@ namespace Gameplay.Choreography
             else
             {
                 // Original behavior: shuffle individual prompts
-                foreach (int laneIndex in _activeLanes)
+                foreach (int laneIndex in _sequenceAllowedLanes)
                 {
                     int count = laneConfigs[laneIndex].promptsPerSequence;
                     for (int i = 0; i < count; i++)
@@ -248,6 +265,33 @@ namespace Gameplay.Choreography
                 }
 
                 Debug.Log($"[PromptQueue] Lane order (shuffled): [{string.Join(", ", _sequenceLaneOrder)}]");
+            }
+        }
+
+        private void ApplyOppositeLaneExclusionForSequence(List<int> lanes)
+        {
+            if (lanes == null || lanes.Count == 0) return;
+
+            int anchorLane = lanes[UnityEngine.Random.Range(0, lanes.Count)];
+
+            foreach (var pair in OppositeLanePairs)
+            {
+                int laneA = pair[0];
+                int laneB = pair[1];
+
+                if (anchorLane == laneA && lanes.Contains(laneB))
+                {
+                    lanes.Remove(laneB);
+                    Debug.Log($"[PromptQueue] Sequence lane exclusion: anchor lane {anchorLane}, removed opposite lane {laneB}");
+                    return;
+                }
+
+                if (anchorLane == laneB && lanes.Contains(laneA))
+                {
+                    lanes.Remove(laneA);
+                    Debug.Log($"[PromptQueue] Sequence lane exclusion: anchor lane {anchorLane}, removed opposite lane {laneA}");
+                    return;
+                }
             }
         }
 
