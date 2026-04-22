@@ -55,8 +55,7 @@ namespace Gameplay.Choreography
             public float accuracy;
         }
 
-        public enum HitQuality { Perfect, Good, WrongPose, NoInput }
-        public enum PadSelection {WrongPad, NoInput}
+        public enum HitQuality { Perfect, Good, WrongPose, WrongPlanet, NoInput }
         public enum PoseTiming { Early, Perfect, Late }
 
         private struct SequenceStatus
@@ -104,9 +103,10 @@ namespace Gameplay.Choreography
                 // if (abs < Mathf.Abs(prompt.bestOffset))
                 //     prompt.bestOffset = offset;
 
-                // Check pose and pad
+                bool correctPlanetSelected = selectionState != null && selectionState.IsSelected(prompt.laneIndex);
+
                 if (!prompt.success &&
-                    selectionState.IsSelected(prompt.laneIndex) &&
+                    correctPlanetSelected &&
                     poseState.CurrentPose == prompt.requiredPose &&
                     poseState.Confidence >= minPoseConfidence &&
                     abs < perfectWindow)
@@ -208,8 +208,6 @@ namespace Gameplay.Choreography
                 timing = EvaluateTimingFromOffset(offset)
             };
 
-            Debug.Log($"[PromptJudge - HIT] Seq {result.sequenceId} | Prompt {id}: {result.quality} | " +
-              $"Timing: {result.timing} (Offset: {offset:F2}) | Pose: {result.detectedPose}| Confidence: {poseState.Confidence:F2}");
             OnJudged?.Invoke(result);
             UpdateSequenceProgress(prompt.sequenceId, result.quality);
 
@@ -228,8 +226,8 @@ namespace Gameplay.Choreography
         }
 
         private void EmitFailure(int id, ActivePrompt prompt)
-        {   
-            
+        {
+            HitQuality failureQuality = EvaluateFailureReason(prompt);
 
             var result = new JudgementResult
             {
@@ -238,17 +236,19 @@ namespace Gameplay.Choreography
                 laneIndex = prompt.laneIndex,
                 detectedPose = poseState.CurrentPose,
                 selectedPad = GetSelectedPad(),
-                quality = HitQuality.NoInput,
+                quality = failureQuality,
                 timing = PoseTiming.Late
             };
+
             Debug.Log($"[PromptJudge - MISS] Seq {result.sequenceId} | Prompt {id}: {result.quality} | " +
-              $"Pose: {result.detectedPose}");
+              $"Pose: {result.detectedPose} | SelectedPad: {result.selectedPad} | ExpectedLane: {result.laneIndex}");
+
             OnJudged?.Invoke(result);
             UpdateSequenceProgress(prompt.sequenceId, result.quality);
 
             if (hitZone != null)
             {
-                hitZone.TriggerFeedback(false); //red flash
+                hitZone.TriggerFeedback(false);
             }
         }
 
@@ -258,6 +258,27 @@ namespace Gameplay.Choreography
                 return PoseTiming.Perfect;
 
             return offset > 0 ? PoseTiming.Early : PoseTiming.Late;
+        }
+        private HitQuality EvaluateFailureReason(ActivePrompt prompt)
+        {
+            bool hasAnySelection = selectionState != null && selectionState.Selected.Count > 0;
+            bool correctPlanetSelected = selectionState != null && selectionState.IsSelected(prompt.laneIndex);
+            bool poseMatches = poseState.CurrentPose == prompt.requiredPose;
+            bool hasEnoughConfidence = poseState.Confidence >= minPoseConfidence;
+
+            // No planet selected OR required planet not selected
+            if (!hasAnySelection || !correctPlanetSelected)
+                return HitQuality.WrongPlanet;
+
+            // Correct planet selected, but wrong pose
+            if (!poseMatches)
+                return HitQuality.WrongPose;
+
+            // Correct planet and pose, but low confidence
+            if (!hasEnoughConfidence)
+                return HitQuality.NoInput;
+
+            return HitQuality.NoInput;
         }
 
         //Updates progress when a prompt is judged
@@ -332,9 +353,7 @@ namespace Gameplay.Choreography
         }
         private int GetSelectedPad()
         {
-            if (selectionState?.Selected.Count == 0) return -1;
-            var list = new System.Collections.Generic.List<int>(selectionState.Selected);
-            return list[list.Count - 1];
+            return selectionState != null ? selectionState.GetSingleSelected() : -1;
         }
 
 

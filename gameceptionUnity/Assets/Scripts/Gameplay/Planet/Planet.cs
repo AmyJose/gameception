@@ -58,6 +58,12 @@ namespace Gameplay
         [Header("Feedback")]
         [SerializeField] private ElementBurst elementBurstPrefab;
         [SerializeField] private Transform burstSpawnPoint;
+        [SerializeField] private GameObject goodFeedbackPrefab;
+        [SerializeField] private GameObject missFeedbackPrefab;
+        [SerializeField] private GameObject perfectFeedbackPrefab;
+        [SerializeField] private GameObject wrongPlanetFeedbackPrefab;
+        [SerializeField] private Transform judgementFeedbackSpawnPoint;
+        [SerializeField] private float judgementFeedbackLifetime = 1f;
 
         [Header("Element Icons")]
         [SerializeField] private Sprite fireIcon;
@@ -158,7 +164,7 @@ namespace Gameplay
         public void SetPlanetIndex(int index)
         {
             planetIndex = index;
-            UpdateSelectionVisuals();
+            RefreshVisualState();
         }
 
         public void SetDefinition(PlanetDefinition newDefinition)
@@ -257,6 +263,7 @@ namespace Gameplay
             AddPopulation(populationDelta);
 
             PlayElementFeedback(result);
+            SpawnJudgementFeedback(result);
 
             RefreshAlienMood();
             RefreshDeteriorationVisuals();
@@ -267,6 +274,39 @@ namespace Gameplay
                 $"Population delta={populationDelta:+0.0;-0.0;0.0}, " +
                 $"Vitality={vitality:F1}/{maxVitality}, Population={population:F1}"
             );
+        }
+        private void SpawnJudgementFeedback(PromptJudge.JudgementResult result)
+        {
+            GameObject prefabToSpawn = null;
+
+            if (result.quality == PromptJudge.HitQuality.WrongPlanet)
+            {
+                prefabToSpawn = wrongPlanetFeedbackPrefab;
+            }
+            else if (result.quality == PromptJudge.HitQuality.WrongPose ||
+                     result.quality == PromptJudge.HitQuality.NoInput)
+            {
+                prefabToSpawn = missFeedbackPrefab;
+            }
+            else if (result.quality == PromptJudge.HitQuality.Perfect &&
+                     result.timing == PromptJudge.PoseTiming.Perfect)
+            {
+                prefabToSpawn = perfectFeedbackPrefab;;
+            }
+            else
+            {
+                prefabToSpawn = goodFeedbackPrefab;
+            }
+
+            if (prefabToSpawn == null)
+                return;
+
+            Vector3 spawnPos = judgementFeedbackSpawnPoint != null
+                ? judgementFeedbackSpawnPoint.position
+                : transform.position;
+
+            GameObject instance = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
+            Destroy(instance, judgementFeedbackLifetime);
         }
         private void PlayElementFeedback(PromptJudge.JudgementResult result)
         {
@@ -333,9 +373,7 @@ namespace Gameplay
             population = Mathf.Clamp(definition.startingPopulation, 0f, definition.populationCap);
 
             RebuildVisual();
-            UpdateSelectionVisuals();
-            RefreshAlienMood();
-            RefreshDeteriorationVisuals();
+            RefreshVisualState();
         }
         private void RebuildVisual()
         {
@@ -370,6 +408,7 @@ namespace Gameplay
             }
 
             _currentVisual.Initialize(definition);
+            UpdateSelectionVisuals();
         }
         private void UpdateSelectionVisuals()
         {
@@ -382,7 +421,12 @@ namespace Gameplay
                 _currentVisual.SetSelected(isSelected);
             }
         }
-
+        public void RefreshVisualState()
+        {
+            UpdateSelectionVisuals();
+            RefreshAlienMood();
+            RefreshDeteriorationVisuals();
+        }
         private void RefreshAlienMood()
         {
             if (alienSwarmView == null)

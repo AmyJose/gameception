@@ -91,9 +91,6 @@ public class LevelOneController : MonoBehaviour
 
         yield return IntroduceNextPlanet();
 
-        if (danceMatSelectionController != null)
-            danceMatSelectionController.SetSelectionEnabled(true);
-
         if (promptQueue != null && unlockedLanes.Count > 0)
         {
             promptQueue.SetActiveLanes(unlockedLanes);
@@ -151,6 +148,12 @@ public class LevelOneController : MonoBehaviour
 
         yield return new WaitUntil(() => !newPlanet.IsGrowing);
         newPlanet.ActivateChoreography();
+
+        if (danceMatSelectionController != null)
+            danceMatSelectionController.SetSelectionEnabled(true);
+
+        if (selectionState != null)
+            selectionState.SoloSelect(unlock.laneIndex);
 
         if (currentUFO != null)
         {

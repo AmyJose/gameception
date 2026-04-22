@@ -160,8 +160,9 @@ public class TutorialSceneController : MonoBehaviour
         SetObjective("Stand so your whole body is visible in the camera.");
         yield return SpeakAndPause("Position yourself in the middle of the camera so we can see your entire body.", 1.2f);
 
-        yield return SpeakAndPause($"Jump on pad {readyPadIndex + 1} once you're ready.", 0.5f);
-        SetObjective($"Select pad {readyPadIndex + 1} when you're ready.");
+        // yield return SpeakAndPause($"Jump on pad {readyPadIndex + 1} once you're ready.", 0.5f);
+        yield return SpeakAndPause($"Jump on pad <sprite name=\"arrowup\"> once you're ready.", 0.5f);
+        SetObjective($"Select pad <sprite name=\"arrowup\"> when you're ready.");
 
         yield return new WaitUntil(IsReadyPadSelected);
         selectionState.Clear();

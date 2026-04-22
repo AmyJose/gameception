@@ -112,7 +112,7 @@ namespace Gameplay.Choreography
             if (audioSource != null && perfectSound != null)
                 audioSource.PlayOneShot(perfectSound);
 
-            SpawnFeedback(successPrefab);
+            //SpawnFeedback(successPrefab);
         }
 
         public void SetFail()
@@ -123,7 +123,7 @@ namespace Gameplay.Choreography
             if (audioSource != null && missSound != null)
                 audioSource.PlayOneShot(missSound);
 
-            SpawnFeedback(failPrefab);
+            //SpawnFeedback(failPrefab);
         }
 
         public void SetMidHit()
@@ -134,7 +134,7 @@ namespace Gameplay.Choreography
             if (audioSource != null && goodSound != null)
                 audioSource.PlayOneShot(goodSound);
 
-            SpawnFeedback(midHitPrefab);
+            //SpawnFeedback(midHitPrefab);
         }
 
         private void SpawnFeedback(GameObject prefab)
