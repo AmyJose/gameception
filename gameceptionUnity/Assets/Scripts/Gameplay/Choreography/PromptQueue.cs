@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using InputLayer;
 using UnityEngine;
 using Rhythm;
+using Unity.VisualScripting;
 
 namespace Gameplay.Choreography
 {
-    [System.Serializable]
+    [Serializable]
     public class LanePromptConfig
     {
         public int laneIndex;
@@ -17,6 +18,7 @@ namespace Gameplay.Choreography
     {
         [Header("Dependencies")]
         [SerializeField] private PromptJudge promptJudge;
+        [SerializeField] private GameFlowController gameFlowController;
 
         [Header("Queue Layout")]
         [SerializeField] public float hitZoneY = 0f;
@@ -44,7 +46,8 @@ namespace Gameplay.Choreography
         [SerializeField] private int generationIntervalBeats = 10;
         [SerializeField] private int promptSpawnBeatSpacing = 2; // within a sequence
         [SerializeField] private bool keepLanePromptsConsecutive = true;
-        [SerializeField] private LanePromptConfig[] laneConfigs = new LanePromptConfig[4]
+        [SerializeField]
+        private LanePromptConfig[] laneConfigs = new LanePromptConfig[4]
         {
             new LanePromptConfig { laneIndex = 0, promptsPerSequence = 1 },
             new LanePromptConfig { laneIndex = 1, promptsPerSequence = 1 },
@@ -56,7 +59,7 @@ namespace Gameplay.Choreography
 
         [Header("Scripted Intro")]
         [SerializeField] private PromptSequenceAsset scriptedIntroSequence;
-        [SerializeField] private float scriptedIntroDurationMinutes = 0f;
+        [SerializeField] private float scriptedIntroDurationSeconds = 0f;
         [SerializeField] private bool loopScriptedIntroSequence = true;
 
         // Events
@@ -100,17 +103,17 @@ namespace Gameplay.Choreography
         public IReadOnlyList<int> ActiveLanes => _activeLanes;
         public int LaneCount => laneOffsets != null ? laneOffsets.Length : 0;
 
-        private bool _generationTimingInitialized = false;
-        private double _generationStartSongTime = 0.0;
         private int _introPoseCursor = 0;
 
         private int _lastPromptSpawnBeat = -999;  // Tracks when last prompt was spawned
-        private int _promptsExpectedThisSequence = 0;  // How many prompts should spawn this sequence
+        private int _promptsExpectedThisSequence = 0; // How many prompts should spawn this sequence
 
         private void OnEnable()
         {
             if (beatClock != null)
                 beatClock.OnBeat += HandleBeat;
+
+
 
             if (autoStartGeneration)
                 BeginGeneration();
@@ -129,12 +132,6 @@ namespace Gameplay.Choreography
             if (!_isGenerating) return;
             if (_activeLanes.Count == 0) return;
 
-            if (!_generationTimingInitialized)
-            {
-                _generationTimingInitialized = true;
-                _generationStartSongTime = beat.dspSongTime;
-            }
-
             // Check if we should start a new sequence
             // Condition: either first sequence or enough beats after last prompt spawned
             bool shouldGenerateNewSequence = (_lastPromptSpawnBeat == -999) || (beat.beatIndex >= _lastPromptSpawnBeat + generationIntervalBeats);
@@ -150,14 +147,18 @@ namespace Gameplay.Choreography
             if (_promptsSpawnedThisSequence < promptsThisSequence)
             {
                 int beatOffsetInSequence = beat.beatIndex - _currentSequenceStartBeat;
-                
+
                 if (beatOffsetInSequence % promptSpawnBeatSpacing == 0)
                 {
-                    if (TryGetScriptedIntroPose(beat.dspSongTime, out var scriptedPose))
+                    if (TryGetScriptedIntroPose(out var scriptedPose))
+                    {
                         SpawnOnePrompt(beat.beatIndex, scriptedPose);
+                    }
                     else
+                    {
+                        Debug.Log("Random generation started");
                         SpawnOnePrompt(beat.beatIndex);
-
+                    }
                     _promptsSpawnedThisSequence++;
                     _lastPromptSpawnBeat = beat.beatIndex;
                 }
@@ -200,7 +201,7 @@ namespace Gameplay.Choreography
             {
                 // Build groups (keep lane prompts together)
                 var laneGroups = new List<List<int>>();
-                
+
                 foreach (int laneIndex in _activeLanes)
                 {
                     int count = laneConfigs[laneIndex].promptsPerSequence;
@@ -404,8 +405,6 @@ namespace Gameplay.Choreography
         {
             _isGenerating = true;
             _lastGeneratedSequenceBeat = -999;
-            _generationTimingInitialized = false;
-            _generationStartSongTime = 0.0;
             _introPoseCursor = 0;
             Debug.Log("[PromptQueue] Generation started");
         }
@@ -413,21 +412,22 @@ namespace Gameplay.Choreography
         public void StopGeneration()
         {
             _isGenerating = false;
-            _generationTimingInitialized = false;
             Debug.Log("[PromptQueue] Generation stopped");
         }
 
-        private bool TryGetScriptedIntroPose(double currentSongTime, out ElementPose pose)
+        private bool TryGetScriptedIntroPose(out ElementPose pose)
         {
             pose = default;
 
             if (scriptedIntroSequence == null) return false;
             if (scriptedIntroSequence.steps == null || scriptedIntroSequence.steps.Count == 0) return false;
-            if (scriptedIntroDurationMinutes <= 0f) return false;
+            if (scriptedIntroDurationSeconds <= 0f) return false;
+            if (gameFlowController == null) return false;
 
-            double introDurationSeconds = scriptedIntroDurationMinutes * 60.0;
-            double elapsedSinceStart = currentSongTime - _generationStartSongTime;
-            if (elapsedSinceStart > introDurationSeconds)
+            float remainingTime = gameFlowController.RemainingTime;
+            float introWindowStartRemaining = Mathf.Max(0f, gameFlowController.RunDurationSeconds - scriptedIntroDurationSeconds);
+
+            if (remainingTime < introWindowStartRemaining)
             {
                 _introPoseCursor = 0;
                 return false;

@@ -15,7 +15,6 @@ namespace Gameplay.Choreography
     [Serializable]
     public class PromptStep
     {
-        public int beatOffset;
         public ElementPose pose;
     }
 }

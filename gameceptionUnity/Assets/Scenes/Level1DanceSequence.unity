@@ -1525,6 +1525,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Choreography.PromptQueue
   promptJudge: {fileID: 64651961}
+  gameFlowController: {fileID: 177462652}
   hitZoneY: 0
   hitZoneThreshold: 0.6
   promptPrefab: {fileID: 926613821937977704, guid: 49cfaf71d55284b3fb6c1b8a300f4003, type: 3}
@@ -1539,11 +1540,20 @@ MonoBehaviour:
   beatSpeedMultiplier: 1
   beatClock: {fileID: 1130057111}
   generationIntervalBeats: 10
-  promptsPerSequence: 4
-  extraLaneRepeatsPerSequence: 2
+  promptSpawnBeatSpacing: 2
+  keepLanePromptsConsecutive: 1
+  laneConfigs:
+  - laneIndex: 0
+    promptsPerSequence: 1
+  - laneIndex: 1
+    promptsPerSequence: 1
+  - laneIndex: 2
+    promptsPerSequence: 1
+  - laneIndex: 3
+    promptsPerSequence: 1
   promptSelector: {fileID: 1779290181}
   scriptedIntroSequence: {fileID: 11400000, guid: 6833d863739f64937a335e046fa8a66d, type: 2}
-  scriptedIntroDurationMinutes: 50
+  scriptedIntroDurationSeconds: 50
   loopScriptedIntroSequence: 1
 --- !u!4 &750123599 stripped
 Transform:
@@ -3050,19 +3060,28 @@ MonoBehaviour:
     max: 120
   easyPrompt:
     generationIntervalBeats: 10
-    PromptsPerSequence: 4
-    minExtraLaneRepeatsPerSequence: 2
-    maxExtraLaneRepeatsPerSequence: 4
+    promptSpawnBeatSpacing: 2
+    promptsPerLane0: 3
+    promptsPerLane1: 2
+    promptsPerLane2: 2
+    promptsPerLane3: 2
+    keepConsecutive: 1
   mediumPrompt:
     generationIntervalBeats: 12
-    PromptsPerSequence: 4
-    minExtraLaneRepeatsPerSequence: 4
-    maxExtraLaneRepeatsPerSequence: 6
+    promptSpawnBeatSpacing: 2
+    promptsPerLane0: 1
+    promptsPerLane1: 1
+    promptsPerLane2: 1
+    promptsPerLane3: 1
+    keepConsecutive: 1
   hardPrompt:
     generationIntervalBeats: 14
-    PromptsPerSequence: 4
-    minExtraLaneRepeatsPerSequence: 6
-    maxExtraLaneRepeatsPerSequence: 7
+    promptSpawnBeatSpacing: 2
+    promptsPerLane0: 2
+    promptsPerLane1: 1
+    promptsPerLane2: 1
+    promptsPerLane3: 2
+    keepConsecutive: 1
   bpmSmoothing: 0.2
 --- !u!1 &1346458577
 GameObject:
