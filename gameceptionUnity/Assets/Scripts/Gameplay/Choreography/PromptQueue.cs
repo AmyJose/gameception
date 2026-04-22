@@ -489,6 +489,19 @@ namespace Gameplay.Choreography
         public void SetGenerationIntervalBeats(int beats)
         {
             generationIntervalBeats = Mathf.Max(1, beats);
+            Debug.Log($"[PromptQueue] Generation interval -> {generationIntervalBeats} beats");
+        }
+
+        public void SetPromptSpawnBeatSpacing(int spacing)
+        {
+            promptSpawnBeatSpacing = Mathf.Max(1, spacing);
+            Debug.Log($"[PromptQueue] Prompt spawn beat spacing -> {promptSpawnBeatSpacing}");
+        }
+
+        public void SetKeepLanePromptsConsecutive(bool keep)
+        {
+            keepLanePromptsConsecutive = keep;
+            Debug.Log($"[PromptQueue] Keep lane prompts consecutive -> {keep}");
         }
 
         public void SetLanePromptsPerSequence(int laneIndex, int count)
@@ -496,6 +509,16 @@ namespace Gameplay.Choreography
             if (laneIndex < 0 || laneIndex >= laneConfigs.Length) return;
             laneConfigs[laneIndex].promptsPerSequence = Mathf.Max(0, count);
             Debug.Log($"[PromptQueue] Lane {laneIndex} -> {count} prompts per sequence");
+        }
+
+        public void SetAllLanesPromptsPerSequence(int count)
+        {
+            count = Mathf.Max(0, count);
+            foreach (var config in laneConfigs)
+            {
+                config.promptsPerSequence = count;
+            }
+            Debug.Log($"[PromptQueue] All lanes -> {count} prompts per sequence");
         }
 
         public bool TryGetLaneCenterLocalPosition(int laneIndex, out Vector3 centerLocal)

@@ -17,10 +17,13 @@ namespace Gameplay.Choreography
         [Serializable]
         private struct DifficultyPromptBand
         {
-            [Min(10)] public int generationIntervalBeats;
-            [Min(4)] public int PromptsPerSequence;
-            [Min(2)] public int minExtraLaneRepeatsPerSequence;
-            [Min(4)] public int maxExtraLaneRepeatsPerSequence;
+            [Min(1)] public int generationIntervalBeats;
+            [Min(1)] public int promptSpawnBeatSpacing;
+            [Min(0)] public int promptsPerLane0;
+            [Min(0)] public int promptsPerLane1;
+            [Min(0)] public int promptsPerLane2;
+            [Min(0)] public int promptsPerLane3;
+            public bool keepConsecutive;
         }
 
         [Header("References")]
@@ -45,9 +48,36 @@ namespace Gameplay.Choreography
         [SerializeField] private DifficultyBpmBand hardBpm = new DifficultyBpmBand { min = 95f, max = 120f };
 
         [Header("Prompt Bounds Per Difficulty")]
-        [SerializeField] private DifficultyPromptBand easyPrompt = new DifficultyPromptBand { generationIntervalBeats = 10, PromptsPerSequence = 4, minExtraLaneRepeatsPerSequence = 2, maxExtraLaneRepeatsPerSequence = 4 };
-        [SerializeField] private DifficultyPromptBand mediumPrompt = new DifficultyPromptBand { generationIntervalBeats = 12, PromptsPerSequence = 4, minExtraLaneRepeatsPerSequence = 4, maxExtraLaneRepeatsPerSequence = 6 };
-        [SerializeField] private DifficultyPromptBand hardPrompt = new DifficultyPromptBand { generationIntervalBeats = 14, PromptsPerSequence = 4, minExtraLaneRepeatsPerSequence = 6, maxExtraLaneRepeatsPerSequence = 7 };
+        [SerializeField] private DifficultyPromptBand easyPrompt = new DifficultyPromptBand 
+        { 
+            generationIntervalBeats = 10,
+            promptSpawnBeatSpacing = 2,
+            promptsPerLane0 = 3,
+            promptsPerLane1 = 2,
+            promptsPerLane2 = 2,
+            promptsPerLane3 = 2,
+            keepConsecutive = true
+        };
+        [SerializeField] private DifficultyPromptBand mediumPrompt = new DifficultyPromptBand 
+        { 
+            generationIntervalBeats = 12,
+            promptSpawnBeatSpacing = 2,
+            promptsPerLane0 = 1,
+            promptsPerLane1 = 1,
+            promptsPerLane2 = 1,
+            promptsPerLane3 = 1,
+            keepConsecutive = true
+        };
+        [SerializeField] private DifficultyPromptBand hardPrompt = new DifficultyPromptBand 
+        { 
+            generationIntervalBeats = 14,
+            promptSpawnBeatSpacing = 2,
+            promptsPerLane0 = 2,
+            promptsPerLane1 = 1,
+            promptsPerLane2 = 1,
+            promptsPerLane3 = 2,
+            keepConsecutive = true
+        };
 
         [Header("BPM Transition")]
         [SerializeField, Range(0f, 1f)] private float bpmSmoothing = 0.2f;
@@ -55,7 +85,7 @@ namespace Gameplay.Choreography
         private float _remainingTime;
         private Difficulty _currentDifficulty = Difficulty.Easy;
 
-        private float _performanceOffset = 0f; // future use for performance-based adjustments
+        private float _performanceOffset = 0f; // for future difficulty
 
         private void OnEnable()
         {
@@ -80,15 +110,14 @@ namespace Gameplay.Choreography
                 _currentDifficulty = newDifficulty;
                 _performanceOffset = 0f;
 
-
-                var band = GetBpmBand(_currentDifficulty);
-                float targetBpm = band.median;
-
+                var bpmBand = GetBpmBand(_currentDifficulty);
+                float targetBpm = bpmBand.median;
                 beatClock.SetBpm(targetBpm);
 
-                Debug.Log($"[Progression] Difficulty → {_currentDifficulty}, BPM set to {targetBpm}");
+                var promptBand = GetPromptBand(_currentDifficulty);
+                ApplyPromptBandSettings(promptBand);
 
-
+                Debug.Log($"[Progression] Difficulty -> {_currentDifficulty}, BPM={targetBpm}");
             }
         }
 
@@ -101,24 +130,34 @@ namespace Gameplay.Choreography
 
                 var bpmBand = GetBpmBand(_currentDifficulty);
                 float targetBpm = bpmBand.median;
-
                 beatClock.SetBpm(targetBpm);
 
                 var promptBand = GetPromptBand(_currentDifficulty);
-                // promptQueue.SetGenerationIntervalBeats(promptBand.generationIntervalBeats);
-                // promptQueue.SetPromptsPerSequence(promptBand.PromptsPerSequence);
-                // promptQueue.SetExtraLaneRepeatsPerSequence(promptBand.minExtraLaneRepeatsPerSequence);
+                ApplyPromptBandSettings(promptBand);
 
-                Debug.Log($"[Progression] Difficulty -> {_currentDifficulty}, BPM={targetBpm}, Prompts: interval={promptBand.generationIntervalBeats}, perSeq={promptBand.PromptsPerSequence}");
+                Debug.Log($"[Progression] Start -> {_currentDifficulty}, BPM={targetBpm}");
             }
-
         }
 
-        //might need this later if we want to adjust difficulty based on performance 
-        /*private void Update()
+        private void ApplyPromptBandSettings(DifficultyPromptBand promptBand)
         {
+            // Apply generation timing
+            promptQueue.SetGenerationIntervalBeats(promptBand.generationIntervalBeats);
+            
+            // Apply spawn spacing
+            promptQueue.SetPromptSpawnBeatSpacing(promptBand.promptSpawnBeatSpacing);
+            
+            // Apply per-lane prompt counts
+            promptQueue.SetLanePromptsPerSequence(0, promptBand.promptsPerLane0);
+            promptQueue.SetLanePromptsPerSequence(1, promptBand.promptsPerLane1);
+            promptQueue.SetLanePromptsPerSequence(2, promptBand.promptsPerLane2);
+            promptQueue.SetLanePromptsPerSequence(3, promptBand.promptsPerLane3);
+            
+            // Apply consecutive lane grouping
+            promptQueue.SetKeepLanePromptsConsecutive(promptBand.keepConsecutive);
 
-        }*/
+            Debug.Log($"[Progression] Prompt settings -> Interval={promptBand.generationIntervalBeats}, Spacing={promptBand.promptSpawnBeatSpacing}, PerLane=[{promptBand.promptsPerLane0},{promptBand.promptsPerLane1},{promptBand.promptsPerLane2},{promptBand.promptsPerLane3}], Consecutive={promptBand.keepConsecutive}");
+        }
 
         private Difficulty GetDifficultyForTime(float timeLeft)
         {
@@ -154,8 +193,5 @@ namespace Gameplay.Choreography
                     return hardPrompt;
             }
         }
-
-
-
     }
 }
