@@ -102,6 +102,9 @@ namespace Gameplay.Choreography
         private double _generationStartSongTime = 0.0;
         private int _introPoseCursor = 0;
 
+        private int _lastPromptSpawnBeat = -999;  // Tracks when last prompt was spawned
+        private int _promptsExpectedThisSequence = 0;  // How many prompts should spawn this sequence
+
         private void OnEnable()
         {
             if (beatClock != null)
@@ -130,13 +133,17 @@ namespace Gameplay.Choreography
                 _generationStartSongTime = beat.dspSongTime;
             }
 
-            if (beat.beatIndex >= _lastGeneratedSequenceBeat + generationIntervalBeats)
+            // Check if we should start a new sequence
+            // Condition: either first sequence or enough beats after last prompt spawned
+            bool shouldGenerateNewSequence = (_lastPromptSpawnBeat == -999) || (beat.beatIndex >= _lastPromptSpawnBeat + generationIntervalBeats);
+
+            if (shouldGenerateNewSequence)
             {
                 StartNewSequence(beat.beatIndex);
-                _lastGeneratedSequenceBeat = beat.beatIndex;
                 _promptsSpawnedThisSequence = 0;
             }
 
+            // Spawn prompts from current sequence
             int promptsThisSequence = _sequenceLaneOrder.Count;
             if (_promptsSpawnedThisSequence < promptsThisSequence)
             {
@@ -150,6 +157,11 @@ namespace Gameplay.Choreography
                         SpawnOnePrompt(beat.beatIndex);
 
                     _promptsSpawnedThisSequence++;
+                    
+                    //Tracks when last prompt is actually spawned
+                    _lastPromptSpawnBeat = beat.beatIndex;
+                    
+                    Debug.Log($"[PromptQueue] Prompt spawned at beat {beat.beatIndex}, next sequence eligible at beat {beat.beatIndex + generationIntervalBeats}");
                 }
             }
         }
@@ -172,8 +184,9 @@ namespace Gameplay.Choreography
             BuildSequenceLaneOrder();
 
             int promptsThisSequence = _sequenceLaneOrder.Count;
+            _promptsExpectedThisSequence = promptsThisSequence;  // Store expected count
 
-            Debug.Log($"[PromptQueue] Beat {startBeat}: START sequence {sequenceId} with {promptsThisSequence} prompts across {_activeLanes.Count} active lanes");
+            Debug.Log($"[PromptQueue] Beat {startBeat}: START sequence {sequenceId} with {promptsThisSequence} prompts | Next sequence eligible at beat {_lastPromptSpawnBeat + generationIntervalBeats}");
 
             if (promptJudge != null)
             {
