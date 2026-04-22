@@ -42,6 +42,7 @@ namespace Gameplay.Choreography
 
         [Header("Generation")]
         [SerializeField] private int generationIntervalBeats = 10;
+        [SerializeField] private int promptSpawnBeatSpacing = 2; // within a sequence
         [SerializeField] private bool keepLanePromptsConsecutive = true;
         [SerializeField] private LanePromptConfig[] laneConfigs = new LanePromptConfig[4]
         {
@@ -149,8 +150,8 @@ namespace Gameplay.Choreography
             if (_promptsSpawnedThisSequence < promptsThisSequence)
             {
                 int beatOffsetInSequence = beat.beatIndex - _currentSequenceStartBeat;
-                int promptBeatSpacing = 2;
-                if (beatOffsetInSequence % promptBeatSpacing == 0)
+                
+                if (beatOffsetInSequence % promptSpawnBeatSpacing == 0)
                 {
                     if (TryGetScriptedIntroPose(beat.dspSongTime, out var scriptedPose))
                         SpawnOnePrompt(beat.beatIndex, scriptedPose);
@@ -158,11 +159,7 @@ namespace Gameplay.Choreography
                         SpawnOnePrompt(beat.beatIndex);
 
                     _promptsSpawnedThisSequence++;
-                    
-                    //Tracks when last prompt is actually spawned
                     _lastPromptSpawnBeat = beat.beatIndex;
-                    
-                    Debug.Log($"[PromptQueue] Prompt spawned at beat {beat.beatIndex}, next sequence eligible at beat {beat.beatIndex + generationIntervalBeats}");
                 }
             }
         }
