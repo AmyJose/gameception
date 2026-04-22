@@ -1555,6 +1555,7 @@ MonoBehaviour:
   scriptedIntroSequence: {fileID: 11400000, guid: 6833d863739f64937a335e046fa8a66d, type: 2}
   scriptedIntroDurationSeconds: 50
   loopScriptedIntroSequence: 1
+  blockOppositeLanePerSequence: 0
 --- !u!4 &750123599 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6458756254599614175, guid: 282923dcfcb664441a2b46713890fed7, type: 3}
