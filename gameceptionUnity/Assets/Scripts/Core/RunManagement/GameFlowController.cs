@@ -39,6 +39,7 @@ namespace Gameplay
 
         public GameState CurrentState { get; private set; } = GameState.WaitingToStart;
         public float RemainingTime { get; private set; }
+        public float RunDurationSeconds => runDurationSeconds;
         public bool IsRunActive => CurrentState == GameState.Playing;
 
         public event Action<GameState> OnStateChanged;
@@ -66,7 +67,7 @@ namespace Gameplay
 
             OnTimerUpdated?.Invoke(RemainingTime);
 
-            if(RemainingTime <= 0f)
+            if (RemainingTime <= 0f)
             {
                 EndRun();
             }
@@ -101,7 +102,7 @@ namespace Gameplay
             _runEnded = true;
             ChangeState(GameState.Ending);
 
-            if(promptQueue != null)
+            if (promptQueue != null)
             {
                 promptQueue.StopGeneration();
                 promptQueue.ClearAll();
@@ -119,7 +120,7 @@ namespace Gameplay
         }
         private RunResults BuildResults()
         {
-            if(scoreManager == null)
+            if (scoreManager == null)
             {
                 return new RunResults
                 {
