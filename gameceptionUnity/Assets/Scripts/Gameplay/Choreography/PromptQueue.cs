@@ -42,6 +42,7 @@ namespace Gameplay.Choreography
 
         [Header("Generation")]
         [SerializeField] private int generationIntervalBeats = 10;
+        [SerializeField] private bool keepLanePromptsConsecutive = true;
         [SerializeField] private LanePromptConfig[] laneConfigs = new LanePromptConfig[4]
         {
             new LanePromptConfig { laneIndex = 0, promptsPerSequence = 1 },
@@ -198,22 +199,57 @@ namespace Gameplay.Choreography
         {
             _sequenceLaneOrder.Clear();
 
-            foreach (int laneIndex in _activeLanes)
+            if (keepLanePromptsConsecutive)
             {
-                if (laneIndex < 0 || laneIndex >= laneConfigs.Length) continue;
-
-                int count = laneConfigs[laneIndex].promptsPerSequence;
-                for (int i = 0; i < count; i++)
+                // Build groups (keep lane prompts together)
+                var laneGroups = new List<List<int>>();
+                
+                foreach (int laneIndex in _activeLanes)
                 {
-                    _sequenceLaneOrder.Add(laneIndex);
+                    int count = laneConfigs[laneIndex].promptsPerSequence;
+                    var group = new List<int>();
+                    for (int i = 0; i < count; i++)
+                    {
+                        group.Add(laneIndex);
+                    }
+                    laneGroups.Add(group);
                 }
-            }
 
-            // Shuffle final lane order
-            for (int i = 0; i < _sequenceLaneOrder.Count; i++)
+                // Shuffle groups
+                for (int i = 0; i < laneGroups.Count; i++)
+                {
+                    int j = UnityEngine.Random.Range(i, laneGroups.Count);
+                    (laneGroups[i], laneGroups[j]) = (laneGroups[j], laneGroups[i]);
+                }
+
+                // Flatten
+                foreach (var group in laneGroups)
+                {
+                    _sequenceLaneOrder.AddRange(group);
+                }
+
+                Debug.Log($"[PromptQueue] Lane order (grouped): [{string.Join(", ", _sequenceLaneOrder)}]");
+            }
+            else
             {
-                int j = UnityEngine.Random.Range(i, _sequenceLaneOrder.Count);
-                (_sequenceLaneOrder[i], _sequenceLaneOrder[j]) = (_sequenceLaneOrder[j], _sequenceLaneOrder[i]);
+                // Original behavior: shuffle individual prompts
+                foreach (int laneIndex in _activeLanes)
+                {
+                    int count = laneConfigs[laneIndex].promptsPerSequence;
+                    for (int i = 0; i < count; i++)
+                    {
+                        _sequenceLaneOrder.Add(laneIndex);
+                    }
+                }
+
+                // Shuffle individual prompts
+                for (int i = 0; i < _sequenceLaneOrder.Count; i++)
+                {
+                    int j = UnityEngine.Random.Range(i, _sequenceLaneOrder.Count);
+                    (_sequenceLaneOrder[i], _sequenceLaneOrder[j]) = (_sequenceLaneOrder[j], _sequenceLaneOrder[i]);
+                }
+
+                Debug.Log($"[PromptQueue] Lane order (shuffled): [{string.Join(", ", _sequenceLaneOrder)}]");
             }
         }
 
