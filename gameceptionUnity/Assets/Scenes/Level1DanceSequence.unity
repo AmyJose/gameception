@@ -3052,19 +3052,19 @@ MonoBehaviour:
   promptQueue: {fileID: 733875701}
   promptJudge: {fileID: 64651961}
   gameFlowController: {fileID: 177462652}
-  easyAboveSeconds: 270
+  easyAboveSeconds: 260
   mediumAboveSeconds: 80
   easyBpm:
     min: 60
-    max: 75
+    max: 85
   mediumBpm:
-    min: 75
-    max: 95
-  hardBpm:
     min: 95
     max: 120
+  hardBpm:
+    min: 120
+    max: 160
   easyPrompt:
-    generationIntervalBeats: 10
+    generationIntervalBeats: 7
     promptSpawnBeatSpacing: 2
     promptsPerLane0: 3
     promptsPerLane1: 3
@@ -3072,20 +3072,20 @@ MonoBehaviour:
     promptsPerLane3: 2
     keepConsecutive: 1
   mediumPrompt:
-    generationIntervalBeats: 9
-    promptSpawnBeatSpacing: 2
-    promptsPerLane0: 1
-    promptsPerLane1: 1
-    promptsPerLane2: 1
-    promptsPerLane3: 1
-    keepConsecutive: 1
-  hardPrompt:
-    generationIntervalBeats: 8
+    generationIntervalBeats: 7
     promptSpawnBeatSpacing: 3
     promptsPerLane0: 2
     promptsPerLane1: 1
     promptsPerLane2: 1
     promptsPerLane3: 2
+    keepConsecutive: 1
+  hardPrompt:
+    generationIntervalBeats: 5
+    promptSpawnBeatSpacing: 3
+    promptsPerLane0: 2
+    promptsPerLane1: 1
+    promptsPerLane2: 2
+    promptsPerLane3: 1
     keepConsecutive: 1
   recentSequenceCount: 3
   recentSequenceWeights: {x: 0.5, y: 0.3, z: 0.2}
@@ -3283,7 +3283,7 @@ MonoBehaviour:
   shiftToSoloSelect: 0
   autoSelectFirst: 0
   planetCount: 0
-  latchSelectionForTesting: 1
+  latchSelectionForTesting: 0
   overrideAllowedPadCount: 0
   allowedPadCount: 0
   selectionEnabled: 1
