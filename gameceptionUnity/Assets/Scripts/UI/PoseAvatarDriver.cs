@@ -348,12 +348,11 @@ public class PoseAvatarDriver : MonoBehaviour
     {
         float x = lm.x - 0.5f;
         float y = -(lm.y - 0.5f);
-        float z = lm.z;
 
         if (mirrorX)
             x = -x;
 
-        return new Vector3(x, y, z);
+        return new Vector3(x, y, 0f);
     }
 
     private float GetLimbLength(Vector3 a, Vector3 b, Vector3 c)
