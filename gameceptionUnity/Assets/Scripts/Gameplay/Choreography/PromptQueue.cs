@@ -55,6 +55,11 @@ namespace Gameplay.Choreography
             new LanePromptConfig { laneIndex = 3, promptsPerSequence = 1 }
         };
 
+        [Header("Double Trouble Mode")]
+        [SerializeField] private bool enableDoubleTroubleMode = false;
+        [SerializeField, Min(1)] private int doubleTroubleGenerationIntervalBeats = 10;  // separate interval for DT mode
+        [SerializeField, Min(1)] private int doubleTroublePromptsPerSequence = 1;  // Number of pairs per sequence
+
         [SerializeField] private PromptSelector promptSelector;
 
         [Header("Scripted Intro")]
@@ -87,6 +92,20 @@ namespace Gameplay.Choreography
             public float spawnTime;
         }
 
+        // Double Trouble: pairs of lanes with same pose
+        private struct DoubleTroublePair
+        {
+            public int lane1;
+            public int lane2;
+            public ElementPose sharedPose;
+        }
+
+        private static readonly int[][] OppositeLanePairs =
+        {
+            new[] { 0, 3 }, // Left / Right
+            new[] { 1, 2 }  // Up / Down
+        };
+
         private List<PromptIndicator> _activePrompts = new();
         private Dictionary<int, PromptInfo> _promptInfo = new();
         private HashSet<int> _promptsInZone = new();
@@ -94,12 +113,7 @@ namespace Gameplay.Choreography
         private readonly List<int> _activeLanes = new();
         private readonly List<int> _sequenceLaneOrder = new();
         private readonly List<int> _sequenceAllowedLanes = new();
-
-        private static readonly int[][] OppositeLanePairs =
-        {
-            new[] { 0, 3 }, // Left / Right
-            new[] { 1, 2 }  // Up / Down
-        };
+        private readonly List<DoubleTroublePair> _sequenceDoubleTroublePairs = new();  //for double trouble mode
 
         private float _totalScrollDistance = 0f;
         private int _nextPromptId = 0;
@@ -118,17 +132,21 @@ namespace Gameplay.Choreography
         private int _lastPromptSpawnBeat = -999;  // Tracks when last prompt was spawned
         private int _promptsExpectedThisSequence = 0; // How many prompts should spawn this sequence
 
+        private int _lastUsedPairIndex = -1;  // DT mode tracks which pair was used last
+
         private void OnEnable()
         {
             if (beatClock != null)
                 beatClock.OnBeat += HandleBeat;
 
-
-
             if (autoStartGeneration)
                 BeginGeneration();
             else
                 _isGenerating = false;
+
+            // Notify on startup if mode is enabled
+            if (enableDoubleTroubleMode)
+                OnDoubleTroubleModeChanged?.Invoke(true);
         }
 
         private void OnDisable()
@@ -142,9 +160,13 @@ namespace Gameplay.Choreography
             if (!_isGenerating) return;
             if (_activeLanes.Count == 0) return;
 
+            // Use appropriate generation interval based on mode
+            int activeGenerationInterval = enableDoubleTroubleMode 
+                ? doubleTroubleGenerationIntervalBeats 
+                : generationIntervalBeats;
+
             // Check if we should start a new sequence
-            // Condition: either first sequence or enough beats after last prompt spawned
-            bool shouldGenerateNewSequence = (_lastPromptSpawnBeat == -999) || (beat.beatIndex >= _lastPromptSpawnBeat + generationIntervalBeats);
+            bool shouldGenerateNewSequence = (_lastPromptSpawnBeat == -999) || (beat.beatIndex >= _lastPromptSpawnBeat + activeGenerationInterval);
 
             if (shouldGenerateNewSequence)
             {
@@ -152,7 +174,22 @@ namespace Gameplay.Choreography
                 _promptsSpawnedThisSequence = 0;
             }
 
-            // Spawn prompts from current sequence
+            // Spawn prompts based on mode
+            if (enableDoubleTroubleMode)
+            {
+                HandleDoubleTroubleSpawning(beat);
+            }
+            else
+            {
+                HandleNormalSpawning(beat);
+            }
+        }
+
+
+        // Normal spawning: uses per-lane prompt counts, respects keepLanePromptsConsecutive
+
+        private void HandleNormalSpawning(BeatInfo beat)
+        {
             int promptsThisSequence = _sequenceLaneOrder.Count;
             if (_promptsSpawnedThisSequence < promptsThisSequence)
             {
@@ -174,6 +211,39 @@ namespace Gameplay.Choreography
             }
         }
 
+
+        // Double Trouble spawning: spawns pairs on opposite lanes with same pose
+
+        private void HandleDoubleTroubleSpawning(BeatInfo beat)
+        {
+            int pairsThisSequence = _sequenceDoubleTroublePairs.Count;
+            if (_promptsSpawnedThisSequence < pairsThisSequence)
+            {
+                int beatOffsetInSequence = beat.beatIndex - _currentSequenceStartBeat;
+
+                if (beatOffsetInSequence % promptSpawnBeatSpacing == 0)
+                {
+                    var pair = _sequenceDoubleTroublePairs[_promptsSpawnedThisSequence];
+
+                    if (TryGetScriptedIntroPose(out var scriptedPose))
+                    {
+                        SpawnOnePromptDoubleTrouble(beat.beatIndex, pair.lane1, scriptedPose);
+                        SpawnOnePromptDoubleTrouble(beat.beatIndex, pair.lane2, scriptedPose);
+                    }
+                    else
+                    {
+                        SpawnOnePromptDoubleTrouble(beat.beatIndex, pair.lane1, pair.sharedPose);
+                        SpawnOnePromptDoubleTrouble(beat.beatIndex, pair.lane2, pair.sharedPose);
+                    }
+
+                    _promptsSpawnedThisSequence++;
+                    _lastPromptSpawnBeat = beat.beatIndex;
+
+                    Debug.Log($"[PromptQueue] Double Trouble: Beat {beat.beatIndex} spawned pair on lanes {pair.lane1} and {pair.lane2} with pose {pair.sharedPose}");
+                }
+            }
+        }
+
         private void Update()
         {
             if (beatClock == null) return;
@@ -189,17 +259,72 @@ namespace Gameplay.Choreography
             int sequenceId = _nextSequenceId++;
             _currentSequenceStartBeat = startBeat;
 
-            BuildSequenceLaneOrder();
+            if (enableDoubleTroubleMode)
+            {
+                BuildSequenceDoubleTrouble();
+                int promptsThisSequence = _sequenceDoubleTroublePairs.Count * 2;  // Each pair = 2 prompts
+                _promptsExpectedThisSequence = promptsThisSequence;
 
-            int promptsThisSequence = _sequenceLaneOrder.Count;
-            _promptsExpectedThisSequence = promptsThisSequence;  // Store expected count
+                Debug.Log($"[PromptQueue] Beat {startBeat}: START Double Trouble sequence {sequenceId} with {_sequenceDoubleTroublePairs.Count} pairs ({promptsThisSequence} prompts total) | Next sequence eligible at beat {_lastPromptSpawnBeat + generationIntervalBeats}");
+            }
+            else
+            {
+                BuildSequenceLaneOrder();
+                int promptsThisSequence = _sequenceLaneOrder.Count;
+                _promptsExpectedThisSequence = promptsThisSequence;
 
-            Debug.Log($"[PromptQueue] Beat {startBeat}: START sequence {sequenceId} with {promptsThisSequence} prompts | Next sequence eligible at beat {_lastPromptSpawnBeat + generationIntervalBeats}");
+                Debug.Log($"[PromptQueue] Beat {startBeat}: START sequence {sequenceId} with {promptsThisSequence} prompts | Next sequence eligible at beat {_lastPromptSpawnBeat + generationIntervalBeats}");
+            }
 
             if (promptJudge != null)
             {
-                promptJudge.RegisterSequence(sequenceId, promptsThisSequence);
+                promptJudge.RegisterSequence(sequenceId, _promptsExpectedThisSequence);
             }
+        }
+
+        // Double Trouble mode: generates N pairs of opposite lanes with random poses
+
+        private void BuildSequenceDoubleTrouble()
+        {
+            _sequenceDoubleTroublePairs.Clear();
+
+            // Get active opposite lane pairs
+            var availablePairs = new List<int[]>();
+            foreach (var pair in OppositeLanePairs)
+            {
+                if (_activeLanes.Contains(pair[0]) && _activeLanes.Contains(pair[1]))
+                {
+                    availablePairs.Add(pair);
+                }
+            }
+
+            if (availablePairs.Count == 0)
+            {
+                Debug.LogWarning("[PromptQueue] Double Trouble mode: no valid opposite lane pairs available!");
+                return;
+            }
+
+            // Generate N pairs with random poses
+            for (int i = 0; i < doubleTroublePromptsPerSequence; i++)
+            {
+                // Get next pair index (alternating between 0,3 and 1,2)
+                int pairIndex = GetNextPairIndex(availablePairs.Count);
+                int[] selectedPair = availablePairs[pairIndex];
+
+                ElementPose randomPose = (ElementPose)UnityEngine.Random.Range(1, 5);  // Poses 1-4
+
+                _sequenceDoubleTroublePairs.Add(new DoubleTroublePair
+                {
+                    lane1 = selectedPair[0],
+                    lane2 = selectedPair[1],
+                    sharedPose = randomPose
+                });
+                // Update last used pair index
+                _lastUsedPairIndex = pairIndex;
+                Debug.Log($"[PromptQueue] Double Trouble pair {i}: lanes [{selectedPair[0]}, {selectedPair[1]}], pose {randomPose}, next pair index will be {GetNextPairIndex(availablePairs.Count)}");
+            }
+
+            Debug.Log($"[PromptQueue] Double Trouble sequence: {_sequenceDoubleTroublePairs.Count} pairs generated");
         }
 
         private void BuildSequenceLaneOrder()
@@ -329,6 +454,36 @@ namespace Gameplay.Choreography
             _nextPromptId++;
         }
 
+
+        // Spawns a prompt for Double Trouble mode with forced pose and lane
+
+        private void SpawnOnePromptDoubleTrouble(int beatIndex, int laneIndex, ElementPose forcedPose)
+        {
+            int sequenceId = _nextSequenceId - 1;
+
+            var indicator = Instantiate(promptPrefab, transform);
+            indicator.Initialize(forcedPose, _nextPromptId);
+
+            float initialY = spawnOffset.y;
+            Vector3 laneSpawnPos = spawnOffset + laneOffsets[laneIndex];
+            indicator.transform.localPosition = laneSpawnPos;
+
+            _promptInfo[_nextPromptId] = new PromptInfo
+            {
+                id = _nextPromptId,
+                sequenceId = sequenceId,
+                laneIndex = laneIndex,
+                initialY = initialY,
+                spawnTime = _totalScrollDistance
+            };
+
+            _activePrompts.Add(indicator);
+
+            Debug.Log($"[PromptQueue] Beat {beatIndex}: Spawned Double Trouble prompt {_nextPromptId} (seq {sequenceId}, lane {laneIndex}, pose {forcedPose})");
+
+            _nextPromptId++;
+        }
+
         private void UpdatePrompts()
         {
             for (int i = _activePrompts.Count - 1; i >= 0; i--)
@@ -412,6 +567,7 @@ namespace Gameplay.Choreography
             _promptInfo.Clear();
             _promptsInZone.Clear();
             _sequenceLaneOrder.Clear();
+            _sequenceDoubleTroublePairs.Clear();
         }
 
         public float GetPromptCurrentY(int id)
@@ -445,6 +601,14 @@ namespace Gameplay.Choreography
             Gizmos.DrawCube(center, new Vector3(width * 2, scaledHeight, 0.1f));
         }
 
+        // Helper to get next pair index (alternating) for DT mode
+        private int GetNextPairIndex(int totalPairs)
+        {
+            if (totalPairs <= 1) return 0;
+            
+            int nextIndex = (_lastUsedPairIndex + 1) % totalPairs;
+            return nextIndex;
+        }
         public void BeginGeneration()
         {
             _isGenerating = true;
@@ -586,5 +750,22 @@ namespace Gameplay.Choreography
             boundaryX = (leftCenter.x + rightCenter.x) * 0.5f;
             return true;
         }
+
+        // Events for UI display
+        public event Action<bool> OnDoubleTroubleModeChanged;  // fired when mode toggles
+
+        //setter for external mode toggling with notification
+        public void SetDoubleTroubleMode(bool enabled)
+        {
+            if (enableDoubleTroubleMode == enabled) return;
+
+            enableDoubleTroubleMode = enabled;
+            OnDoubleTroubleModeChanged?.Invoke(enabled);
+
+            Debug.Log($"[PromptQueue] Double Trouble mode -> {(enabled ? "ON 🟢" : "OFF 🔴")}");
+        }
+
+        // getter for UI to read current state
+        public bool IsDoubleTroubleModeEnabled => enableDoubleTroubleMode;
     }
 }

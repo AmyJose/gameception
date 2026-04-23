@@ -1550,6 +1550,9 @@ MonoBehaviour:
     promptsPerSequence: 1
   - laneIndex: 3
     promptsPerSequence: 1
+  enableDoubleTroubleMode: 0
+  doubleTroubleGenerationIntervalBeats: 7
+  doubleTroublePromptsPerSequence: 2
   promptSelector: {fileID: 1779290181}
   scriptedIntroSequence: {fileID: 11400000, guid: 6833d863739f64937a335e046fa8a66d, type: 2}
   scriptedIntroDurationSeconds: 50
