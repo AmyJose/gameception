@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -12,10 +13,16 @@ namespace Gameplay
         [Header("Text References")]
         [SerializeField] private TMP_Text timerText;
         [SerializeField] private TMP_Text scoreText;
+        [SerializeField] private TMP_Text bonusText;
 
         [Header("Formatting")]
         [SerializeField] private string timerPrefix = "Time: ";
         [SerializeField] private string scorePrefix = "Score: ";
+
+        [Header("Bonus Popup")]
+        [SerializeField] private float bonusShowDuration = 1.5f;
+
+        private Coroutine bonusRoutine;
 
         private void Awake()
         {
@@ -40,6 +47,7 @@ namespace Gameplay
             if (scoreManager != null)
             {
                 scoreManager.OnScoreChanged += HandleScoreChanged;
+                scoreManager.OnSequenceBonusAwarded += HandleSequenceBonusAwarded;
             }
         }
 
@@ -53,6 +61,7 @@ namespace Gameplay
             if (scoreManager != null)
             {
                 scoreManager.OnScoreChanged -= HandleScoreChanged;
+                scoreManager.OnSequenceBonusAwarded -= HandleSequenceBonusAwarded;
             }
         }
 
@@ -66,6 +75,10 @@ namespace Gameplay
             if (scoreManager != null)
             {
                 HandleScoreChanged(scoreManager.CurrentScore);
+            }
+            if (bonusText != null)
+            {
+                bonusText.gameObject.SetActive(false);
             }
         }
 
@@ -85,6 +98,29 @@ namespace Gameplay
             if (scoreText == null) return;
 
             scoreText.text = $"{scorePrefix}{score}";
+        }
+
+        private void HandleSequenceBonusAwarded(string label, int amount)
+        {
+            if (bonusText == null) return;
+
+            if (bonusRoutine != null)
+            {
+                StopCoroutine(bonusRoutine);
+            }
+
+            bonusRoutine = StartCoroutine(ShowBonusRoutine(label, amount));
+        }
+
+        private IEnumerator ShowBonusRoutine(string label, int amount)
+        {
+            bonusText.text = $"{label} +{amount}";
+            bonusText.gameObject.SetActive(true);
+
+            yield return new WaitForSeconds(bonusShowDuration);
+
+            bonusText.gameObject.SetActive(false);
+            bonusRoutine = null;
         }
     }
 }

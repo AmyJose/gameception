@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Gameplay.Choreography;
 
@@ -12,8 +13,6 @@ namespace Gameplay
         Perfect
     }
 
-    // NOTE: currently doesnt care about lanes and that.
-    // also doesnt care about population etc. just only the prompt Judge
     public class ScoreManager : MonoBehaviour
     {
         [Header("Dependencies")]
@@ -25,8 +24,11 @@ namespace Gameplay
         [SerializeField] private int okayScore = 40;
         [SerializeField] private int missPenalty = 0;
 
-        [Header("Bonuses")]
-        [SerializeField] private int sequenceCompleteBonus = 250;
+        [Header("Sequence Bonuses")]
+        [SerializeField] private int cleanSequenceBonus = 250;
+        [SerializeField] private int allPerfectSequenceBonus = 400;
+
+        [Header("Streak Bonuses")]
         [SerializeField] private bool useStreakBonuses = true;
         [SerializeField] private int streakBonusEvery = 5;
         [SerializeField] private int streakBonusAmount = 50;
@@ -44,6 +46,18 @@ namespace Gameplay
         public event Action<int> OnScoreChanged;
         public event Action<int> OnStreakChanged;
         public event Action OnStatsChanged;
+        public event Action<string, int> OnSequenceBonusAwarded;
+
+        private struct SequenceScoreStatus
+        {
+            public int perfectCount;
+            public int goodCount;
+            public int okayCount;
+            public int missCount;
+            public HashSet<int> judgedPromptIds;
+        }
+
+        private readonly Dictionary<int, SequenceScoreStatus> _sequenceScores = new();
 
         private void OnEnable()
         {
@@ -83,6 +97,8 @@ namespace Gameplay
             LongestStreak = 0;
             SequencesCompleted = 0;
 
+            _sequenceScores.Clear();
+
             NotifyAll();
         }
 
@@ -90,52 +106,45 @@ namespace Gameplay
         {
             if (!RunActive) return;
 
+            TimingJudgement finalJudgement = ConvertToFinalJudgement(result);
+
+            ApplyPromptScore(finalJudgement);
+            UpdateSequenceScoreStatus(result.sequenceId, result.promptId, finalJudgement);
+        }
+
+        private TimingJudgement ConvertToFinalJudgement(PromptJudge.JudgementResult result)
+        {
             switch (result.quality)
             {
                 case PromptJudge.HitQuality.Perfect:
-                    if (result.timing == PromptJudge.PoseTiming.Perfect)
-                        RegisterHit(TimingJudgement.Perfect);
-                    else
-                        RegisterHit(TimingJudgement.Good);
-                    break;
+                    return result.timing == PromptJudge.PoseTiming.Perfect
+                        ? TimingJudgement.Perfect
+                        : TimingJudgement.Good;
 
                 case PromptJudge.HitQuality.Good:
-                    if (result.timing == PromptJudge.PoseTiming.Perfect)
-                        RegisterHit(TimingJudgement.Good);
-                    else
-                        RegisterHit(TimingJudgement.Okay);
-                    break;
+                    return result.timing == PromptJudge.PoseTiming.Perfect
+                        ? TimingJudgement.Good
+                        : TimingJudgement.Okay;
 
+                case PromptJudge.HitQuality.WrongPlanet:
                 case PromptJudge.HitQuality.WrongPose:
                 case PromptJudge.HitQuality.NoInput:
-                    RegisterMiss();
-                    break;
-
                 default:
-                    RegisterMiss();
-                    break;
+                    return TimingJudgement.Miss;
             }
         }
 
-        private void HandleSequenceComplete(PromptJudge.SequenceResult result)
+        private void ApplyPromptScore(TimingJudgement judgement)
         {
             if (!RunActive) return;
 
-            bool qualifiesForCompletionBonus = result.missesCount == 0 && result.hitsCount > 0;
-            RegisterSequenceCompleted(qualifiesForCompletionBonus);
-        }
-
-        public void RegisterHit(TimingJudgement timing)
-        {
-            if (!RunActive) return;
-
-            int awardedScore = GetBaseScoreForTiming(timing);
-
-            if (timing == TimingJudgement.Miss)
+            if (judgement == TimingJudgement.Miss)
             {
                 RegisterMiss();
                 return;
             }
+
+            int awardedScore = GetBaseScoreForTiming(judgement);
 
             CurrentScore += awardedScore;
             PromptsHit++;
@@ -154,6 +163,102 @@ namespace Gameplay
             NotifyAll();
         }
 
+        private void UpdateSequenceScoreStatus(int sequenceId, int promptId, TimingJudgement judgement)
+        {
+            if (!_sequenceScores.TryGetValue(sequenceId, out var status))
+            {
+                status = new SequenceScoreStatus
+                {
+                    perfectCount = 0,
+                    goodCount = 0,
+                    okayCount = 0,
+                    missCount = 0,
+                    judgedPromptIds = new HashSet<int>()
+                };
+            }
+
+            if (status.judgedPromptIds == null)
+            {
+                status.judgedPromptIds = new HashSet<int>();
+            }
+
+            if (status.judgedPromptIds.Contains(promptId))
+            {
+                return;
+            }
+
+            status.judgedPromptIds.Add(promptId);
+
+            switch (judgement)
+            {
+                case TimingJudgement.Perfect:
+                    status.perfectCount++;
+                    break;
+
+                case TimingJudgement.Good:
+                    status.goodCount++;
+                    break;
+
+                case TimingJudgement.Okay:
+                    status.okayCount++;
+                    break;
+
+                case TimingJudgement.Miss:
+                default:
+                    status.missCount++;
+                    break;
+            }
+
+            _sequenceScores[sequenceId] = status;
+        }
+
+        private void HandleSequenceComplete(PromptJudge.SequenceResult result)
+        {
+            if (!RunActive) return;
+
+            SequencesCompleted++;
+
+            if (!_sequenceScores.TryGetValue(result.sequenceId, out var status))
+            {
+                Debug.LogWarning($"[ScoreManager] No tracked score data for sequence {result.sequenceId}");
+                NotifyAll();
+                return;
+            }
+
+            int totalSuccessfulPrompts = status.perfectCount + status.goodCount + status.okayCount;
+            int totalEvaluatedPrompts = totalSuccessfulPrompts + status.missCount;
+
+            bool cleanSequence =
+                result.totalPrompts > 0 &&
+                status.missCount == 0 &&
+                totalSuccessfulPrompts == result.totalPrompts;
+
+            bool allPerfect =
+                cleanSequence &&
+                status.perfectCount == result.totalPrompts;
+
+            Debug.Log(
+                $"[ScoreManager] SequenceComplete | seq={result.sequenceId}, total={result.totalPrompts}, " +
+                $"perfect={status.perfectCount}, good={status.goodCount}, okay={status.okayCount}, misses={status.missCount}, " +
+                $"tracked={totalEvaluatedPrompts}"
+            );
+
+            if (allPerfect)
+            {
+                CurrentScore += allPerfectSequenceBonus;
+                OnSequenceBonusAwarded?.Invoke("ALL PERFECT!", allPerfectSequenceBonus);
+            }
+            else if (cleanSequence)
+            {
+                CurrentScore += cleanSequenceBonus;
+                OnSequenceBonusAwarded?.Invoke("CLEAN SEQUENCE!", cleanSequenceBonus);
+            }
+
+            _sequenceScores.Remove(result.sequenceId);
+
+            NotifyAll();
+        }
+
         public void RegisterMiss()
         {
             if (!RunActive) return;
@@ -165,21 +270,6 @@ namespace Gameplay
             {
                 CurrentScore += missPenalty;
                 CurrentScore = Mathf.Max(0, CurrentScore);
-            }
-
-            NotifyAll();
-        }
-
-        public void RegisterSequenceCompleted(bool awardBonus)
-        {
-            if (!RunActive) return;
-
-            SequencesCompleted++;
-
-            // Completion bonus is only for clean sequences with no misses.
-            if (awardBonus)
-            {
-                CurrentScore += sequenceCompleteBonus;
             }
 
             NotifyAll();

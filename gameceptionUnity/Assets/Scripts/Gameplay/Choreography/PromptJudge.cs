@@ -17,7 +17,6 @@ namespace Gameplay.Choreography
         [Header("Thresholds")]
         [SerializeField] private float minPoseConfidence = 0.85f;
         [SerializeField] private float maxPoseConfidence = 0.86f;
-        [SerializeField] private long stabilityMs = 200;
         [SerializeField] private float perfectWindow = 0.5f;
 
 
@@ -25,9 +24,11 @@ namespace Gameplay.Choreography
         public event Action<SequenceResult> OnSequenceComplete;
         public event Action<PromptQueue.PromptData> OnPromptUpdated;
         private Dictionary<int, ActivePrompt> _activePrompts = new();
+        private readonly Dictionary<int, SequenceStatus> _sequenceProgress = new();
 
         private class ActivePrompt
         {
+            public int promptId;
             public int sequenceId;
             public int laneIndex;
             public ElementPose requiredPose;
@@ -67,10 +68,6 @@ namespace Gameplay.Choreography
             public HashSet<int> evaluatedPrompts;
         }
 
-        private Dictionary<int, SequenceStatus> _sequenceProgress = new();
-
-        private long _lastJudgeTime = 0;
-
         private void OnEnable()
         {
             if (promptQueue != null)
@@ -90,62 +87,37 @@ namespace Gameplay.Choreography
         }
         private void Update()
         {
+            if (promptQueue == null || poseState == null)
+                return;
+
             foreach (var kvp in _activePrompts)
             {
                 int id = kvp.Key;
                 var prompt = kvp.Value;
 
-                float currentY = promptQueue != null ? promptQueue.GetPromptCurrentY(id) : -999f;
+                float currentY = promptQueue.GetPromptCurrentY(id);
                 float offset = currentY - promptQueue.hitZoneY;
-                float abs = Mathf.Abs(offset);
+                float absOffset = Mathf.Abs(offset);
 
-                // Track best timing
-                // if (abs < Mathf.Abs(prompt.bestOffset))
-                //     prompt.bestOffset = offset;
+                bool correctPlanetSelected = 
+                    selectionState != null 
+                    && selectionState.IsSelected(prompt.laneIndex);
 
-                bool correctPlanetSelected = selectionState != null && selectionState.IsSelected(prompt.laneIndex);
+                bool poseMatches = poseState.CurrentPose == prompt.requiredPose;
+                bool hasEnoughConfidence = poseState.Confidence >= minPoseConfidence;
+                bool insideHitWindow = absOffset < perfectWindow;
 
                 if (!prompt.success &&
                     correctPlanetSelected &&
-                    poseState.CurrentPose == prompt.requiredPose &&
-                    poseState.Confidence >= minPoseConfidence &&
-                    abs < perfectWindow)
+                    poseMatches &&
+                    hasEnoughConfidence &&
+                    insideHitWindow)
                 {
                     prompt.success = true;
                     EmitSuccess(id, prompt, offset);
                 }
-                /*else if (!prompt.success && offset > perfectWindow) // Missed the window
-                {
-                    EmitFailure(id, prompt);
-                    prompt.success = true; // Mark as evaluated to prevent multiple failure emissions
-                }*/
 
             }
-        }
-        private void HandlePromptInZone(PromptQueue.PromptData data)
-        {
-            long now = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
-            if (now - _lastJudgeTime < stabilityMs)
-                return;
-            _lastJudgeTime = now;
-
-            var result = new JudgementResult
-            {
-                promptId = data.id,
-                sequenceId = data.sequenceId,
-                laneIndex = data.laneIndex,
-                detectedPose = poseState?.CurrentPose ?? ElementPose.None,
-                selectedPad = GetSelectedPad(),
-                quality = EvaluateConfidence(data.requiredPose, poseState.CurrentPose, minPoseConfidence, maxPoseConfidence, poseState.Confidence),
-                timing = EvaluateTiming(data.currentY, promptQueue.hitZoneY)
-            };
-
-            Debug.Log($"[PromptJudge- seq {data.sequenceId}:] Prompt {data.id}: {result.quality} " +
-                     $"(Pose: {result.detectedPose}, Quality: {result.quality}, Timing: {result.timing}, Pad: {result.selectedPad})");
-
-            OnJudged?.Invoke(result);
-
-            UpdateSequenceProgress(data.sequenceId, result.quality);
         }
 
         //helper functions for continuous window based monitoring
@@ -159,11 +131,12 @@ namespace Gameplay.Choreography
                 success = false,
                 bestOffset = float.MaxValue
             };
+            OnPromptUpdated?.Invoke(data);
         }
 
         private void HandlePromptExit(PromptQueue.PromptData data)
         {
-            if (!_activePrompts.TryGetValue(data.id, out var prompt) && !promptQueue.IsActiveLane(data.laneIndex))
+            if (!_activePrompts.TryGetValue(data.id, out var prompt))
                 return;
 
             if (!prompt.success)
@@ -181,7 +154,6 @@ namespace Gameplay.Choreography
             {
                 sequenceId = sequenceId,
                 totalPrompts = totalPrompts,
-                hitsCount = 0,
                 missesCount = 0,
                 evaluatedPrompts = new HashSet<int>()
             };
@@ -189,62 +161,58 @@ namespace Gameplay.Choreography
             Debug.Log($"[PromptJudge] Registered sequence {sequenceId} with {totalPrompts} prompts");
         }
 
-        private void EmitSuccess(int id, ActivePrompt prompt, float offset)
+        private void EmitSuccess(int promptId, ActivePrompt prompt, float offset)
         {
             var result = new JudgementResult
             {
-                promptId = id,
+                promptId = promptId,
                 sequenceId = prompt.sequenceId,
                 laneIndex = prompt.laneIndex,
-                detectedPose = poseState.CurrentPose,
+                detectedPose = poseState != null ? poseState.CurrentPose : ElementPose.None,
                 selectedPad = GetSelectedPad(),
                 quality = EvaluateConfidence(
                     prompt.requiredPose,
-                    poseState.CurrentPose,
+                    poseState != null ? poseState.CurrentPose : ElementPose.None,
                     minPoseConfidence,
                     maxPoseConfidence,
-                    poseState.Confidence
+                    poseState != null ? poseState.Confidence : 0f
                 ),
                 timing = EvaluateTimingFromOffset(offset)
             };
 
-            OnJudged?.Invoke(result);
-            UpdateSequenceProgress(prompt.sequenceId, result.quality);
+            Debug.Log($"Prompt {promptId} {result.quality} HIT");
 
-            float distanceToCenter = Mathf.Abs(offset);
+            OnJudged?.Invoke(result);
+            UpdateSequenceProgress(promptId, prompt.sequenceId, result.quality);
+
             if (hitZone != null)
             {
-                {
-                    bool isPerfect = Mathf.Abs(offset) <= perfectWindow * 0.5f;
-                    hitZone.TriggerFeedback(true); //green flash
-                }
-                if (distanceToCenter <= 0.1f)
-                {
-                    hitZone.TriggerFeedback(true);
-                }
+                hitZone.TriggerFeedback(true);
             }
         }
 
-        private void EmitFailure(int id, ActivePrompt prompt)
+        private void EmitFailure(int promptId, ActivePrompt prompt)
         {
             HitQuality failureQuality = EvaluateFailureReason(prompt);
 
             var result = new JudgementResult
             {
-                promptId = id,
+                promptId = promptId,
                 sequenceId = prompt.sequenceId,
                 laneIndex = prompt.laneIndex,
-                detectedPose = poseState.CurrentPose,
+                detectedPose = poseState != null ? poseState.CurrentPose : ElementPose.None,
                 selectedPad = GetSelectedPad(),
                 quality = failureQuality,
                 timing = PoseTiming.Late
             };
 
-            Debug.Log($"[PromptJudge - MISS] Seq {result.sequenceId} | Prompt {id}: {result.quality} | " +
-              $"Pose: {result.detectedPose} | SelectedPad: {result.selectedPad} | ExpectedLane: {result.laneIndex}");
+            Debug.Log(
+                $"[PromptJudge - MISS] Seq {result.sequenceId} | Prompt {promptId}: {result.quality} | " +
+                $"Pose: {result.detectedPose} | SelectedPad: {result.selectedPad} | ExpectedLane: {result.laneIndex}"
+            );
 
             OnJudged?.Invoke(result);
-            UpdateSequenceProgress(prompt.sequenceId, result.quality);
+            UpdateSequenceProgress(promptId, prompt.sequenceId, result.quality);
 
             if (hitZone != null)
             {
@@ -261,20 +229,32 @@ namespace Gameplay.Choreography
         }
         private HitQuality EvaluateFailureReason(ActivePrompt prompt)
         {
-            bool hasAnySelection = selectionState != null && selectionState.Selected.Count > 0;
-            bool correctPlanetSelected = selectionState != null && selectionState.IsSelected(prompt.laneIndex);
-            bool poseMatches = poseState.CurrentPose == prompt.requiredPose;
-            bool hasEnoughConfidence = poseState.Confidence >= minPoseConfidence;
+            bool hasAnySelection =
+                selectionState != null &&
+                selectionState.Selected != null &&
+                selectionState.Selected.Count > 0;
 
-            // No planet selected OR required planet not selected
+            bool correctPlanetSelected =
+                selectionState != null &&
+                selectionState.IsSelected(prompt.laneIndex);
+
+            bool poseMatches =
+                poseState != null &&
+                poseState.CurrentPose == prompt.requiredPose;
+
+            bool hasEnoughConfidence =
+                poseState != null &&
+                poseState.Confidence >= minPoseConfidence;
+
+            // No selected planet, or wrong one selected
             if (!hasAnySelection || !correctPlanetSelected)
                 return HitQuality.WrongPlanet;
 
-            // Correct planet selected, but wrong pose
+            // Right planet, wrong pose
             if (!poseMatches)
                 return HitQuality.WrongPose;
 
-            // Correct planet and pose, but low confidence
+            // Right planet and right pose, but confidence too low
             if (!hasEnoughConfidence)
                 return HitQuality.NoInput;
 
@@ -282,7 +262,7 @@ namespace Gameplay.Choreography
         }
 
         //Updates progress when a prompt is judged
-        private void UpdateSequenceProgress(int sequenceId, HitQuality quality)
+        private void UpdateSequenceProgress(int promptId, int sequenceId, HitQuality quality)
         {
             if (!_sequenceProgress.TryGetValue(sequenceId, out var status))
             {
@@ -290,7 +270,18 @@ namespace Gameplay.Choreography
                 return;
             }
 
-            // Count hit/miss
+            if (status.evaluatedPrompts == null)
+            {
+                status.evaluatedPrompts = new HashSet<int>();
+            }
+
+            if (status.evaluatedPrompts.Contains(promptId))
+            {
+                return;
+            }
+
+            status.evaluatedPrompts.Add(promptId);
+
             if (quality == HitQuality.Perfect || quality == HitQuality.Good)
             {
                 status.hitsCount++;
@@ -303,13 +294,17 @@ namespace Gameplay.Choreography
             _sequenceProgress[sequenceId] = status;
 
             int totalEvaluated = status.hitsCount + status.missesCount;
-            Debug.Log($"[PromptJudge] Sequence {sequenceId} progress: {totalEvaluated}/{status.totalPrompts} " +
-                     $"(Hits: {status.hitsCount}, Misses: {status.missesCount})");
 
-            // Check if sequence complete
+            Debug.Log(
+                $"[PromptJudge] Sequence {sequenceId} progress: {totalEvaluated}/{status.totalPrompts} " +
+                $"(Hits: {status.hitsCount}, Misses: {status.missesCount})"
+            );
+
             if (totalEvaluated >= status.totalPrompts)
             {
-                float accuracy = (float)status.hitsCount / status.totalPrompts;
+                float accuracy = status.totalPrompts > 0
+                    ? (float)status.hitsCount / status.totalPrompts
+                    : 0f;
 
                 var seqResult = new SequenceResult
                 {
@@ -320,10 +315,13 @@ namespace Gameplay.Choreography
                     accuracy = accuracy
                 };
 
-                Debug.Log($"✅ [PromptJudge] Sequence {sequenceId} COMPLETE! " +
-                         $"Hits: {status.hitsCount}/{status.totalPrompts}, Accuracy: {accuracy:P}");
+                Debug.Log(
+                    $"[PromptJudge] Sequence {sequenceId} COMPLETE! " +
+                    $"Hits: {status.hitsCount}, Misses: {status.missesCount}, Accuracy: {accuracy:P2}"
+                );
 
                 OnSequenceComplete?.Invoke(seqResult);
+                _sequenceProgress.Remove(sequenceId);
             }
         }
 
@@ -331,31 +329,19 @@ namespace Gameplay.Choreography
         {
             if (current != required)
                 return HitQuality.WrongPose;
-            //evaluate teh current confidence against thresholds to determine hit quality
-            bool isHighConfidence = confidence >= maxConfidence;
-            bool isMediumConfidence = confidence >= minConfidence;
-            if (isHighConfidence)
+
+            if (confidence >= maxConfidence)
                 return HitQuality.Perfect;
-            else if (isMediumConfidence)
+
+            if (confidence >= minConfidence)
                 return HitQuality.Good;
-            else
-                return HitQuality.NoInput;
 
-        }
+            return HitQuality.NoInput;
 
-        private PoseTiming EvaluateTiming(float promptY, float hitZoneY)
-        {
-            float offset = promptY - hitZoneY;
-            if (Mathf.Abs(offset) <= perfectWindow * 0.5f)
-                return PoseTiming.Perfect;
-
-            return offset > 0 ? PoseTiming.Early : PoseTiming.Late;
         }
         private int GetSelectedPad()
         {
             return selectionState != null ? selectionState.GetSingleSelected() : -1;
         }
-
-
     }
 }
