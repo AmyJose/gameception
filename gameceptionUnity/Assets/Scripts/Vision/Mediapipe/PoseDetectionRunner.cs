@@ -311,4 +311,20 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
 
         if (annotationVisualRoot != null) annotationVisualRoot.SetActive(visible);
     }
+    public bool TryGetLatestPoseResult(out PoseLandmarkerResult result, out long timestamp)
+    {
+        lock (_resultLock)
+        {
+            if (_latestResult.poseLandmarks == null || _latestResult.poseLandmarks.Count == 0)
+            {
+                result = default;
+                timestamp = 0;
+                return false;
+            }
+
+            result = _latestResult;
+            timestamp = _latestTimestamp;
+            return true;
+        }
+    }
 }
