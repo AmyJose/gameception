@@ -1,6 +1,7 @@
 using UnityEngine;
 using Rhythm;
 using System;
+using System.Collections.Generic;
 
 namespace Gameplay.Choreography
 {
@@ -29,6 +30,7 @@ namespace Gameplay.Choreography
         [Header("References")]
         [SerializeField] private BeatClock beatClock;
         [SerializeField] private PromptQueue promptQueue;
+        [SerializeField] private PromptJudge promptJudge;
         [SerializeField] private GameFlowController gameFlowController;
 
         public enum Difficulty
@@ -48,8 +50,8 @@ namespace Gameplay.Choreography
         [SerializeField] private DifficultyBpmBand hardBpm = new DifficultyBpmBand { min = 95f, max = 120f };
 
         [Header("Prompt Bounds Per Difficulty")]
-        [SerializeField] private DifficultyPromptBand easyPrompt = new DifficultyPromptBand 
-        { 
+        [SerializeField] private DifficultyPromptBand easyPrompt = new DifficultyPromptBand
+        {
             generationIntervalBeats = 10,
             promptSpawnBeatSpacing = 2,
             promptsPerLane0 = 3,
@@ -58,8 +60,9 @@ namespace Gameplay.Choreography
             promptsPerLane3 = 2,
             keepConsecutive = true
         };
-        [SerializeField] private DifficultyPromptBand mediumPrompt = new DifficultyPromptBand 
-        { 
+
+        [SerializeField] private DifficultyPromptBand mediumPrompt = new DifficultyPromptBand
+        {
             generationIntervalBeats = 12,
             promptSpawnBeatSpacing = 2,
             promptsPerLane0 = 1,
@@ -68,8 +71,9 @@ namespace Gameplay.Choreography
             promptsPerLane3 = 1,
             keepConsecutive = true
         };
-        [SerializeField] private DifficultyPromptBand hardPrompt = new DifficultyPromptBand 
-        { 
+
+        [SerializeField] private DifficultyPromptBand hardPrompt = new DifficultyPromptBand
+        {
             generationIntervalBeats = 14,
             promptSpawnBeatSpacing = 2,
             promptsPerLane0 = 2,
@@ -79,24 +83,63 @@ namespace Gameplay.Choreography
             keepConsecutive = true
         };
 
-        [Header("BPM Transition")]
-        [SerializeField, Range(0f, 1f)] private float bpmSmoothing = 0.2f;
+        [Header("Adaptive BPM - Performance Memory")]
+        [SerializeField, Min(1)] private int recentSequenceCount = 3;
+        [SerializeField] private Vector3 recentSequenceWeights = new Vector3(0.5f, 0.3f, 0.2f);
+
+        [Header("Adaptive BPM - Decision Thresholds")]
+        [SerializeField, Range(0f, 1f)] private float raiseThreshold = 0.80f;
+        [SerializeField, Range(0f, 1f)] private float lowerThreshold = 0.45f;
+
+        [Header("Adaptive BPM - BPM Change")]
+        [SerializeField, Min(0.1f)] private float bpmIncreaseStep = 2f;
+        [SerializeField, Min(0.1f)] private float bpmDecreaseStep = 3f;
+
+        [Header("Adaptive BPM - Stability")]
+        [SerializeField, Min(0)] private int sequenceCooldownAfterChange = 1;
+        [SerializeField] private bool resetPerformanceMemoryOnDifficultyChange = true;
 
         private float _remainingTime;
         private Difficulty _currentDifficulty = Difficulty.Easy;
+        private float _currentBpm;
 
-        private float _performanceOffset = 0f; // for future difficulty
+        private readonly Queue<float> _recentAccuracies = new Queue<float>();
+        private int _sequencesUntilNextBpmChange = 0;
 
         private void OnEnable()
         {
             if (gameFlowController != null)
                 gameFlowController.OnTimerUpdated += HandleTimerUpdated;
+
+            if (promptJudge != null)
+                promptJudge.OnSequenceComplete += HandleSequenceComplete;
         }
 
         private void OnDisable()
         {
             if (gameFlowController != null)
                 gameFlowController.OnTimerUpdated -= HandleTimerUpdated;
+
+            if (promptJudge != null)
+                promptJudge.OnSequenceComplete -= HandleSequenceComplete;
+        }
+
+        private void Start()
+        {
+            if (gameFlowController == null || beatClock == null || promptQueue == null)
+                return;
+
+            _remainingTime = gameFlowController.RemainingTime;
+            _currentDifficulty = GetDifficultyForTime(_remainingTime);
+
+            var bpmBand = GetBpmBand(_currentDifficulty);
+            _currentBpm = bpmBand.median;
+            beatClock.SetBpm(_currentBpm);
+
+            var promptBand = GetPromptBand(_currentDifficulty);
+            ApplyPromptBandSettings(promptBand);
+
+            Debug.Log($"[Progression] Start -> {_currentDifficulty}, BPM={_currentBpm}");
         }
 
         private void HandleTimerUpdated(float timeLeft)
@@ -108,55 +151,143 @@ namespace Gameplay.Choreography
             if (newDifficulty != _currentDifficulty)
             {
                 _currentDifficulty = newDifficulty;
-                _performanceOffset = 0f;
 
                 var bpmBand = GetBpmBand(_currentDifficulty);
-                float targetBpm = bpmBand.median;
-                beatClock.SetBpm(targetBpm);
+                _currentBpm = bpmBand.median;
+                beatClock.SetBpm(_currentBpm);
 
                 var promptBand = GetPromptBand(_currentDifficulty);
                 ApplyPromptBandSettings(promptBand);
 
-                Debug.Log($"[Progression] Difficulty -> {_currentDifficulty}, BPM={targetBpm}");
+                if (resetPerformanceMemoryOnDifficultyChange)
+                    ClearPerformanceMemory();
+
+                Debug.Log($"[Progression] Difficulty -> {_currentDifficulty}, BPM reset to {_currentBpm}");
             }
         }
 
-        private void Start()
+        private void HandleSequenceComplete(PromptJudge.SequenceResult result)
         {
-            if (gameFlowController != null)
+            AddRecentAccuracy(result.accuracy);
+
+            if (_sequencesUntilNextBpmChange > 0)
             {
-                _remainingTime = gameFlowController.RemainingTime;
-                _currentDifficulty = GetDifficultyForTime(_remainingTime);
+                _sequencesUntilNextBpmChange--;
 
-                var bpmBand = GetBpmBand(_currentDifficulty);
-                float targetBpm = bpmBand.median;
-                beatClock.SetBpm(targetBpm);
+                Debug.Log(
+                    $"[Progression] Sequence {result.sequenceId} complete | " +
+                    $"Accuracy={result.accuracy:P0} | " +
+                    $"Cooldown active ({_sequencesUntilNextBpmChange} left) | BPM stays {_currentBpm}"
+                );
 
-                var promptBand = GetPromptBand(_currentDifficulty);
-                ApplyPromptBandSettings(promptBand);
-
-                Debug.Log($"[Progression] Start -> {_currentDifficulty}, BPM={targetBpm}");
+                return;
             }
+
+            float recentPerformanceScore = CalculateRecentPerformanceScore();
+            var bpmBand = GetBpmBand(_currentDifficulty);
+
+            float bpmBefore = _currentBpm;
+            string decision = "Hold";
+
+            if (recentPerformanceScore >= raiseThreshold)
+            {
+                _currentBpm += bpmIncreaseStep;
+                decision = "Raise";
+            }
+            else if (recentPerformanceScore <= lowerThreshold)
+            {
+                _currentBpm -= bpmDecreaseStep;
+                decision = "Lower";
+            }
+
+            _currentBpm = Mathf.Clamp(_currentBpm, bpmBand.min, bpmBand.max);
+
+            if (!Mathf.Approximately(_currentBpm, bpmBefore))
+            {
+                beatClock.SetBpm(_currentBpm);
+                _sequencesUntilNextBpmChange = sequenceCooldownAfterChange;
+            }
+
+            Debug.Log(
+                $"[Progression] Sequence {result.sequenceId} complete | " +
+                $"Hits={result.hitsCount}/{result.totalPrompts} ({result.accuracy:P0}) | " +
+                $"RecentScore={recentPerformanceScore:F2} | " +
+                $"Decision={decision} | BPM {bpmBefore} -> {_currentBpm} | " +
+                $"Difficulty={_currentDifficulty}"
+            );
+        }
+
+        private void AddRecentAccuracy(float accuracy)
+        {
+            _recentAccuracies.Enqueue(Mathf.Clamp01(accuracy));
+
+            while (_recentAccuracies.Count > recentSequenceCount)
+                _recentAccuracies.Dequeue();
+        }
+
+        private float CalculateRecentPerformanceScore()
+        {
+            if (_recentAccuracies.Count == 0)
+                return 0.5f;
+
+            float[] values = _recentAccuracies.ToArray();
+
+            float newestWeight = recentSequenceWeights.x;
+            float middleWeight = recentSequenceWeights.y;
+            float oldestWeight = recentSequenceWeights.z;
+
+            float weightedSum = 0f;
+            float totalWeight = 0f;
+
+            int newestIndex = values.Length - 1;
+            weightedSum += values[newestIndex] * newestWeight;
+            totalWeight += newestWeight;
+
+            if (values.Length >= 2)
+            {
+                int previousIndex = values.Length - 2;
+                weightedSum += values[previousIndex] * middleWeight;
+                totalWeight += middleWeight;
+            }
+
+            if (values.Length >= 3)
+            {
+                int oldestIndex = values.Length - 3;
+                weightedSum += values[oldestIndex] * oldestWeight;
+                totalWeight += oldestWeight;
+            }
+
+            if (totalWeight <= 0f)
+                return values[newestIndex];
+
+            return weightedSum / totalWeight;
+        }
+
+        private void ClearPerformanceMemory()
+        {
+            _recentAccuracies.Clear();
+            _sequencesUntilNextBpmChange = 0;
         }
 
         private void ApplyPromptBandSettings(DifficultyPromptBand promptBand)
         {
-            // Apply generation timing
             promptQueue.SetGenerationIntervalBeats(promptBand.generationIntervalBeats);
-            
-            // Apply spawn spacing
             promptQueue.SetPromptSpawnBeatSpacing(promptBand.promptSpawnBeatSpacing);
-            
-            // Apply per-lane prompt counts
+
             promptQueue.SetLanePromptsPerSequence(0, promptBand.promptsPerLane0);
             promptQueue.SetLanePromptsPerSequence(1, promptBand.promptsPerLane1);
             promptQueue.SetLanePromptsPerSequence(2, promptBand.promptsPerLane2);
             promptQueue.SetLanePromptsPerSequence(3, promptBand.promptsPerLane3);
-            
-            // Apply consecutive lane grouping
+
             promptQueue.SetKeepLanePromptsConsecutive(promptBand.keepConsecutive);
 
-            Debug.Log($"[Progression] Prompt settings -> Interval={promptBand.generationIntervalBeats}, Spacing={promptBand.promptSpawnBeatSpacing}, PerLane=[{promptBand.promptsPerLane0},{promptBand.promptsPerLane1},{promptBand.promptsPerLane2},{promptBand.promptsPerLane3}], Consecutive={promptBand.keepConsecutive}");
+            Debug.Log(
+                $"[Progression] Prompt settings -> Interval={promptBand.generationIntervalBeats}, " +
+                $"Spacing={promptBand.promptSpawnBeatSpacing}, " +
+                $"PerLane=[{promptBand.promptsPerLane0},{promptBand.promptsPerLane1}," +
+                $"{promptBand.promptsPerLane2},{promptBand.promptsPerLane3}], " +
+                $"Consecutive={promptBand.keepConsecutive}"
+            );
         }
 
         private Difficulty GetDifficultyForTime(float timeLeft)

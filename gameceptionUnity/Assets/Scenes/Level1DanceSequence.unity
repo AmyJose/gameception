@@ -3051,6 +3051,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Choreography.ProgressionController
   beatClock: {fileID: 1130057111}
   promptQueue: {fileID: 733875701}
+  promptJudge: {fileID: 64651961}
   gameFlowController: {fileID: 177462652}
   easyAboveSeconds: 270
   mediumAboveSeconds: 80
@@ -3067,12 +3068,12 @@ MonoBehaviour:
     generationIntervalBeats: 10
     promptSpawnBeatSpacing: 2
     promptsPerLane0: 3
-    promptsPerLane1: 2
+    promptsPerLane1: 3
     promptsPerLane2: 2
     promptsPerLane3: 2
     keepConsecutive: 1
   mediumPrompt:
-    generationIntervalBeats: 12
+    generationIntervalBeats: 9
     promptSpawnBeatSpacing: 2
     promptsPerLane0: 1
     promptsPerLane1: 1
@@ -3080,14 +3081,21 @@ MonoBehaviour:
     promptsPerLane3: 1
     keepConsecutive: 1
   hardPrompt:
-    generationIntervalBeats: 14
-    promptSpawnBeatSpacing: 2
+    generationIntervalBeats: 8
+    promptSpawnBeatSpacing: 3
     promptsPerLane0: 2
     promptsPerLane1: 1
     promptsPerLane2: 1
     promptsPerLane3: 2
     keepConsecutive: 1
-  bpmSmoothing: 0.2
+  recentSequenceCount: 3
+  recentSequenceWeights: {x: 0.5, y: 0.3, z: 0.2}
+  raiseThreshold: 0.8
+  lowerThreshold: 0.45
+  bpmIncreaseStep: 3
+  bpmDecreaseStep: 3
+  sequenceCooldownAfterChange: 1
+  resetPerformanceMemoryOnDifficultyChange: 1
 --- !u!1 &1346458577
 GameObject:
   m_ObjectHideFlags: 0
