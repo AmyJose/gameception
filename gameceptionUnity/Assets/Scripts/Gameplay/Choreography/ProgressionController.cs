@@ -99,6 +99,14 @@ namespace Gameplay.Choreography
         [SerializeField, Min(0)] private int sequenceCooldownAfterChange = 1;
         [SerializeField] private bool resetPerformanceMemoryOnDifficultyChange = true;
 
+        [Header("Double Trouble Scheduling")]
+        [SerializeField] private bool enableDoubleTroubleScheduling = true;
+        [SerializeField, Min(0f)] private float doubleTroubleStartSeconds = 170f;  // Start at N sec remaining
+        [SerializeField, Min(1f)] private float doubleTroubleDurationSeconds = 30f;  // Active for 30 seconds
+
+        private float _doubleTroubleEndTime = -1f;
+        private bool _doubleTroubleActive = false;
+
         private float _remainingTime;
         private Difficulty _currentDifficulty = Difficulty.Easy;
         private float _currentBpm;
@@ -163,6 +171,37 @@ namespace Gameplay.Choreography
                     ClearPerformanceMemory();
 
                 Debug.Log($"[Progression] Difficulty -> {_currentDifficulty}, BPM reset to {_currentBpm}");
+            }
+
+            // Handle Double Trouble scheduling
+            if (enableDoubleTroubleScheduling && promptQueue != null)
+            {
+                HandleDoubleTroubleScheduling(timeLeft);
+            }
+        }
+
+        private void HandleDoubleTroubleScheduling(float timeLeft)
+        {
+            // Calculate when Double Trouble window is active
+            float doubleTroubleStart = doubleTroubleStartSeconds;
+            float doubleTroubleEnd = doubleTroubleStart - doubleTroubleDurationSeconds;
+
+            bool shouldBeActive = (timeLeft <= doubleTroubleStart && timeLeft > doubleTroubleEnd);
+
+            // Toggle on
+            if (shouldBeActive && !_doubleTroubleActive)
+            {
+                promptQueue.SetDoubleTroubleMode(true);
+                _doubleTroubleActive = true;
+                Debug.Log($"[Progression] Double Trouble ENABLED (active until {doubleTroubleEnd:F1}s remaining)");
+            }
+
+            // Toggle off
+            if (!shouldBeActive && _doubleTroubleActive)
+            {
+                promptQueue.SetDoubleTroubleMode(false);
+                _doubleTroubleActive = false;
+                Debug.Log($"[Progression] Double Trouble DISABLED");
             }
         }
 
