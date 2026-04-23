@@ -179,6 +179,10 @@ MonoBehaviour:
   tutorialStartHidden: 1
   cameraFeedVisualRoot: {fileID: 143260029}
   annotationVisualRoot: {fileID: 887219560}
+  headPrefab: {fileID: 0}
+  headFadeDuration: 0.4
+  headOffset: {x: 0, y: 0, z: 0}
+  headScale: 1
 --- !u!4 &184578139
 Transform:
   m_ObjectHideFlags: 0
@@ -505,7 +509,7 @@ MonoBehaviour:
     element: {fileID: 21300000, guid: 2bcd956c1b5e3b94291d1c08fd5c0606, type: 3}
   - alien: {fileID: 21300000, guid: c82bd52e6ea0efe4a9ccdc123c799642, type: 3}
     element: {fileID: 21300000, guid: 09bb7a07cb7c7e340b3041fd93c1a176, type: 3}
-  - alien: {fileID: 21300000, guid: c02c846eb5f460a4ca8964859bbcca37, type: 3}
+  - alien: {fileID: 21300000, guid: 932793a757ad0774bb3b275486046b6c, type: 3}
     element: {fileID: 21300000, guid: 86f2ef379c3a6654f9ecb0ebafed6f65, type: 3}
   - alien: {fileID: 21300000, guid: 8313b7b033689a447b9503953172d7aa, type: 3}
     element: {fileID: 21300000, guid: 98d673921f18df041a16a3b4953fd650, type: 3}
