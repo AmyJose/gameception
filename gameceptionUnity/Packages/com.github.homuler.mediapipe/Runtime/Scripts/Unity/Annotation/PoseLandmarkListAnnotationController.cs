@@ -36,10 +36,16 @@ namespace Mediapipe.Unity
       DrawLater(target?.Landmark);
     }
 
+    // protected override void SyncNow()
+    // {
+    //   isStale = false;
+    //   annotation.Draw(_currentTarget, _visualizeZ);
+    // }
+
     protected override void SyncNow()
     {
-      isStale = false;
-      annotation.Draw(_currentTarget, _visualizeZ);
+        isStale = false;
+        annotation.Draw(_currentTarget, _visualizeZ);
     }
   }
 }

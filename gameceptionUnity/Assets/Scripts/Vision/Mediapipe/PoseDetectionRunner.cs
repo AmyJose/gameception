@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using Color = UnityEngine.Color;
+using Screen = UnityEngine.Screen;
 
 // NOTE: this script currently holds a lot of switch statements depending on the type of imagesource and processing selected
 // possibly can strip this back for performance if needed
@@ -40,13 +41,28 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
     private bool _isNewResultAvailable = false;
     private readonly object _resultLock = new object();
 
+    [Header("Head Replacement")]
+    [SerializeField] private GameObject headPrefab;
+    [SerializeField] private float headFadeDuration = 0.4f;
+
+    private GameObject _activeHead;
+    private GameObject _outgoingHead;
+    private float _fadeInTime  = 1f;
+    private float _fadeOutTime = 1f;
+    private ElementPose _lastHeadPose = ElementPose.None;
+    [SerializeField] private Vector3 headOffset = Vector3.zero;
+    [SerializeField] private float headScale = 1f;
+
 
     public override void Stop()
     {
         base.Stop();
         _textureFramePool?.Dispose();
         _textureFramePool = null;
+        if (_activeHead != null) Destroy(_activeHead);
+        if (_outgoingHead != null) Destroy(_outgoingHead);
     }
+
     protected override IEnumerator Start()
     {
         if (tutorialStartHidden)
@@ -64,11 +80,28 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
 
     private void Update()
     {
+        
         // 1. Check for a new result from the background thread
         PoseLandmarkerResult resultToProcess = default;
         long timestampToProcess = 0;
         bool shouldProcess = false;
 
+
+        _fadeInTime  = Mathf.MoveTowards(_fadeInTime,  1f, Time.deltaTime / headFadeDuration);
+        _fadeOutTime = Mathf.MoveTowards(_fadeOutTime, 1f, Time.deltaTime / headFadeDuration);
+
+        if (_activeHead != null)
+            SetHeadAlpha(_activeHead, _fadeInTime);
+
+        if (_outgoingHead != null)
+        {
+            SetHeadAlpha(_outgoingHead, 1f - _fadeOutTime);
+            if (_fadeOutTime >= 1f)
+            {
+                Destroy(_outgoingHead);
+                _outgoingHead = null;
+            }
+        }
         lock (_resultLock)
         {
             if (_isNewResultAvailable)
@@ -80,13 +113,75 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
             }
         }
         if (shouldProcess && poseClassifier != null && poseState != null)
+{
+    var classification = poseClassifier.Classify(resultToProcess);
+    poseState.SetPose(classification.pose, classification.confidence, timestampToProcess);
+
+    UpdateSkeletonColor(classification.pose);
+
+    if (resultToProcess.poseLandmarks != null && resultToProcess.poseLandmarks.Count > 0)
+    {
+        var landmarks = resultToProcess.poseLandmarks[0].landmarks;
+        var nose = landmarks[0];
+        var headWorldPos = Vector3.zero;
+
+        var rawImage = annotationVisualRoot.GetComponentInChildren<RawImage>();
+        if (rawImage != null)
         {
-            var classification = poseClassifier.Classify(resultToProcess);
-            poseState.SetPose(classification.pose, classification.confidence, timestampToProcess);
+            var corners = new Vector3[4];
+            rawImage.rectTransform.GetWorldCorners(corners);
 
+            headWorldPos = new Vector3(
+                Mathf.Lerp(corners[0].x, corners[2].x, nose.x),
+                Mathf.Lerp(corners[0].y, corners[2].y, 1f - nose.y),
+                corners[0].z
+            );
+        }
 
-            UpdateSkeletonColor(classification.pose);
+        if (_activeHead != null)
+            _activeHead.transform.position = headWorldPos + headOffset;
 
+        if (classification.pose != _lastHeadPose)
+        {
+            _lastHeadPose = classification.pose;
+            SwapHead(classification.pose, headWorldPos + headOffset);
+        }
+    }
+}
+    }
+    private void SwapHead(ElementPose pose, Vector3 position)
+    {
+        // destroy any still-fading outgoing head first
+        if (_outgoingHead != null)
+        {
+            Destroy(_outgoingHead);
+            _outgoingHead = null;
+        }
+
+        _outgoingHead = _activeHead;
+        _fadeOutTime  = 0f;
+
+        if (headPrefab != null)
+        {
+            _activeHead = Instantiate(headPrefab, position, Quaternion.identity);
+            _activeHead.transform.localScale = Vector3.one * headScale;
+            SetHeadAlpha(_activeHead, 0f);
+            _fadeInTime = 0f;
+        }
+        else
+        {
+            _activeHead = null;
+        }
+    }
+
+    private void SetHeadAlpha(GameObject go, float alpha)
+    {
+        var sr = go.GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            var c = sr.color;
+            c.a = alpha;
+            sr.color = c;
         }
     }
 
