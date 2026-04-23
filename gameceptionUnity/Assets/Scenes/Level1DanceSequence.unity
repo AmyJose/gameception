@@ -3116,7 +3116,7 @@ MonoBehaviour:
   promptQueue: {fileID: 733875701}
   promptJudge: {fileID: 64651961}
   gameFlowController: {fileID: 177462652}
-  easyAboveSeconds: 260
+  easyAboveSeconds: 200
   mediumAboveSeconds: 80
   easyBpm:
     min: 60
