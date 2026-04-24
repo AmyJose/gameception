@@ -10,6 +10,13 @@ using UnityEngine;
     public int laneIndex;
     public int requiredPadIndex;
 }
+public enum DirectionInstruction
+{
+    Left,
+    Up,
+    Right,
+    Down
+}
 
 public class LevelOneController : MonoBehaviour
 {
@@ -125,13 +132,12 @@ public class LevelOneController : MonoBehaviour
         if (spawnPoint == null) yield break;
 
         LaneUnlockData unlock = laneUnlockOrder[nextUnlockStep];
+        DirectionInstruction direction = GetDirectionForUnlockStep(nextUnlockStep);
 
-        string message = $"Jump on pad {unlock.requiredPadIndex + 1} to create this planet!";
-
-        if(ufoPrefab != null && ufoSpawnPoint != null && ufoIntroPoint!= null)
+        if (ufoPrefab != null && ufoSpawnPoint != null && ufoIntroPoint!= null)
         {
             currentUFO = Instantiate(ufoPrefab, ufoSpawnPoint.position, Quaternion.identity);
-            yield return currentUFO.PlayEntranceSequence(ufoIntroPoint.position, message);
+            yield return currentUFO.PlayEntranceSequence(ufoIntroPoint.position, direction);
         }
         yield return WaitForSpecificPadPress(unlock.requiredPadIndex);
 
@@ -227,5 +233,16 @@ public class LevelOneController : MonoBehaviour
     {
         if (planet == null) return;
         planet.AddStarterPopulation(starterPopulationAmount);
+    }
+    private DirectionInstruction GetDirectionForUnlockStep(int step)
+    {
+        return step switch
+        {
+            0 => DirectionInstruction.Left,
+            1 => DirectionInstruction.Up,
+            2 => DirectionInstruction.Down,
+            3 => DirectionInstruction.Right,
+            _ => DirectionInstruction.Left
+        };
     }
 }

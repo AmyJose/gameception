@@ -1,51 +1,34 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class SpeechBubble : MonoBehaviour
 {
+    [Header("Root")]
     [SerializeField] private GameObject root;
-    [SerializeField] private TMP_Text messageText;
-    [SerializeField] private float charactersPerSecond = 30f;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+
+    [Header("Arrow Mode")]
+    [SerializeField] private Sprite leftArrow;
+    [SerializeField] private Sprite upArrow;
+    [SerializeField] private Sprite rightArrow;
+    [SerializeField] private Sprite downArrow;
 
     public bool IsTyping { get; private set; }
 
     private void Awake()
     {
-        if (root != null)
-            root.SetActive(false);
+        Hide();
     }
 
-    public void ShowInstant(string message)
-    {
-        IsTyping = false;
-
-        if (root != null)
-            root.SetActive(true);
-
-        if (messageText != null)
-            messageText.text = message;
-    }
-
-    public IEnumerator ShowTyped(string message)
+    public void ShowArrow(DirectionInstruction direction)
     {
         if (root != null)
             root.SetActive(true);
 
-        IsTyping = true;
-        messageText.text = "";
-
-        float delay = 1f / charactersPerSecond;
-
-        foreach (char c in message)
-        {
-            messageText.text += c;
-            yield return new WaitForSeconds(delay);
-        }
-
-        Debug.Log("[SpeechBubble] Showing message");
-
-        IsTyping = false;
+        if (spriteRenderer != null)
+            spriteRenderer.sprite = GetSprite(direction);
     }
 
     public void Hide()
@@ -54,5 +37,17 @@ public class SpeechBubble : MonoBehaviour
 
         if (root != null)
             root.SetActive(false);
+    }
+
+    private Sprite GetSprite(DirectionInstruction direction)
+    {
+        return direction switch
+        {
+            DirectionInstruction.Left => leftArrow,
+            DirectionInstruction.Up => upArrow,
+            DirectionInstruction.Right => rightArrow,
+            DirectionInstruction.Down => downArrow,
+            _ => null
+        };
     }
 }

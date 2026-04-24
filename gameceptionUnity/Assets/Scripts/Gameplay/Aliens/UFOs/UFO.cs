@@ -34,7 +34,7 @@ public class UFO : MonoBehaviour
         visualBaseLocalPosition = visualRoot.localPosition;
     }
 
-    public IEnumerator PlayEntranceSequence(Vector3 introWorldPosition, string message, float flyInDuration = 1.2f, float tiltAmount = 15f)
+    public IEnumerator PlayEntranceSequence(Vector3 introWorldPosition, DirectionInstruction direction, float flyInDuration = 1.2f, float tiltAmount = 15f)
     {   
         if (audioSource != null && enterSound != null)
         {
@@ -47,7 +47,7 @@ public class UFO : MonoBehaviour
         yield return new WaitForSeconds(pauseBeforeMessage);
 
         if (speechBubble != null)
-            yield return speechBubble.ShowTyped(message);
+            speechBubble.ShowArrow(direction);
     }
 
     public IEnumerator PlayFlyToPlanetSequence(Vector3 planetPosition, float flyInDuration = 1f, float tiltAmount = 15f)
