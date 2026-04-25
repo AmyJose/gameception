@@ -39,6 +39,7 @@ public class TutorialSceneController : MonoBehaviour
     [SerializeField] private PoseState poseState;
     [SerializeField] private TMP_Text countdownText;
     [SerializeField] private TMP_Text objectiveText;
+    [SerializeField] private UnityEngine.UI.Image holdFillImage;
     [SerializeField, Range(0f, 1f)] private float minPoseConfidence = 0.75f;
 
     [Header("Ready Selection")]
@@ -98,6 +99,12 @@ public class TutorialSceneController : MonoBehaviour
         if (choreographyTutorialRoot != null)
             choreographyTutorialRoot.SetActive(false);
 
+        if (holdFillImage != null)
+        {
+            holdFillImage.fillAmount = 1f;
+            holdFillImage.transform.parent.gameObject.SetActive(false);
+        }
+
         StartCoroutine(RunTutorialRoutine());
     }
 
@@ -146,6 +153,16 @@ public class TutorialSceneController : MonoBehaviour
                     }
                 }
             }
+            //progress bar updating
+            if (holdFillImage != null && currentRequiredHoldTime > 0f)
+            {
+                float progress = currentHoldTimer / currentRequiredHoldTime;
+                holdFillImage.fillAmount = Mathf.Lerp(
+                    holdFillImage.fillAmount,
+                    progress,
+                    Time.deltaTime * 10f
+                );
+            }
         }
     }
 
@@ -193,12 +210,12 @@ public class TutorialSceneController : MonoBehaviour
         // }
 
         if (poseSpritePairs != null && poseSpritePairs.Count >= index)
-    {
-        PoseSpritePair pair = poseSpritePairs[index - 1];
+        {
+            PoseSpritePair pair = poseSpritePairs[index - 1];
         
-        if (alienSpriteRenderer1 != null) alienSpriteRenderer1.sprite = pair.alien;
-        if (alienSpriteRenderer2 != null) alienSpriteRenderer2.sprite = pair.element;
-    }
+            if (alienSpriteRenderer1 != null) alienSpriteRenderer1.sprite = pair.alien;
+            if (alienSpriteRenderer2 != null) alienSpriteRenderer2.sprite = pair.element;
+        }
 
         currentExpectedPoseId = null;
         currentPoseMatched = false;
@@ -214,6 +231,14 @@ public class TutorialSceneController : MonoBehaviour
         currentExpectedPoseId = step.poseId;
         currentRequiredHoldTime = step.holdDuration;
         currentHoldTimer = 0f;
+        
+        //show progress bar
+        if (holdFillImage != null)
+        {
+            holdFillImage.fillAmount = 0f;
+            holdFillImage.transform.parent.gameObject.SetActive(true);
+        }
+
         _nextHoldDebugTime = Time.time;
         currentPoseMatched = false;
 
@@ -228,6 +253,12 @@ public class TutorialSceneController : MonoBehaviour
 
 
         yield return new WaitUntil(() => currentPoseMatched);
+        //hide progress bar
+        if (holdFillImage != null)
+        {
+            holdFillImage.fillAmount = 1f;
+            holdFillImage.transform.parent.gameObject.SetActive(false);
+        }
 
         if (verbosePoseDebug)
         {
