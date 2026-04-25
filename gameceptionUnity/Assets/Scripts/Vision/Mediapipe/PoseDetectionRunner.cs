@@ -113,42 +113,62 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
             }
         }
         if (shouldProcess && poseClassifier != null && poseState != null)
-{
-    var classification = poseClassifier.Classify(resultToProcess);
-    poseState.SetPose(classification.pose, classification.confidence, timestampToProcess);
+        {
+            var classification = poseClassifier.Classify(resultToProcess);
+            poseState.SetPose(classification.pose, classification.confidence, timestampToProcess);
 
-    UpdateSkeletonColor(classification.pose);
+            UpdateSkeletonColor(classification.pose);
+            HideFaceLandmarks();
 
-    if (resultToProcess.poseLandmarks != null && resultToProcess.poseLandmarks.Count > 0)
+            if (resultToProcess.poseLandmarks != null && resultToProcess.poseLandmarks.Count > 0)
+            {
+                var landmarks = resultToProcess.poseLandmarks[0].landmarks;
+                var nose = landmarks[0];
+                var headWorldPos = Vector3.zero;
+
+                var rawImage = annotationVisualRoot.GetComponentInChildren<RawImage>();
+                if (rawImage != null)
+                {
+                    var corners = new Vector3[4];
+                    rawImage.rectTransform.GetWorldCorners(corners);
+
+                    headWorldPos = new Vector3(
+                        Mathf.Lerp(corners[0].x, corners[2].x, nose.x),
+                        Mathf.Lerp(corners[0].y, corners[2].y, 1f - nose.y),
+                        corners[0].z
+                    );
+                }
+
+                if (_activeHead != null)
+                    _activeHead.transform.position = headWorldPos + headOffset;
+
+                if (classification.pose != _lastHeadPose)
+                {
+                    _lastHeadPose = classification.pose;
+                    SwapHead(classification.pose, headWorldPos + headOffset);
+                }
+            }
+        }
+    }
+
+    private void HideFaceLandmarks()
     {
-        var landmarks = resultToProcess.poseLandmarks[0].landmarks;
-        var nose = landmarks[0];
-        var headWorldPos = Vector3.zero;
-
-        var rawImage = annotationVisualRoot.GetComponentInChildren<RawImage>();
-        if (rawImage != null)
+        if (_poseLandmarkerResultAnnotationController == null) return;
+        
+        var points = _poseLandmarkerResultAnnotationController
+                        .GetComponentsInChildren<SpriteRenderer>();
+        
+        // face landmarks are the first 11 points (indices 0-10)
+        // disable their renderers
+        int count = 0;
+        foreach (var sr in points)
         {
-            var corners = new Vector3[4];
-            rawImage.rectTransform.GetWorldCorners(corners);
-
-            headWorldPos = new Vector3(
-                Mathf.Lerp(corners[0].x, corners[2].x, nose.x),
-                Mathf.Lerp(corners[0].y, corners[2].y, 1f - nose.y),
-                corners[0].z
-            );
-        }
-
-        if (_activeHead != null)
-            _activeHead.transform.position = headWorldPos + headOffset;
-
-        if (classification.pose != _lastHeadPose)
-        {
-            _lastHeadPose = classification.pose;
-            SwapHead(classification.pose, headWorldPos + headOffset);
+            if (count <= 10)
+                sr.enabled = false;
+            count++;
         }
     }
-}
-    }
+
     private void SwapHead(ElementPose pose, Vector3 position)
     {
         // destroy any still-fading outgoing head first

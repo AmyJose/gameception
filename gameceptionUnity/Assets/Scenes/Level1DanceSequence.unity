@@ -2213,7 +2213,7 @@ MonoBehaviour:
   cameraFeedVisualRoot: {fileID: 0}
   annotationVisualRoot: {fileID: 2052719645}
   headPrefab: {fileID: 2643215368533006898, guid: d211016e5bbb2144daaca846fd56c408, type: 3}
-  headFadeDuration: 0.4
+  headFadeDuration: 0.1
   headOffset: {x: 0, y: 0, z: 0}
   headScale: 1
 --- !u!4 &1019512105

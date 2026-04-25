@@ -63,6 +63,19 @@ namespace Mediapipe.Unity
       {
         isStale = false;
         annotation.Draw(_currentTarget.poseLandmarks, _visualizeZ);
+        HideFaceLandmarks();
+      }
+    }
+
+    private void HideFaceLandmarks()
+    {
+      var pointAnnotations = annotation.GetComponentsInChildren<PointAnnotation>();
+      // face landmarks are always the first 11 per pose (33 total per pose)
+      for (int i = 0; i < pointAnnotations.Length; i++)
+      {
+          int landmarkIndex = i % 33;
+          if (landmarkIndex <= 10)
+              pointAnnotations[i].gameObject.SetActive(false);
       }
     }
   }
