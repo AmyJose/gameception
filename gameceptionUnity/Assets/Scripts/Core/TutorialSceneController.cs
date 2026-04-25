@@ -20,6 +20,7 @@ public class TutorialSceneController : MonoBehaviour
 
     [Header("Core References")]
     [SerializeField] private AlienSpeechBubble speechBubble;
+    [SerializeField] private DanceMatInputProvider danceMatInputProvider;
     [SerializeField] private SelectionState selectionState;
 
     [Serializable]
@@ -33,6 +34,8 @@ public class TutorialSceneController : MonoBehaviour
     [SerializeField] private SpriteRenderer alienSpriteRenderer1;
     [SerializeField] private SpriteRenderer alienSpriteRenderer2;
     [SerializeField] private List<PoseSpritePair> poseSpritePairs;
+    [SerializeField] private Sprite defaultAlienSprite;
+    [SerializeField] private Sprite defaultElementSprite;
 
     [Header("Pose Detection")]
     [SerializeField] private PoseDetectionRunner poseDetectionRunner;
@@ -61,11 +64,29 @@ public class TutorialSceneController : MonoBehaviour
     [Header("Next Tutorial Section")]
     [SerializeField] private GameObject choreographyTutorialRoot;
 
+    [Header("Queue and Arrow Visibility")]
+    [SerializeField] private List<GameObject> hideUntilLanePadStep = new();
+
+    [Serializable]
+    public class TutorialDialogueLine
+    {
+        [TextArea] public string text;
+        public float extraWait = 1.0f;
+    }
+
+    [Header("Post Pose Dialogue")]
+    [SerializeField] private List<TutorialDialogueLine> postPoseDialogue = new();
+
     private bool currentPoseMatched;
     private string currentExpectedPoseId;
     private float currentRequiredHoldTime;
     private float currentHoldTimer;
     private float _nextHoldDebugTime;
+    private Sprite _initialAlienSprite;
+    private Sprite _initialElementSprite;
+    private bool waitingForSpecificPad;
+    private bool requiredPadPressed;
+    private int requiredPadIndex = -1;
 
     public event Action<string> OnPoseStepStarted;
     public event Action<string> OnPoseStepCompleted;
@@ -73,6 +94,16 @@ public class TutorialSceneController : MonoBehaviour
 
     private void OnEnable()
     {
+        if (danceMatInputProvider != null)
+        {
+            danceMatInputProvider.OnPadPressed += HandlePadPressed;
+            Debug.Log("[Tutorial] Subscribed to DanceMatInputProvider.OnPadPressed");
+        }
+        else
+        {
+            Debug.LogWarning("[Tutorial] DanceMatInputProvider is NOT assigned! Pad presses won't work.");
+        }
+
         if (selectionState != null)
         {
             selectionState.OnChanged += HandleSelectionChanged;
@@ -80,11 +111,28 @@ public class TutorialSceneController : MonoBehaviour
     }
     private void OnDisable()
     {
+        if (danceMatInputProvider != null)
+        {
+            danceMatInputProvider.OnPadPressed -= HandlePadPressed;
+        }
+
         if (selectionState != null)
         {
             selectionState.OnChanged -= HandleSelectionChanged;
         }
     }
+
+    private void HandlePadPressed(int idx)
+    {
+        Debug.Log($"[Tutorial] Pad pressed: idx={idx}, waiting={waitingForSpecificPad}, required={requiredPadIndex}");
+
+        if (!waitingForSpecificPad) return;
+        if (idx != requiredPadIndex) return;
+
+        Debug.Log($"[Tutorial] Pad matched! Setting requiredPadPressed=true");
+        requiredPadPressed = true;
+    }
+
     private void HandleSelectionChanged(IReadOnlyCollection<int> selected)
     {
         string selectedText = selected == null ? "null" : string.Join(", ", selected);
@@ -93,11 +141,16 @@ public class TutorialSceneController : MonoBehaviour
 
     private void Start()
     {
+        _initialAlienSprite = alienSpriteRenderer1 != null ? alienSpriteRenderer1.sprite : null;
+        _initialElementSprite = alienSpriteRenderer2 != null ? alienSpriteRenderer2.sprite : null;
+
         if (countdownText != null)
             countdownText.gameObject.SetActive(false);
 
         if (choreographyTutorialRoot != null)
             choreographyTutorialRoot.SetActive(false);
+
+        SetLanePadObjectsVisible(false);
 
         if (holdFillImage != null)
         {
@@ -181,8 +234,8 @@ public class TutorialSceneController : MonoBehaviour
         yield return SpeakAndPause($"Jump on pad <sprite name=\"arrowup\"> once you're ready.", 0.5f);
         SetObjective($"Select pad <sprite name=\"arrowup\"> when you're ready.");
 
-        yield return new WaitUntil(IsReadyPadSelected);
-        selectionState.Clear();
+        yield return WaitForSpecificPadPress(readyPadIndex);
+        //selectionState?.Clear();
 
         yield return SpeakAndPause("Perfect. Let's try a few poses.", 0.8f);
 
@@ -191,8 +244,38 @@ public class TutorialSceneController : MonoBehaviour
             yield return RunPoseStep(poseSteps[i], i + 1, poseSteps.Count);
         }
 
+        RestoreDefaultAlienVisuals();
+
+        yield return SpeakAndPause("Let's learn the lanes and pads one by one.", 1.0f);
+        SetLanePadObjectsVisible(true);
+
+        // UP
+        yield return SpeakAndPause("Step on the  <sprite name=\"arrowup\"> pad", 0.5f);
+        yield return WaitForSpecificPadPress(0);
+
+        yield return SpeakAndPause("Good!", 0.5f);
+
+        // LEFT
+        yield return SpeakAndPause("Now step on the  <sprite name=\"arrowleft\"> pad", 0.5f);
+        yield return WaitForSpecificPadPress(1);
+
+        yield return SpeakAndPause("Nice!", 0.5f);
+
+        // DOWN
+        yield return SpeakAndPause("Now step on the  <sprite name=\"arrowdown\"> pad", 0.5f);
+        yield return WaitForSpecificPadPress(2);
+
+        yield return SpeakAndPause("Great!", 0.5f);
+
+        // RIGHT
+        yield return SpeakAndPause("Finally step on the  <sprite name=\"arrowright\"> pad", 0.5f);
+        yield return WaitForSpecificPadPress(3);
+
+        yield return SpeakAndPause("Perfect! You’ve mastered the pads.", 1.0f);
+
         yield return SpeakAndPause("Amazing! You are ready to help us.", 1.0f);
         yield return SpeakAndPause("Next, prompts will move down the lane. Match the pose at the right moment!", 1.2f);
+
 
         StartChoreographyTutorial();
         SetObjective("Choreography tutorial coming next...");
@@ -212,7 +295,7 @@ public class TutorialSceneController : MonoBehaviour
         if (poseSpritePairs != null && poseSpritePairs.Count >= index)
         {
             PoseSpritePair pair = poseSpritePairs[index - 1];
-        
+
             if (alienSpriteRenderer1 != null) alienSpriteRenderer1.sprite = pair.alien;
             if (alienSpriteRenderer2 != null) alienSpriteRenderer2.sprite = pair.element;
         }
@@ -231,7 +314,7 @@ public class TutorialSceneController : MonoBehaviour
         currentExpectedPoseId = step.poseId;
         currentRequiredHoldTime = step.holdDuration;
         currentHoldTimer = 0f;
-        
+
         //show progress bar
         if (holdFillImage != null)
         {
@@ -308,6 +391,16 @@ public class TutorialSceneController : MonoBehaviour
         yield return new WaitForSeconds(extraWait);
     }
 
+
+    private void RestoreDefaultAlienVisuals()
+    {
+        if (alienSpriteRenderer1 != null)
+            alienSpriteRenderer1.sprite = defaultAlienSprite != null ? defaultAlienSprite : _initialAlienSprite;
+
+        if (alienSpriteRenderer2 != null)
+            alienSpriteRenderer2.sprite = defaultElementSprite != null ? defaultElementSprite : _initialElementSprite;
+    }
+
     private void ActivatePoseDetection()
     {
         poseDetectionRunner.SetVisualsVisible(true);
@@ -328,7 +421,38 @@ public class TutorialSceneController : MonoBehaviour
             objectiveText.text = text;
     }
 
-    private bool IsReadyPadSelected()
+    private void SetLanePadObjectsVisible(bool isVisible)
+    {
+        if (hideUntilLanePadStep == null)
+            return;
+
+        for (int i = 0; i < hideUntilLanePadStep.Count; i++)
+        {
+            GameObject target = hideUntilLanePadStep[i];
+            if (target != null)
+                target.SetActive(isVisible);
+        }
+    }
+
+    private IEnumerator WaitForSpecificPadPress(int padIndex)
+    {
+        waitingForSpecificPad = true;
+        requiredPadIndex = padIndex;
+        requiredPadPressed = false;
+
+        yield return new WaitUntil(() => requiredPadPressed);
+
+        waitingForSpecificPad = false;
+        requiredPadIndex = -1;
+    }
+
+    private IEnumerator WaitForSinglePad(int padIndex)
+    {
+        yield return new WaitUntil(() => IsSinglePadSelected(padIndex));
+        selectionState?.Clear();
+    }
+
+    /*private bool IsReadyPadSelected()
     {
         if (selectionState == null)
             return false;
@@ -337,7 +461,17 @@ public class TutorialSceneController : MonoBehaviour
             return selectionState.GetSingleSelected() == readyPadIndex;
 
         return selectionState.IsSelected(readyPadIndex);
+    }*/
+
+    private bool IsSinglePadSelected(int padIndex)
+    {
+        if (selectionState == null)
+            return false;
+
+        return selectionState.GetSingleSelected() == padIndex;
     }
+
+
 
     private bool EvaluateCurrentPose(string poseId)
     {
