@@ -381,6 +381,72 @@ Transform:
   - {fileID: 1722423706}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &322084894
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 322084896}
+  - component: {fileID: 322084895}
+  m_Layer: 0
+  m_Name: 'LaneGlowController '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &322084895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322084894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eae960c8b99fb4362b3cf0df20e9aeca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialLaneGlowController
+  danceMatInputProvider: {fileID: 1719782886}
+  laneBindings:
+  - padIndex: 0
+    laneRenderer: {fileID: 600523322}
+    normalSprite: {fileID: 4878292133311768621, guid: 3333d65a624bb854cbe96d8b0ba67782, type: 3}
+    glowSprite: {fileID: -656151079061566919, guid: 3b291b2d4a7d59c41a9eb75c880af292, type: 3}
+    glowScaleMultiplier: 1
+  - padIndex: 1
+    laneRenderer: {fileID: 761563123}
+    normalSprite: {fileID: 1785783668881456394, guid: 46ab64d2ec01baf4ea57b6c1fb973c78, type: 3}
+    glowSprite: {fileID: -6969561689083684737, guid: 72e03c5d55e321a4f90621c09bc15e34, type: 3}
+    glowScaleMultiplier: 1
+  - padIndex: 2
+    laneRenderer: {fileID: 598740354}
+    normalSprite: {fileID: 739604881099658102, guid: bfc52b09f2106604ba0f16b9ac5643da, type: 3}
+    glowSprite: {fileID: -1095908990811571848, guid: 20b20ea9aa357064497dddc4ca01f778, type: 3}
+    glowScaleMultiplier: 1
+  - padIndex: 3
+    laneRenderer: {fileID: 115954186}
+    normalSprite: {fileID: -4173635132665283305, guid: ff4af311efed518429179fc3aced32e6, type: 3}
+    glowSprite: {fileID: -9214965904565321388, guid: 42b6057a7176b19429fd59cc21d59ff1, type: 3}
+    glowScaleMultiplier: 1
+--- !u!4 &322084896
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322084894}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.16833, y: 0.63738, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &336051880
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,6 +751,7 @@ MonoBehaviour:
   speechBubble: {fileID: 1596741971}
   danceMatInputProvider: {fileID: 1719782886}
   selectionState: {fileID: 1025710956}
+  laneGlowController: {fileID: 322084895}
   alienSpriteRenderer1: {fileID: 1353357650}
   alienSpriteRenderer2: {fileID: 610451976}
   poseSpritePairs:
@@ -990,7 +1057,7 @@ Transform:
   m_GameObject: {fileID: 600523321}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.0062, y: -0.54, z: 0}
+  m_LocalPosition: {x: -7.04, y: -0.39, z: 0}
   m_LocalScale: {x: 0.32765174, y: 0.8897556, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1469,7 +1536,7 @@ Transform:
   m_GameObject: {fileID: 761563122}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.11, y: -0.52, z: 0}
+  m_LocalPosition: {x: -6.09, y: -0.52, z: 0}
   m_LocalScale: {x: -0.3429991, y: 0.8992707, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3532,3 +3599,4 @@ SceneRoots:
   - {fileID: 962437872}
   - {fileID: 985367832}
   - {fileID: 600523323}
+  - {fileID: 322084896}

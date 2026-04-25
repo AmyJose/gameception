@@ -22,6 +22,7 @@ public class TutorialSceneController : MonoBehaviour
     [SerializeField] private AlienSpeechBubble speechBubble;
     [SerializeField] private DanceMatInputProvider danceMatInputProvider;
     [SerializeField] private SelectionState selectionState;
+    [SerializeField] private TutorialLaneGlowController laneGlowController;
 
     [Serializable]
     public class PoseSpritePair
@@ -158,6 +159,8 @@ public class TutorialSceneController : MonoBehaviour
             holdFillImage.transform.parent.gameObject.SetActive(false);
         }
 
+        laneGlowController?.ResetAllToNormal();
+
         StartCoroutine(RunTutorialRoutine());
     }
 
@@ -246,30 +249,26 @@ public class TutorialSceneController : MonoBehaviour
 
         RestoreDefaultAlienVisuals();
 
-        yield return SpeakAndPause("Let's learn the lanes and pads one by one.", 1.0f);
+        yield return SpeakAndPause("Let's learn the lanes and pads one by one.", 0.8f);
         SetLanePadObjectsVisible(true);
 
         // UP
-        yield return SpeakAndPause("Step on the  <sprite name=\"arrowup\"> pad", 0.5f);
-        yield return WaitForSpecificPadPress(0);
+        yield return SpeakAndWaitForPadWithGlow("Step on the  <sprite name=\"arrowup\"> pad", 0, 0.5f);
 
         yield return SpeakAndPause("Good!", 0.5f);
 
         // LEFT
-        yield return SpeakAndPause("Now step on the  <sprite name=\"arrowleft\"> pad", 0.5f);
-        yield return WaitForSpecificPadPress(1);
+        yield return SpeakAndWaitForPadWithGlow("Now step on the  <sprite name=\"arrowleft\"> pad", 1, 0.5f);
 
         yield return SpeakAndPause("Nice!", 0.5f);
 
         // DOWN
-        yield return SpeakAndPause("Now step on the  <sprite name=\"arrowdown\"> pad", 0.5f);
-        yield return WaitForSpecificPadPress(2);
+        yield return SpeakAndWaitForPadWithGlow("Now step on the  <sprite name=\"arrowdown\"> pad", 2, 0.5f);
 
         yield return SpeakAndPause("Great!", 0.5f);
 
         // RIGHT
-        yield return SpeakAndPause("Finally step on the  <sprite name=\"arrowright\"> pad", 0.5f);
-        yield return WaitForSpecificPadPress(3);
+        yield return SpeakAndWaitForPadWithGlow("Finally step on the  <sprite name=\"arrowright\"> pad", 3, 0.5f);
 
         yield return SpeakAndPause("Perfect! You’ve mastered the pads.", 1.0f);
 
@@ -389,6 +388,15 @@ public class TutorialSceneController : MonoBehaviour
         }
 
         yield return new WaitForSeconds(extraWait);
+    }
+
+    private IEnumerator SpeakAndWaitForPadWithGlow(string message, int padIndex, float extraWait)
+    {
+        yield return SpeakAndPause(message, extraWait);
+
+        laneGlowController?.ActivateGlowForPad(padIndex);
+        yield return WaitForSpecificPadPress(padIndex);
+        laneGlowController?.DeactivateGlow();
     }
 
 
