@@ -2687,7 +2687,7 @@ MonoBehaviour:
   minHandVisibility: 0.45
   maxBadHandFrames: 8
   headOffset: {x: 0, y: 0, z: 0}
-  headScale: 1.75
+  headScale: 1.9
 --- !u!4 &1019512105
 Transform:
   m_ObjectHideFlags: 0
@@ -5827,6 +5827,11 @@ MonoBehaviour:
   scoreManager: {fileID: 1818512631}
   streakText: {fileID: 83165005}
   showFromStreak: 3
+  popScale: 1.35
+  popDuration: 0.12
+  settleDuration: 0.18
+  shakeAmount: 8
+  shakeDuration: 0.15
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
