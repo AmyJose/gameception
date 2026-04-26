@@ -105,8 +105,29 @@ public class UFO : MonoBehaviour
             yield return null;
         }
 
+        // Finish movement
         transform.position = targetPosition;
-        transform.rotation = Quaternion.identity;
+
+        // Smoothly return to upright
+        Quaternion finalTilt = transform.rotation;
+        Quaternion upright = Quaternion.identity;
+
+        float straightenTime = 0.2f;
+        float t2 = 0f;
+
+        while (t2 < straightenTime)
+        {
+            t2 += Time.deltaTime;
+
+            float normalized = Mathf.Clamp01(t2 / straightenTime);
+            float eased = Mathf.SmoothStep(0f, 1f, normalized);
+
+            transform.rotation = Quaternion.Slerp(finalTilt, upright, eased);
+
+            yield return null;
+        }
+
+        transform.rotation = upright;
 
     }
 
