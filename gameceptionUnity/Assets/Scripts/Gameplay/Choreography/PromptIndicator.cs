@@ -25,6 +25,7 @@ namespace Gameplay.Choreography
         [Header("Visual Polish")]
         [SerializeField] private float scaleInHitZone = 1.15f; // grows when in hit zone
         [SerializeField] private float normalScale = 1f;
+        [SerializeField] private float hitAlpha = 0.3f;
 
         [Header("Text Feedback")]
         [SerializeField] private GameObject successPrefab;
@@ -108,33 +109,62 @@ namespace Gameplay.Choreography
         {
             if (backgroundRenderer != null)
                 backgroundRenderer.color = new Color(0f, 1f, 0f, 1f); // green
+                iconRenderer.color = new Color(0f, 1f, 0f, 1f);
+                
+                ApplyFadeToIcon();
 
             if (audioSource != null && perfectSound != null)
                 audioSource.PlayOneShot(perfectSound);
 
             //SpawnFeedback(successPrefab);
+            SetBackgroundVisible(false);
         }
 
         public void SetFail()
         {
             if (backgroundRenderer != null)
                 backgroundRenderer.color = new Color(1f, 0f, 0f, 1f); // Red
+                iconRenderer.color = new Color(1f, 0f, 0f, 1f);
+
+                ApplyFadeToIcon();
 
             if (audioSource != null && missSound != null)
                 audioSource.PlayOneShot(missSound);
 
             //SpawnFeedback(failPrefab);
+            SetBackgroundVisible(false);
         }
 
         public void SetMidHit()
         {
             if (backgroundRenderer != null)
                 backgroundRenderer.color = midHitColor; // Yellow
+                iconRenderer.color = midHitColor;
+                ApplyFadeToIcon();
 
             if (audioSource != null && goodSound != null)
                 audioSource.PlayOneShot(goodSound);
 
             //SpawnFeedback(midHitPrefab);
+            SetBackgroundVisible(false);
+        }
+
+        private void ApplyFadeToIcon()
+        {
+            if (iconRenderer != null)
+            {
+                Color c = iconRenderer.color;
+                c.a = hitAlpha;
+                iconRenderer.color = c;
+            }
+        }
+
+        public void SetBackgroundVisible(bool isVisible)
+        {
+            if (backgroundRenderer != null)
+            {
+                backgroundRenderer.enabled = isVisible;
+            }
         }
 
         private void SpawnFeedback(GameObject prefab)

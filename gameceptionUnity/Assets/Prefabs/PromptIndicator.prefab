@@ -279,13 +279,14 @@ MonoBehaviour:
   fireSprite: {fileID: 21300000, guid: ce4da59d207eb574b9bfdd1e24823952, type: 3}
   iceSprite: {fileID: 21300000, guid: fb8f0b6ef2a023c4e8b0f48fc6524b3d, type: 3}
   backgroundRenderer: {fileID: 6723285944216071819}
-  normalColor: {r: 1, g: 1, b: 1, a: 0.7}
+  normalColor: {r: 1, g: 1, b: 1, a: 0}
   hitZoneColor: {r: 0, g: 1, b: 0, a: 0.9}
   missColor: {r: 1, g: 0, b: 0, a: 0.9}
   successColor: {r: 1, g: 1, b: 1, a: 0.7}
   midHitColor: {r: 1, g: 1, b: 0, a: 0.9}
   scaleInHitZone: 1.7
   normalScale: 1
+  hitAlpha: 0.4
   successPrefab: {fileID: 3366393576688562372, guid: 23f0914aa2492a34981ba88c8e066931, type: 3}
   failPrefab: {fileID: 2713779776154782385, guid: a63cd621ad8c60f4a92d8327c3cc4397, type: 3}
   midHitPrefab: {fileID: 7799667515327862433, guid: 00c192a1d493cb340943afb03ae90103, type: 3}
