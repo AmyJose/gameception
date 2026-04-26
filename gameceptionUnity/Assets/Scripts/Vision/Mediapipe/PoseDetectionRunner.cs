@@ -45,6 +45,13 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
     [SerializeField] private GameObject headPrefab;
     [SerializeField] private float headFadeDuration = 0.4f;
 
+    [Header("Pose Stability")]
+    [SerializeField] private float minHandVisibility = 0.45f;
+    [SerializeField] private int maxBadHandFrames = 8;
+
+    private PoseLandmarkerResult _lastStableResult;
+    private int _badHandFrames;
+
     private GameObject _activeHead;
     private GameObject _outgoingHead;
     private float _fadeInTime  = 1f;
@@ -167,6 +174,20 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
                 sr.enabled = false;
             count++;
         }
+    }
+
+    private bool HandsLookStable(PoseLandmarkerResult result)
+    {
+        if (result.poseLandmarks == null || result.poseLandmarks.Count == 0)
+            return false;
+
+        var lm = result.poseLandmarks[0].landmarks;
+
+        // MediaPipe Pose: wrists are 15 and 16
+        bool leftHandVisible = !lm[15].visibility.HasValue || lm[15].visibility.Value >= minHandVisibility;
+        bool rightHandVisible = !lm[16].visibility.HasValue || lm[16].visibility.Value >= minHandVisibility;
+
+        return leftHandVisible && rightHandVisible;
     }
 
     private void SwapHead(ElementPose pose, Vector3 position)
@@ -383,7 +404,23 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
 
     private void OnPoseLandmarkDetectionOutput(PoseLandmarkerResult result, Mediapipe.Image image, long timestamp)
     {
-        // 1) classify pose (thread-safe: pure math)
+        bool stable = HandsLookStable(result);
+
+        if (stable)
+        {
+            _lastStableResult = result;
+            _badHandFrames = 0;
+        }
+        else if (_badHandFrames < maxBadHandFrames)
+        {
+            _badHandFrames++;
+
+            if (_lastStableResult.poseLandmarks != null)
+            {
+                result = _lastStableResult;
+            }
+        }
+
         lock (_resultLock)
         {
             _latestResult = result;
@@ -391,13 +428,11 @@ public class PoseDetectionRunner : VisionTaskApiRunner<PoseLandmarker>
             _isNewResultAvailable = true;
         }
 
-        // Added Null Check to prevent background thread crashing
         if (dataCollector != null)
         {
             dataCollector.AddSample(result);
         }
 
-        // 2) UI / annotation
         _poseLandmarkerResultAnnotationController.DrawLater(result);
         DisposeAllMasks(result);
     }

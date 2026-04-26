@@ -1150,6 +1150,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Mediapipe.Runtime::Mediapipe.Unity.PoseLandmarkerResultAnnotationController
   annotation: {fileID: 1119485327}
   _visualizeZ: 0
+  _drawCustomConnections: 1
+  _connectionWidth: 0.06
+  _smoothSkeleton: 1
+  _smoothSpeed: 22
+  _maxJump: 0.2
+  _maxBadFrames: 12
 --- !u!1 &545700347
 GameObject:
   m_ObjectHideFlags: 0
@@ -2503,8 +2509,10 @@ MonoBehaviour:
   annotationVisualRoot: {fileID: 2052719645}
   headPrefab: {fileID: 2643215368533006898, guid: d211016e5bbb2144daaca846fd56c408, type: 3}
   headFadeDuration: 0.1
+  minHandVisibility: 0.45
+  maxBadHandFrames: 8
   headOffset: {x: 0, y: 0, z: 0}
-  headScale: 1
+  headScale: 2
 --- !u!4 &1019512105
 Transform:
   m_ObjectHideFlags: 0
@@ -2606,6 +2614,18 @@ PrefabInstance:
       propertyPath: _screen
       value: 
       objectReference: {fileID: 328449557}
+    - target: {fileID: 4854035044496938716, guid: af6f87c1f072d207e99065e4712f000d, type: 3}
+      propertyPath: _color.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4854035044496938716, guid: af6f87c1f072d207e99065e4712f000d, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4854035044496938716, guid: af6f87c1f072d207e99065e4712f000d, type: 3}
+      propertyPath: _connectionColor.a
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4854035044496938716, guid: af6f87c1f072d207e99065e4712f000d, type: 3}
       propertyPath: _leftLandmarkColor.b
       value: 1

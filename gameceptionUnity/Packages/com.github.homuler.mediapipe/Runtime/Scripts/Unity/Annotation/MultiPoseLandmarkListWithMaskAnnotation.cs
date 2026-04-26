@@ -68,8 +68,18 @@ namespace Mediapipe.Unity
       _connectionColor = connectionColor;
       ApplyConnectionColor(_connectionColor);
     }
+        public void SetTorsoColor(Color color)
+        {
+            foreach (var child in children)
+            {
+                if (child != null)
+                {
+                    child.SetTorsoColor(color);
+                }
+            }
+        }
 
-    public void SetConnectionWidth(float connectionWidth)
+        public void SetConnectionWidth(float connectionWidth)
     {
       _connectionWidth = connectionWidth;
       ApplyConnectionWidth(_connectionWidth);
