@@ -17,17 +17,6 @@ namespace Mediapipe.Unity
     private readonly object _currentTargetLock = new object();
 
         private PoseLandmarkerResult _currentTarget;
-
-        [Header("Skeleton Smoothing")]
-        [SerializeField] private bool _smoothSkeleton = true;
-        [SerializeField] private float _smoothSpeed = 22f;
-        [SerializeField] private float _maxJump = 0.35f;
-        [SerializeField] private int _maxBadFrames = 12;
-
-        private Vector3[] _smoothedPositions;
-        private int[] _badFrames;
-        private bool[] _hasSmoothedPosition;
-
         public void InitScreen(int maskWidth, int maskHeight) => annotation.InitMask(maskWidth, maskHeight);
 
     public void DrawNow(PoseLandmarkerResult target)
@@ -74,14 +63,7 @@ namespace Mediapipe.Unity
             lock (_currentTargetLock)
             {
                 isStale = false;
-
                 annotation.Draw(_currentTarget.poseLandmarks, _visualizeZ);
-
-                if (_smoothSkeleton)
-                {
-                    SmoothPointAnnotations();
-                }
-
                 HideFaceLandmarks();
             }
         }
@@ -97,58 +79,5 @@ namespace Mediapipe.Unity
               pointAnnotations[i].gameObject.SetActive(false);
       }
     }
-        private void SmoothPointAnnotations()
-        {
-            var points = annotation.GetComponentsInChildren<PointAnnotation>(true);
-
-            if (points == null || points.Length == 0)
-                return;
-
-            if (_smoothedPositions == null || _smoothedPositions.Length != points.Length)
-            {
-                _smoothedPositions = new Vector3[points.Length];
-                _badFrames = new int[points.Length];
-                _hasSmoothedPosition = new bool[points.Length];
-            }
-
-            float t = 1f - Mathf.Exp(-_smoothSpeed * Time.deltaTime);
-
-            for (int i = 0; i < points.Length; i++)
-            {
-                var point = points[i];
-                if (point == null) continue;
-
-                var tr = point.transform;
-                Vector3 rawPos = tr.position;
-
-                if (!_hasSmoothedPosition[i])
-                {
-                    _smoothedPositions[i] = rawPos;
-                    _hasSmoothedPosition[i] = true;
-                    _badFrames[i] = 0;
-                    continue;
-                }
-
-                Vector3 delta = rawPos - _smoothedPositions[i];
-
-                if (delta.magnitude > _maxJump)
-                {
-                    _badFrames[i]++;
-
-                    if (_badFrames[i] <= _maxBadFrames)
-                    {
-                        tr.position = _smoothedPositions[i];
-                        continue;
-                    }
-
-                    point.gameObject.SetActive(false);
-                    continue;
-                }
-
-                _badFrames[i] = 0;
-                _smoothedPositions[i] = Vector3.Lerp(_smoothedPositions[i], rawPos, t);
-                tr.position = _smoothedPositions[i];
-            }
-        }
     }
 }
