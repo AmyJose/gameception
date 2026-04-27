@@ -35,6 +35,7 @@ namespace Gameplay.Choreography
 
         [Header("Audio Feedback")]
         [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioSource missSoundSource;
         [SerializeField] private AudioClip perfectSound;
         [SerializeField] private AudioClip goodSound;
         [SerializeField] private AudioClip missSound;
@@ -125,8 +126,8 @@ namespace Gameplay.Choreography
 
                 ApplyFadeToIcon();
 
-            if (audioSource != null && missSound != null)
-                audioSource.PlayOneShot(missSound);
+        if (missSoundSource != null && missSound != null)
+            missSoundSource.PlayOneShot(missSound);
 
             //SpawnFeedback(failPrefab);
             SetBackgroundVisible(false);
