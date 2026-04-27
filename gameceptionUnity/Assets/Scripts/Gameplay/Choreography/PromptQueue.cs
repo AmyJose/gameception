@@ -124,6 +124,8 @@ namespace Gameplay.Choreography
 
         private bool _isGenerating = false;
         public bool IsGenerating => _isGenerating;
+        public int PromptsInZoneCount => _promptsInZone.Count;
+        public bool HasPromptsInZone => _promptsInZone.Count > 0;
         public IReadOnlyList<int> ActiveLanes => _activeLanes;
         public int LaneCount => laneOffsets != null ? laneOffsets.Length : 0;
 
@@ -161,8 +163,8 @@ namespace Gameplay.Choreography
             if (_activeLanes.Count == 0) return;
 
             // Use appropriate generation interval based on mode
-            int activeGenerationInterval = enableDoubleTroubleMode 
-                ? doubleTroubleGenerationIntervalBeats 
+            int activeGenerationInterval = enableDoubleTroubleMode
+                ? doubleTroubleGenerationIntervalBeats
                 : generationIntervalBeats;
 
             // Check if we should start a new sequence
@@ -605,7 +607,7 @@ namespace Gameplay.Choreography
         private int GetNextPairIndex(int totalPairs)
         {
             if (totalPairs <= 1) return 0;
-            
+
             int nextIndex = (_lastUsedPairIndex + 1) % totalPairs;
             return nextIndex;
         }

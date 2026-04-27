@@ -5,7 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable] public class LaneUnlockData
+[System.Serializable]
+public class LaneUnlockData
 {
     public int laneIndex;
     public int requiredPadIndex;
@@ -121,11 +122,13 @@ public class LevelOneController : MonoBehaviour
     {
         if (planetManager == null || planetManager.PlanetCount >= maxPlanets) yield break;
 
-        if(nextUnlockStep >=laneUnlockOrder.Length) yield break;
+        if (nextUnlockStep >= laneUnlockOrder.Length) yield break;
 
         if (promptQueue != null)
         {
             promptQueue.StopGeneration();
+            yield return WaitForPromptQueueToDrain();
+            yield return new WaitForSeconds(2.1f);
         }
 
         Transform spawnPoint = GetNextPlanetSpawnPoint();
@@ -134,7 +137,7 @@ public class LevelOneController : MonoBehaviour
         LaneUnlockData unlock = laneUnlockOrder[nextUnlockStep];
         DirectionInstruction direction = GetDirectionForUnlockStep(nextUnlockStep);
 
-        if (ufoPrefab != null && ufoSpawnPoint != null && ufoIntroPoint!= null)
+        if (ufoPrefab != null && ufoSpawnPoint != null && ufoIntroPoint != null)
         {
             currentUFO = Instantiate(ufoPrefab, ufoSpawnPoint.position, Quaternion.identity);
             yield return currentUFO.PlayEntranceSequence(ufoIntroPoint.position, direction);
@@ -204,6 +207,16 @@ public class LevelOneController : MonoBehaviour
         currentUFO = null;
         nextUnlockStep++;
     }
+
+    private IEnumerator WaitForPromptQueueToDrain()
+    {
+        if (promptQueue == null)
+            yield break;
+
+        // Wait until no prompt indicators remain active in lanes before showing UFO.
+        yield return new WaitUntil(() => !promptQueue.HasPromptsInZone);
+    }
+
     private IEnumerator WaitForSpecificPadPress(int padIndex)
     {
         waitingForSpecificPad = true;
