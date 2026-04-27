@@ -104,7 +104,6 @@ namespace Gameplay.Choreography
         [SerializeField, Min(0f)] private float doubleTroubleStartSeconds = 170f;  // Start at N sec remaining
         [SerializeField, Min(1f)] private float doubleTroubleDurationSeconds = 30f;  // Active for 30 seconds
 
-        private float _doubleTroubleEndTime = -1f;
         private bool _doubleTroubleActive = false;
 
         private float _remainingTime;
@@ -147,7 +146,7 @@ namespace Gameplay.Choreography
             var promptBand = GetPromptBand(_currentDifficulty);
             ApplyPromptBandSettings(promptBand);
 
-            Debug.Log($"[Progression] Start -> {_currentDifficulty}, BPM={_currentBpm}");
+            //Debug.Log($"[Progression] Start -> {_currentDifficulty}, BPM={_currentBpm}");
         }
 
         private void HandleTimerUpdated(float timeLeft)
@@ -170,7 +169,7 @@ namespace Gameplay.Choreography
                 if (resetPerformanceMemoryOnDifficultyChange)
                     ClearPerformanceMemory();
 
-                Debug.Log($"[Progression] Difficulty -> {_currentDifficulty}, BPM reset to {_currentBpm}");
+                //Debug.Log($"[Progression] Difficulty -> {_currentDifficulty}, BPM reset to {_currentBpm}");
             }
 
             // Handle Double Trouble scheduling
@@ -193,7 +192,7 @@ namespace Gameplay.Choreography
             {
                 promptQueue.SetDoubleTroubleMode(true);
                 _doubleTroubleActive = true;
-                Debug.Log($"[Progression] Double Trouble ENABLED (active until {doubleTroubleEnd:F1}s remaining)");
+                //Debug.Log($"[Progression] Double Trouble ENABLED (active until {doubleTroubleEnd:F1}s remaining)");
             }
 
             // Toggle off
@@ -201,7 +200,7 @@ namespace Gameplay.Choreography
             {
                 promptQueue.SetDoubleTroubleMode(false);
                 _doubleTroubleActive = false;
-                Debug.Log($"[Progression] Double Trouble DISABLED");
+                //Debug.Log($"[Progression] Double Trouble DISABLED");
             }
         }
 
@@ -213,11 +212,7 @@ namespace Gameplay.Choreography
             {
                 _sequencesUntilNextBpmChange--;
 
-                Debug.Log(
-                    $"[Progression] Sequence {result.sequenceId} complete | " +
-                    $"Accuracy={result.accuracy:P0} | " +
-                    $"Cooldown active ({_sequencesUntilNextBpmChange} left) | BPM stays {_currentBpm}"
-                );
+                //Debug.Log($"[Progression] Sequence {result.sequenceId} complete | " +$"Accuracy={result.accuracy:P0} | " +$"Cooldown active ({_sequencesUntilNextBpmChange} left) | BPM stays {_currentBpm}");
 
                 return;
             }
@@ -226,17 +221,17 @@ namespace Gameplay.Choreography
             var bpmBand = GetBpmBand(_currentDifficulty);
 
             float bpmBefore = _currentBpm;
-            string decision = "Hold";
+            //string decision = "Hold";
 
             if (recentPerformanceScore >= raiseThreshold)
             {
                 _currentBpm += bpmIncreaseStep;
-                decision = "Raise";
+                //decision = "Raise";
             }
             else if (recentPerformanceScore <= lowerThreshold)
             {
                 _currentBpm -= bpmDecreaseStep;
-                decision = "Lower";
+                //decision = "Lower";
             }
 
             _currentBpm = Mathf.Clamp(_currentBpm, bpmBand.min, bpmBand.max);
@@ -247,13 +242,13 @@ namespace Gameplay.Choreography
                 _sequencesUntilNextBpmChange = sequenceCooldownAfterChange;
             }
 
-            Debug.Log(
+            /*Debug.Log(
                 $"[Progression] Sequence {result.sequenceId} complete | " +
                 $"Hits={result.hitsCount}/{result.totalPrompts} ({result.accuracy:P0}) | " +
                 $"RecentScore={recentPerformanceScore:F2} | " +
                 $"Decision={decision} | BPM {bpmBefore} -> {_currentBpm} | " +
                 $"Difficulty={_currentDifficulty}"
-            );
+            );*/
         }
 
         private void AddRecentAccuracy(float accuracy)
@@ -320,13 +315,13 @@ namespace Gameplay.Choreography
 
             promptQueue.SetKeepLanePromptsConsecutive(promptBand.keepConsecutive);
 
-            Debug.Log(
+            /*Debug.Log(
                 $"[Progression] Prompt settings -> Interval={promptBand.generationIntervalBeats}, " +
                 $"Spacing={promptBand.promptSpawnBeatSpacing}, " +
                 $"PerLane=[{promptBand.promptsPerLane0},{promptBand.promptsPerLane1}," +
                 $"{promptBand.promptsPerLane2},{promptBand.promptsPerLane3}], " +
                 $"Consecutive={promptBand.keepConsecutive}"
-            );
+            );*/
         }
 
         private Difficulty GetDifficultyForTime(float timeLeft)

@@ -43,9 +43,6 @@ namespace Gameplay.Choreography
         private ElementPose _pose;
         private float _initialYPosition;
         private bool _isInHitZone = false;
-        private bool _missed = false;
-        private bool _succeeded = false;
-        private bool _midHit = false;
 
         private void Awake()
         {

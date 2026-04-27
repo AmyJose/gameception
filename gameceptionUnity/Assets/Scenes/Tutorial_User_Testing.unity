@@ -363,6 +363,8 @@ MonoBehaviour:
   annotationVisualRoot: {fileID: 887219560}
   headPrefab: {fileID: 0}
   headFadeDuration: 0.4
+  minHandVisibility: 0.45
+  maxBadHandFrames: 8
   headOffset: {x: 0, y: 0, z: 0}
   headScale: 1
 --- !u!4 &184578139
@@ -763,8 +765,9 @@ MonoBehaviour:
     element: {fileID: 21300000, guid: 86f2ef379c3a6654f9ecb0ebafed6f65, type: 3}
   - alien: {fileID: 21300000, guid: 8313b7b033689a447b9503953172d7aa, type: 3}
     element: {fileID: 21300000, guid: 98d673921f18df041a16a3b4953fd650, type: 3}
-  defaultAlienSprite: {fileID: 0}
+  defaultAlienSprite: {fileID: 21300000, guid: b432f809c9e66ee4590f454bdb093003, type: 3}
   defaultElementSprite: {fileID: 0}
+  grumpyAlienSprite: {fileID: 21300000, guid: 87f54d08e5c8c5a4a838938099610e74, type: 3}
   poseDetectionRunner: {fileID: 184578138}
   poseState: {fileID: 1825261778}
   countdownText: {fileID: 1002929563}
@@ -772,7 +775,6 @@ MonoBehaviour:
   holdFillImage: {fileID: 2054738910}
   minPoseConfidence: 0.75
   readyPadIndex: 0
-  requireOnlyThisPadSelected: 0
   poseSteps:
   - poseId: ice
     instructionText: Raise both arms above your head!

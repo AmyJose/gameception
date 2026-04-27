@@ -53,18 +53,18 @@ namespace Gameplay.Choreography.UI
                 result.quality == PromptJudge.HitQuality.WrongPlanet)
             {
                 found.SetFail();
-                Debug.Log($"❌ Prompt {result.promptId} FAIL: {result.quality}");
+                //Debug.Log($"❌ Prompt {result.promptId} FAIL: {result.quality}");
             }
             else if (result.quality == PromptJudge.HitQuality.Perfect &&
                      result.timing == PromptJudge.PoseTiming.Perfect)
             {
                 found.SetSuccess();
-                Debug.Log($"💎 Prompt {result.promptId} PERFECT HIT");
+                //Debug.Log($"💎 Prompt {result.promptId} PERFECT HIT");
             }
             else
             {
                 found.SetMidHit();
-                Debug.Log($"✅ Prompt {result.promptId} GOOD HIT ({result.timing})");
+                //Debug.Log($"✅ Prompt {result.promptId} GOOD HIT ({result.timing})");
             }
         }
     }
