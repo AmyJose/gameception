@@ -202,16 +202,12 @@ public class TutorialSceneController : MonoBehaviour
 
     private IEnumerator RunTutorialRoutine()
     {
-        string intro = "Hey ... you! " + PlayerSession.PlayerName + ", yes you!";
+        string intro = "Hey you! " + PlayerSession.PlayerName + ", yes you!";
         yield return SpeakAndPause(intro, 0.8f);
-        yield return SpeakAndPause("Oh thank goodness, I found someone.", 1.0f);
-        yield return SpeakAndPause("My planet system is completely broken.", 1.0f);
-        yield return SpeakAndPause("And I... may have made it worse.", 1.0f);
-        yield return SpeakAndPause("So now you have to help me fix it.", 1.0f);
-
-        yield return SpeakAndPause("Listen… I’ve been gathering survivors.", 1.0f);
-        yield return SpeakAndPause("Different species. Different planets.", 1.0f);
-        yield return SpeakAndPause("Most of their worlds are… gone.", 1.2f);
+        yield return SpeakAndPause("Oh thank goodness, I found someone. My home has been destroyed.", 1.0f);
+        yield return SpeakAndPause("There's not many of us left.", 1.0f);
+        yield return SpeakAndPause("Most of our worlds are... gone.", 1.2f);
+        yield return SpeakAndPause("Please help me fix it!", 1.0f);
 
         SetAlienVisual(grumpyAlienSprite, defaultElementSprite);
         yield return SpeakAndPause("Long story. Bad timing. Not my fault.", 0.9f);
