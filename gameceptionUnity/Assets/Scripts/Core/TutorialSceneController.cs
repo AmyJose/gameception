@@ -202,10 +202,10 @@ public class TutorialSceneController : MonoBehaviour
 
     private IEnumerator RunTutorialRoutine()
     {
-        string intro = "Hey you! " + PlayerSession.PlayerName + ", yes you!";
+        string intro = "Zorp, you! " + PlayerSession.PlayerName + ", yes you!";
         yield return SpeakAndPause(intro, 0.8f);
-        yield return SpeakAndPause("Oh thank goodness, I found someone.", 1.0f);
-        yield return SpeakAndPause("My friends and I, our homes have been destroyed. We need your help!", 1.0f);
+        yield return SpeakAndPause("Oh finally, I found someone.", 1.0f);
+        yield return SpeakAndPause("Our homes have been destroyed. My friends and I need your help!", 1.0f);
 
         SetAlienVisual(grumpyAlienSprite, defaultElementSprite);
         yield return SpeakAndPause("Long story. Evil space rock. Not my fault.", 0.9f);
@@ -233,9 +233,7 @@ public class TutorialSceneController : MonoBehaviour
         yield return WaitForSpecificPadPress(readyPadIndex);
         //selectionState?.Clear();
 
-        yield return SpeakAndPause("I’ll show you what each one needs.", 0.8f);
-        yield return SpeakAndPause("Copy the pose and hold it!", 0.9f);
-        yield return SpeakAndPause("If you lose it, they lose it too.", 1.2f);
+        yield return SpeakAndPause("I’ll show you what we need, copy our poses and hold it!", 0.8f);
 
         for (int i = 0; i < poseSteps.Count; i++)
         {
@@ -248,7 +246,6 @@ public class TutorialSceneController : MonoBehaviour
         SetLanePadObjectsVisible(true);
         yield return SpeakAndPause("Our planets are spread across different lanes.", 0.9f);
         yield return SpeakAndPause("Your pose gives them energy and your steps decides where it goes!", 0.9f);
-        yield return SpeakAndPause("Please step on the pad I call out.", 0.8f);
         SetAlienVisual(grumpyAlienSprite, defaultElementSprite);
         yield return SpeakAndPause("Don't mix them up.", 0.8f);
 
@@ -258,28 +255,30 @@ public class TutorialSceneController : MonoBehaviour
 
 
 
-        // UP
-        yield return SpeakAndWaitForPadWithGlow("Step on the  <sprite name=\"arrowup\"> pad", 0, 0.5f);
+        // // UP
+        // yield return SpeakAndWaitForPadWithGlow("Step on the  <sprite name=\"arrowup\"> pad", 0, 0.5f);
 
-        yield return SpeakAndPause("Good!", 0.5f);
+        // yield return SpeakAndPause("Good!", 0.5f);
 
-        // LEFT
-        yield return SpeakAndWaitForPadWithGlow("Now step on the  <sprite name=\"arrowleft\"> pad", 1, 0.5f);
+        // // LEFT
+        // yield return SpeakAndWaitForPadWithGlow("Now step on the  <sprite name=\"arrowleft\"> pad", 1, 0.5f);
 
-        yield return SpeakAndPause("Nice!", 0.5f);
+        // yield return SpeakAndPause("Nice!", 0.5f);
 
-        // DOWN
-        yield return SpeakAndWaitForPadWithGlow("Now step on the  <sprite name=\"arrowdown\"> pad", 2, 0.5f);
+        // // DOWN
+        // yield return SpeakAndWaitForPadWithGlow("Now step on the  <sprite name=\"arrowdown\"> pad", 2, 0.5f);
 
-        yield return SpeakAndPause("Great!", 0.5f);
+        // yield return SpeakAndPause("Great!", 0.5f);
 
-        // RIGHT
-        yield return SpeakAndWaitForPadWithGlow("Finally step on the  <sprite name=\"arrowright\"> pad", 3, 0.5f);
+        // // RIGHT
+        // yield return SpeakAndWaitForPadWithGlow("Finally step on the  <sprite name=\"arrowright\"> pad", 3, 0.5f);
+
+        List<int> allPads = new List<int> { 0, 1, 2, 3 };
+        yield return WaitForAllPadsWithGlow("Try stepping on all the pads!", allPads, 0.5f);
 
         yield return SpeakAndPause("Yes! You're getting it", 0.7f);
 
-        yield return SpeakAndPause("Okay. Final thing...", 1.0f);
-        yield return SpeakAndPause("They won’t wait forever.", 0.9f);
+        yield return SpeakAndPause("Okay. One last thing, they won’t wait forever.", 1.0f);
         yield return SpeakAndPause("When a prompt reaches the target, you have to respond in time.", 1.2f);
 
         yield return SpeakAndPause("Miss too many, and…", 1.0f);
@@ -352,9 +351,9 @@ public class TutorialSceneController : MonoBehaviour
         string[] praiseLines =
         {
             "They're responding to you!",
-            "That's... actually working!",
+            "It's really working!",
             "I knew this would work.",
-            "You’re actually good at this! Weird."
+            "You’re actually good at this!"
         };
 
         SetObjective($"Great! {step.poseId} complete.");
@@ -477,6 +476,32 @@ public class TutorialSceneController : MonoBehaviour
     {
         yield return new WaitUntil(() => IsSinglePadSelected(padIndex));
         selectionState?.Clear();
+    }
+
+    private IEnumerator WaitForAllPadsWithGlow(string message, List<int> padIndices, float extraWait)
+    {
+    yield return SpeakAndPause(message, extraWait);
+
+    laneGlowController?.ResetAllToNormal();
+
+    HashSet<int> unpressedPads = new HashSet<int>(padIndices);
+
+    Action<int> onPadPressedHandler = null;
+    onPadPressedHandler = (idx) =>
+    {
+        if (unpressedPads.Contains(idx))
+        {
+            laneGlowController?.ActivateGlowForPad(idx);
+            unpressedPads.Remove(idx);
+        }
+    };
+
+    danceMatInputProvider.OnPadPressed += onPadPressedHandler;
+
+    yield return new WaitUntil(() => unpressedPads.Count == 0);
+    
+    danceMatInputProvider.OnPadPressed -= onPadPressedHandler;
+    
     }
 
     /*private bool IsReadyPadSelected()
