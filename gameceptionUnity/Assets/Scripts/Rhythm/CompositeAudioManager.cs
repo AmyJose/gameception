@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using InputLayer;
+using Audio;
 
 namespace Audio
 {
     public class CompositeAudioManager : MonoBehaviour
     {
         [Header("Audio Sources")]
-        [SerializeField] private AudioSource coreLVL;
         [SerializeField] private AudioSource coreAdds;
         [SerializeField] private List<AudioSource> planetTracks = new List<AudioSource>(4);
 
@@ -77,26 +77,56 @@ namespace Audio
             _secondsPerBeat = 60.0 / bpm;
             _secondsPerSync = _secondsPerBeat * beatsPerSync;
 
-            _startDspTime = AudioSettings.dspTime + 0.1;
+            double songTime = 0;
+            double scheduleTime = AudioSettings.dspTime + 0.1;
 
-            if (coreLVL != null)
-                coreLVL.PlayScheduled(_startDspTime);
+            if (MusicManager.Instance != null)
+            {
+                songTime = MusicManager.Instance.GetSongTime();
 
-            if (coreAdds != null)
-                coreAdds.PlayScheduled(_startDspTime);
+                double nextSyncSongTime =
+                    System.Math.Ceiling(songTime / _secondsPerSync) * _secondsPerSync;
+
+                // If we're too close to the sync point, use the next one instead
+                if (nextSyncSongTime - songTime < 0.05)
+                    nextSyncSongTime += _secondsPerSync;
+
+                double waitTime = nextSyncSongTime - songTime;
+                scheduleTime = AudioSettings.dspTime + waitTime;
+
+                songTime = nextSyncSongTime;
+            }
+
+            _startDspTime = scheduleTime - songTime;
+
+            ScheduleLayer(coreAdds, songTime, scheduleTime, 0f);
+            _targetVolumes[coreAdds] = 1f;
 
             foreach (var planet in planetTracks)
             {
                 if (planet == null) continue;
 
-                planet.playOnAwake = false;
-                planet.loop = true;
-                planet.volume = 0f;
-
+                ScheduleLayer(planet, songTime, scheduleTime, 0f);
                 _targetVolumes[planet] = 0f;
-
-                planet.PlayScheduled(_startDspTime);
             }
+        }
+
+        private void ScheduleLayer(AudioSource source, double songTime, double scheduleTime, float volume)
+        {
+            if (source == null || source.clip == null) return;
+
+            source.playOnAwake = false;
+            source.loop = true;
+            source.volume = volume;
+
+            double clipLength = source.clip.length;
+            double wrappedSongTime = songTime % clipLength;
+
+            int sample = Mathf.RoundToInt((float)(wrappedSongTime * source.clip.frequency));
+            sample = Mathf.Clamp(sample, 0, source.clip.samples - 1);
+
+            source.timeSamples = sample;
+            source.PlayScheduled(scheduleTime);
         }
 
         private void HandleSelectionChanged(IReadOnlyCollection<int> selectedIndices)
