@@ -250,7 +250,7 @@ MonoBehaviour:
   m_text: Confirm
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed8a4b93038f95344879106d86eb17f3, type: 2}
-  m_sharedMaterial: {fileID: -1860596158230258832, guid: 39114c5971de5a04f95c1cfb38c27dcf, type: 2}
+  m_sharedMaterial: {fileID: 5888184441765795590, guid: ed8a4b93038f95344879106d86eb17f3, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -363,13 +363,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-<<<<<<< Updated upstream
-  m_AnchoredPosition: {x: 7.0415, y: -6}
-  m_SizeDelta: {x: 204.09, y: 32.937}
-=======
   m_AnchoredPosition: {x: 7.739, y: -8.9}
   m_SizeDelta: {x: 233.371, y: 32.937}
->>>>>>> Stashed changes
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &667667554
 MonoBehaviour:
@@ -591,7 +586,7 @@ MonoBehaviour:
   m_text: Player Name...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed8a4b93038f95344879106d86eb17f3, type: 2}
-  m_sharedMaterial: {fileID: -7689323027916225956, guid: 0abf9ea4add64514192507c273b9ab3f, type: 2}
+  m_sharedMaterial: {fileID: 5888184441765795590, guid: ed8a4b93038f95344879106d86eb17f3, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -702,7 +697,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 28, y: 36}
+  m_AnchoredPosition: {x: 17.2, y: 34.3}
   m_SizeDelta: {x: 188.173, y: 32.945}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &967345632
@@ -727,7 +722,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Enter Name
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 0abf9ea4add64514192507c273b9ab3f, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 39114c5971de5a04f95c1cfb38c27dcf, type: 2}
   m_sharedMaterial: {fileID: -1860596158230258832, guid: 39114c5971de5a04f95c1cfb38c27dcf, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -794,7 +789,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &967345633
@@ -1243,7 +1238,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 26}
+  m_AnchoredPosition: {x: 0, y: 50}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1278034094
@@ -1567,13 +1562,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-<<<<<<< Updated upstream
-  m_AnchoredPosition: {x: 0, y: -101}
-  m_SizeDelta: {x: -421.924, y: -271.706}
-=======
   m_AnchoredPosition: {x: -10.45697, y: -106.20599}
   m_SizeDelta: {x: -357.009, y: -250.959}
->>>>>>> Stashed changes
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1368882494
 MonoBehaviour:
@@ -1588,11 +1578,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-<<<<<<< Updated upstream
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-=======
-  m_Color: {r: 0.94509804, g: 0.5137255, b: 0.07058824, a: 1}
->>>>>>> Stashed changes
+  m_Color: {r: 0.2627451, g: 1, b: 0.57254905, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1677,7 +1663,7 @@ MonoBehaviour:
   m_text: "\u200B"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed8a4b93038f95344879106d86eb17f3, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 5888184441765795590, guid: ed8a4b93038f95344879106d86eb17f3, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2207,13 +2193,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-<<<<<<< Updated upstream
-  m_AnchoredPosition: {x: 7.041504, y: -40.5}
-  m_SizeDelta: {x: 67.333, y: 20.638}
-=======
   m_AnchoredPosition: {x: 7.041504, y: -46.7}
   m_SizeDelta: {x: 70, y: 25}
->>>>>>> Stashed changes
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1868989811
 MonoBehaviour:
