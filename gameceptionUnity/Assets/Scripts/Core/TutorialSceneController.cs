@@ -204,33 +204,28 @@ public class TutorialSceneController : MonoBehaviour
     {
         string intro = "Hey you! " + PlayerSession.PlayerName + ", yes you!";
         yield return SpeakAndPause(intro, 0.8f);
-        yield return SpeakAndPause("Oh thank goodness, I found someone. My home has been destroyed.", 1.0f);
-        yield return SpeakAndPause("There's not many of us left.", 1.0f);
-        yield return SpeakAndPause("Most of our worlds are... gone.", 1.2f);
-        yield return SpeakAndPause("Please help me fix it!", 1.0f);
+        yield return SpeakAndPause("Oh thank goodness, I found someone.", 1.0f);
+        yield return SpeakAndPause("My friends and I, our homes have been destroyed. We need your help!", 1.0f);
 
         SetAlienVisual(grumpyAlienSprite, defaultElementSprite);
-        yield return SpeakAndPause("Long story. Bad timing. Not my fault.", 0.9f);
+        yield return SpeakAndPause("Long story. Evil space rock. Not my fault.", 0.9f);
 
         RestoreDefaultAlienVisuals();
 
-        yield return SpeakAndPause("Now they’re all here, and they all need something different to survive.", 1.2f);
-        yield return SpeakAndPause("The problem is… they don’t understand me.", 1.0f);
-        yield return SpeakAndPause("But they might understand you.", 0.9f);
+        yield return SpeakAndPause("Everyone here needs something different to survive.", 1.2f);
+        yield return SpeakAndPause("The problem is… the universe doesn’t understand us.", 1.0f);
+        yield return SpeakAndPause("But it will understand you.", 0.9f);
 
-        yield return SpeakAndPause("Every species responds to movement.", 1.0f);
-        yield return SpeakAndPause("Different shapes. Different energy.", 1.0f);
-        yield return SpeakAndPause("When you hold the right pose… they recognise it.", 1.2f);
-        yield return SpeakAndPause("It gives them what they need.", 1.0f);
+        yield return SpeakAndPause("Everything responds to movement. Different shapes, different energy.", 1.0f);
+        yield return SpeakAndPause("When you hold the right pose at the right time, the atoms align.", 1.2f);
 
-        yield return SpeakAndPause("First, I need to see you properly.", 0.9f);
+        yield return SpeakAndPause("First, we need to see you properly.", 0.9f);
 
         ActivatePoseDetection();
 
         SetObjective("Stand so your whole body is visible in the camera.");
 
-        yield return SpeakAndPause("Stand in the middle so I can read your movement.", 1.0f);
-        yield return SpeakAndPause("If I can’t see you, I can’t translate anything.", 1.0f);
+        yield return SpeakAndPause("Please stand in the middle so I can translate your movement.", 1.0f);
 
         yield return SpeakAndPause("Step on the <sprite name=\"arrowup\"> pad when you're ready.", 0.7f);
         SetObjective("Step on <sprite name=\"arrowup\"> when you're ready.");
@@ -239,7 +234,7 @@ public class TutorialSceneController : MonoBehaviour
         //selectionState?.Clear();
 
         yield return SpeakAndPause("I’ll show you what each one needs.", 0.8f);
-        yield return SpeakAndPause("Copy the pose… and hold it.", 0.9f);
+        yield return SpeakAndPause("Copy the pose and hold it!", 0.9f);
         yield return SpeakAndPause("If you lose it, they lose it too.", 1.2f);
 
         for (int i = 0; i < poseSteps.Count; i++)
@@ -249,17 +244,19 @@ public class TutorialSceneController : MonoBehaviour
 
         RestoreDefaultAlienVisuals();
 
-        yield return SpeakAndPause("Now… the dancemat.", 0.8f);
+        yield return SpeakAndPause("Now onto the dancemat!", 0.8f);
         SetLanePadObjectsVisible(true);
-        yield return SpeakAndPause("They’re spread across different lanes.", 0.9f);
-        yield return SpeakAndPause("Your pose gives the energy.", 0.9f);
-        yield return SpeakAndPause("Your feet decide who receives it.", 1.1f);
-        yield return SpeakAndPause("So step on the pad I call out.", 0.8f);
+        yield return SpeakAndPause("Our planets are spread across different lanes.", 0.9f);
+        yield return SpeakAndPause("Your pose gives them energy and your steps decides where it goes!", 0.9f);
+        yield return SpeakAndPause("Please step on the pad I call out.", 0.8f);
         SetAlienVisual(grumpyAlienSprite, defaultElementSprite);
-        yield return SpeakAndPause("Try not to mix them up.", 0.8f);
-        yield return SpeakAndPause("They get… tricky.", 0.9f);
+        yield return SpeakAndPause("Don't mix them up.", 0.8f);
 
         RestoreDefaultAlienVisuals();
+
+        // yield return SpeakAndWaitForPadWithGlow("Step on the <sprite name=\"arrowup\"> <sprite name=\"arrowleft\"> <sprite name=\"arrowdown\"> <sprite name=\"arrowright\"> pads!", 0, 0.5f);
+
+
 
         // UP
         yield return SpeakAndWaitForPadWithGlow("Step on the  <sprite name=\"arrowup\"> pad", 0, 0.5f);
@@ -281,17 +278,18 @@ public class TutorialSceneController : MonoBehaviour
 
         yield return SpeakAndPause("Yes! You're getting it", 0.7f);
 
-        yield return SpeakAndPause("Okay. Final thing, promise...", 1.0f);
+        yield return SpeakAndPause("Okay. Final thing...", 1.0f);
         yield return SpeakAndPause("They won’t wait forever.", 0.9f);
-        yield return SpeakAndPause("When a prompt reaches the target… you have to respond in time.", 1.2f);
+        yield return SpeakAndPause("When a prompt reaches the target, you have to respond in time.", 1.2f);
 
+        yield return SpeakAndPause("Miss too many, and…", 1.0f);
         SetAlienVisual(grumpyAlienSprite, defaultElementSprite);
-        yield return SpeakAndPause("Miss too many, and… let’s not miss too many.", 1.0f);
+        yield return SpeakAndPause("You don't wanna know.", 1.0f);
 
         RestoreDefaultAlienVisuals();
 
         yield return SpeakAndPause("Ready?", 0.6f);
-        yield return SpeakAndPause("Let’s keep them alive.", 1.2f);
+        yield return SpeakAndPause("Let’s groove!", 1.2f);
 
         OnTutorialFinished?.Invoke();
 
@@ -353,10 +351,10 @@ public class TutorialSceneController : MonoBehaviour
 
         string[] praiseLines =
         {
-            "They're responding to you.",
-            "That's... actually working",
-            "I knew this would work",
-            "You’re actually good at this… weird."
+            "They're responding to you!",
+            "That's... actually working!",
+            "I knew this would work.",
+            "You’re actually good at this! Weird."
         };
 
         SetObjective($"Great! {step.poseId} complete.");
