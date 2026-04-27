@@ -1,3 +1,4 @@
+using Gameplay;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -30,6 +31,7 @@ public class MenuSceneController : MonoBehaviour
         }
 
         PlayerSession.PlayerName = name;
+        RunResultsStore.LastResults = null;
 
         PlayerPrefs.SetString("player_name", name);
         PlayerPrefs.Save();

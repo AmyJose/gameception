@@ -25,10 +25,14 @@ namespace Gameplay
         private RunResults _results;
         private bool _scoreSubmitted = false;
 
-        private void Start()
+        private void Awake()
         {
             DisplayResults();
             StartCoroutine(SubmitWhenReady());
+        }
+        private void Start()
+        {
+
         }
 
         private IEnumerator SubmitWhenReady()
@@ -98,6 +102,7 @@ namespace Gameplay
 
         public void ReturnToMainMenu()
         {
+            RunResultsStore.LastResults = null;
             SceneManager.LoadScene(mainMenuSceneName);
         }
 

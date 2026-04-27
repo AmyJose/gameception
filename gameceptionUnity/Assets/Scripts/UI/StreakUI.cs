@@ -12,8 +12,6 @@ public class StreakUI : MonoBehaviour
     [SerializeField] private float popScale = 1.35f;
     [SerializeField] private float popDuration = 0.12f;
     [SerializeField] private float settleDuration = 0.18f;
-    [SerializeField] private float shakeAmount = 8f;
-    [SerializeField] private float shakeDuration = 0.15f;
 
     private int lastStreak;
     private Vector3 baseScale;
@@ -88,7 +86,6 @@ public class StreakUI : MonoBehaviour
             float t = timer / popDuration;
 
             rectTransform.localScale = Vector3.Lerp(baseScale, baseScale * popScale, t);
-            rectTransform.anchoredPosition = baseAnchoredPosition + (Random.insideUnitCircle * shakeAmount);
 
             yield return null;
         }

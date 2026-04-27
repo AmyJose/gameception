@@ -23,6 +23,13 @@ public class LeaderboardSubmissionService : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
 
     private IEnumerator Start()
     {

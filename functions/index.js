@@ -1,7 +1,9 @@
 const {onCall, HttpsError} = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
 
-admin.initializeApp();
+admin.initializeApp({
+  databaseURL: "https://groove-galaxy-6d5c7-default-rtdb.europe-west1.firebasedatabase.app/",
+});
 
 exports.submitScore = onCall(async (request) => {
   const auth = request.auth;
@@ -68,7 +70,14 @@ exports.submitScore = onCall(async (request) => {
   };
 
   const ref = admin.database().ref("leaderboard/scores").push();
-  await ref.set(entry);
+  console.log("Writing leaderboard entry:", entry);
+  try {
+    await ref.set(entry);
+    console.log("Score written:", ref.key);
+  } catch (error) {
+    console.error("Database write failed:", error);
+    throw new HttpsError("internal", "Database write failed.");
+  }
 
   return {
     ok: true,
