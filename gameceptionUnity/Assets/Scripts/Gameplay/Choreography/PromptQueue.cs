@@ -265,7 +265,7 @@ namespace Gameplay.Choreography
                 int promptsThisSequence = _sequenceDoubleTroublePairs.Count * 2;  // Each pair = 2 prompts
                 _promptsExpectedThisSequence = promptsThisSequence;
 
-                Debug.Log($"[PromptQueue] Beat {startBeat}: START Double Trouble sequence {sequenceId} with {_sequenceDoubleTroublePairs.Count} pairs ({promptsThisSequence} prompts total) | Next sequence eligible at beat {_lastPromptSpawnBeat + generationIntervalBeats}");
+                //Debug.Log($"[PromptQueue] Beat {startBeat}: START Double Trouble sequence {sequenceId} with {_sequenceDoubleTroublePairs.Count} pairs ({promptsThisSequence} prompts total) | Next sequence eligible at beat {_lastPromptSpawnBeat + generationIntervalBeats}");
             }
             else
             {
@@ -273,7 +273,7 @@ namespace Gameplay.Choreography
                 int promptsThisSequence = _sequenceLaneOrder.Count;
                 _promptsExpectedThisSequence = promptsThisSequence;
 
-                Debug.Log($"[PromptQueue] Beat {startBeat}: START sequence {sequenceId} with {promptsThisSequence} prompts | Next sequence eligible at beat {_lastPromptSpawnBeat + generationIntervalBeats}");
+                //Debug.Log($"[PromptQueue] Beat {startBeat}: START sequence {sequenceId} with {promptsThisSequence} prompts | Next sequence eligible at beat {_lastPromptSpawnBeat + generationIntervalBeats}");
             }
 
             if (promptJudge != null)
@@ -300,7 +300,7 @@ namespace Gameplay.Choreography
 
             if (availablePairs.Count == 0)
             {
-                Debug.LogWarning("[PromptQueue] Double Trouble mode: no valid opposite lane pairs available!");
+                //Debug.LogWarning("[PromptQueue] Double Trouble mode: no valid opposite lane pairs available!");
                 return;
             }
 
@@ -321,10 +321,10 @@ namespace Gameplay.Choreography
                 });
                 // Update last used pair index
                 _lastUsedPairIndex = pairIndex;
-                Debug.Log($"[PromptQueue] Double Trouble pair {i}: lanes [{selectedPair[0]}, {selectedPair[1]}], pose {randomPose}, next pair index will be {GetNextPairIndex(availablePairs.Count)}");
+                //Debug.Log($"[PromptQueue] Double Trouble pair {i}: lanes [{selectedPair[0]}, {selectedPair[1]}], pose {randomPose}, next pair index will be {GetNextPairIndex(availablePairs.Count)}");
             }
 
-            Debug.Log($"[PromptQueue] Double Trouble sequence: {_sequenceDoubleTroublePairs.Count} pairs generated");
+            //Debug.Log($"[PromptQueue] Double Trouble sequence: {_sequenceDoubleTroublePairs.Count} pairs generated");
         }
 
         private void BuildSequenceLaneOrder()
@@ -368,7 +368,7 @@ namespace Gameplay.Choreography
                     _sequenceLaneOrder.AddRange(group);
                 }
 
-                Debug.Log($"[PromptQueue] Lane order (grouped): [{string.Join(", ", _sequenceLaneOrder)}]");
+                //Debug.Log($"[PromptQueue] Lane order (grouped): [{string.Join(", ", _sequenceLaneOrder)}]");
             }
             else
             {
@@ -389,7 +389,7 @@ namespace Gameplay.Choreography
                     (_sequenceLaneOrder[i], _sequenceLaneOrder[j]) = (_sequenceLaneOrder[j], _sequenceLaneOrder[i]);
                 }
 
-                Debug.Log($"[PromptQueue] Lane order (shuffled): [{string.Join(", ", _sequenceLaneOrder)}]");
+                //Debug.Log($"[PromptQueue] Lane order (shuffled): [{string.Join(", ", _sequenceLaneOrder)}]");
             }
         }
 
@@ -407,14 +407,14 @@ namespace Gameplay.Choreography
                 if (anchorLane == laneA && lanes.Contains(laneB))
                 {
                     lanes.Remove(laneB);
-                    Debug.Log($"[PromptQueue] Sequence lane exclusion: anchor lane {anchorLane}, removed opposite lane {laneB}");
+                    //Debug.Log($"[PromptQueue] Sequence lane exclusion: anchor lane {anchorLane}, removed opposite lane {laneB}");
                     return;
                 }
 
                 if (anchorLane == laneB && lanes.Contains(laneA))
                 {
                     lanes.Remove(laneA);
-                    Debug.Log($"[PromptQueue] Sequence lane exclusion: anchor lane {anchorLane}, removed opposite lane {laneA}");
+                    //Debug.Log($"[PromptQueue] Sequence lane exclusion: anchor lane {anchorLane}, removed opposite lane {laneA}");
                     return;
                 }
             }
@@ -449,7 +449,7 @@ namespace Gameplay.Choreography
 
             _activePrompts.Add(indicator);
 
-            Debug.Log($"[PromptQueue] Beat {beatIndex}: Spawned prompt {_nextPromptId} (seq {sequenceId}, index {indexInSequence}, lane {laneIndex})");
+            //Debug.Log($"[PromptQueue] Beat {beatIndex}: Spawned prompt {_nextPromptId} (seq {sequenceId}, index {indexInSequence}, lane {laneIndex})");
 
             _nextPromptId++;
         }
@@ -479,7 +479,7 @@ namespace Gameplay.Choreography
 
             _activePrompts.Add(indicator);
 
-            Debug.Log($"[PromptQueue] Beat {beatIndex}: Spawned Double Trouble prompt {_nextPromptId} (seq {sequenceId}, lane {laneIndex}, pose {forcedPose})");
+            //Debug.Log($"[PromptQueue] Beat {beatIndex}: Spawned Double Trouble prompt {_nextPromptId} (seq {sequenceId}, lane {laneIndex}, pose {forcedPose})");
 
             _nextPromptId++;
         }
@@ -614,13 +614,13 @@ namespace Gameplay.Choreography
             _isGenerating = true;
             _lastGeneratedSequenceBeat = -999;
             _introPoseCursor = 0;
-            Debug.Log("[PromptQueue] Generation started");
+            //Debug.Log("[PromptQueue] Generation started");
         }
 
         public void StopGeneration()
         {
             _isGenerating = false;
-            Debug.Log("[PromptQueue] Generation stopped");
+            //Debug.Log("[PromptQueue] Generation stopped");
         }
 
         private bool TryGetScriptedIntroPose(out ElementPose pose)
@@ -664,7 +664,7 @@ namespace Gameplay.Choreography
                 _activeLanes.Add(lane);
             }
 
-            Debug.Log($"[PromptQueue] Active lanes set: [{string.Join(", ", _activeLanes)}]");
+            //Debug.Log($"[PromptQueue] Active lanes set: [{string.Join(", ", _activeLanes)}]");
         }
 
         public void AddActiveLane(int lane)
@@ -673,7 +673,7 @@ namespace Gameplay.Choreography
             if (_activeLanes.Contains(lane)) return;
 
             _activeLanes.Add(lane);
-            Debug.Log($"[PromptQueue] Added active lane {lane}");
+            //Debug.Log($"[PromptQueue] Added active lane {lane}");
         }
 
         public void RemoveActiveLane(int lane)
@@ -697,26 +697,26 @@ namespace Gameplay.Choreography
         public void SetGenerationIntervalBeats(int beats)
         {
             generationIntervalBeats = Mathf.Max(1, beats);
-            Debug.Log($"[PromptQueue] Generation interval -> {generationIntervalBeats} beats");
+            //Debug.Log($"[PromptQueue] Generation interval -> {generationIntervalBeats} beats");
         }
 
         public void SetPromptSpawnBeatSpacing(int spacing)
         {
             promptSpawnBeatSpacing = Mathf.Max(1, spacing);
-            Debug.Log($"[PromptQueue] Prompt spawn beat spacing -> {promptSpawnBeatSpacing}");
+            //Debug.Log($"[PromptQueue] Prompt spawn beat spacing -> {promptSpawnBeatSpacing}");
         }
 
         public void SetKeepLanePromptsConsecutive(bool keep)
         {
             keepLanePromptsConsecutive = keep;
-            Debug.Log($"[PromptQueue] Keep lane prompts consecutive -> {keep}");
+            //Debug.Log($"[PromptQueue] Keep lane prompts consecutive -> {keep}");
         }
 
         public void SetLanePromptsPerSequence(int laneIndex, int count)
         {
             if (laneIndex < 0 || laneIndex >= laneConfigs.Length) return;
             laneConfigs[laneIndex].promptsPerSequence = Mathf.Max(0, count);
-            Debug.Log($"[PromptQueue] Lane {laneIndex} -> {count} prompts per sequence");
+            //Debug.Log($"[PromptQueue] Lane {laneIndex} -> {count} prompts per sequence");
         }
 
         public void SetAllLanesPromptsPerSequence(int count)
@@ -726,7 +726,7 @@ namespace Gameplay.Choreography
             {
                 config.promptsPerSequence = count;
             }
-            Debug.Log($"[PromptQueue] All lanes -> {count} prompts per sequence");
+            //Debug.Log($"[PromptQueue] All lanes -> {count} prompts per sequence");
         }
 
         public bool TryGetLaneCenterLocalPosition(int laneIndex, out Vector3 centerLocal)
@@ -762,7 +762,7 @@ namespace Gameplay.Choreography
             enableDoubleTroubleMode = enabled;
             OnDoubleTroubleModeChanged?.Invoke(enabled);
 
-            Debug.Log($"[PromptQueue] Double Trouble mode -> {(enabled ? "ON 🟢" : "OFF 🔴")}");
+            //Debug.Log($"[PromptQueue] Double Trouble mode -> {(enabled ? "ON 🟢" : "OFF 🔴")}");
         }
 
         // getter for UI to read current state

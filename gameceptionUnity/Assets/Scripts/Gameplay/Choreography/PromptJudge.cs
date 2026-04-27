@@ -158,7 +158,7 @@ namespace Gameplay.Choreography
                 evaluatedPrompts = new HashSet<int>()
             };
 
-            Debug.Log($"[PromptJudge] Registered sequence {sequenceId} with {totalPrompts} prompts");
+            //Debug.Log($"[PromptJudge] Registered sequence {sequenceId} with {totalPrompts} prompts");
         }
 
         private void EmitSuccess(int promptId, ActivePrompt prompt, float offset)
@@ -180,7 +180,7 @@ namespace Gameplay.Choreography
                 timing = EvaluateTimingFromOffset(offset)
             };
 
-            Debug.Log($"Prompt {promptId} {result.quality} HIT");
+            //Debug.Log($"Prompt {promptId} {result.quality} HIT");
 
             OnJudged?.Invoke(result);
             UpdateSequenceProgress(promptId, prompt.sequenceId, result.quality);
