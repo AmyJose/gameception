@@ -4234,13 +4234,13 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: d7c0d14ea5e0e4cedacce2c616ea0025, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.46
+  m_Volume: 0.56
   m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 190
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -5481,7 +5481,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6026784dfab774a45a5d450c619d7aca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Audio.CompositeAudioManager
-  coreLVL: {fileID: 1144103110}
+  coreLVL: {fileID: 1350368782}
   coreAdds: {fileID: 1849355380}
   planetTracks:
   - {fileID: 1659193514}
