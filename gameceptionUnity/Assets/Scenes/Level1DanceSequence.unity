@@ -4113,7 +4113,7 @@ MonoBehaviour:
   promptQueue: {fileID: 733875701}
   promptJudge: {fileID: 64651961}
   gameFlowController: {fileID: 177462652}
-  easyAboveSeconds: 200
+  easyAboveSeconds: 160
   mediumAboveSeconds: 80
   easyBpm:
     min: 60
@@ -4157,7 +4157,7 @@ MonoBehaviour:
   sequenceCooldownAfterChange: 1
   resetPerformanceMemoryOnDifficultyChange: 1
   enableDoubleTroubleScheduling: 1
-  doubleTroubleStartSeconds: 170
+  doubleTroubleStartSeconds: 110
   doubleTroubleDurationSeconds: 30
 --- !u!1 &1346458577
 GameObject:
@@ -4234,7 +4234,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: d7c0d14ea5e0e4cedacce2c616ea0025, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.46
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -5573,7 +5573,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1786264946
 Transform:
   m_ObjectHideFlags: 0
@@ -6071,7 +6071,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 5d5bc206f85964b07a46c5eebfa270b2, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.503
   m_Pitch: 1
   Loop: 1
   Mute: 0
