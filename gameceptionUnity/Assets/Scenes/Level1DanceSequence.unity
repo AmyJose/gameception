@@ -1111,7 +1111,7 @@ MonoBehaviour:
   promptQueue: {fileID: 733875701}
   scoreManager: {fileID: 1818512631}
   autoStartRun: 1
-  runDurationSeconds: 15
+  runDurationSeconds: 210
   startDelaySeconds: 1.5
   resultsSceneName: Results
 --- !u!4 &177462653
