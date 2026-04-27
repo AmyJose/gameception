@@ -118,7 +118,7 @@ namespace Gameplay.Choreography
         private float _totalScrollDistance = 0f;
         private int _nextPromptId = 0;
         private int _nextSequenceId = 0;
-        private int _lastGeneratedSequenceBeat = -999;
+        //private int _lastGeneratedSequenceBeat = -999;
         private int _currentSequenceStartBeat = 0;
         private int _promptsSpawnedThisSequence = 0;
 
@@ -239,7 +239,7 @@ namespace Gameplay.Choreography
                     _promptsSpawnedThisSequence++;
                     _lastPromptSpawnBeat = beat.beatIndex;
 
-                    Debug.Log($"[PromptQueue] Double Trouble: Beat {beat.beatIndex} spawned pair on lanes {pair.lane1} and {pair.lane2} with pose {pair.sharedPose}");
+                    //Debug.Log($"[PromptQueue] Double Trouble: Beat {beat.beatIndex} spawned pair on lanes {pair.lane1} and {pair.lane2} with pose {pair.sharedPose}");
                 }
             }
         }
@@ -612,7 +612,7 @@ namespace Gameplay.Choreography
         public void BeginGeneration()
         {
             _isGenerating = true;
-            _lastGeneratedSequenceBeat = -999;
+            //_lastGeneratedSequenceBeat = -999;
             _introPoseCursor = 0;
             //Debug.Log("[PromptQueue] Generation started");
         }

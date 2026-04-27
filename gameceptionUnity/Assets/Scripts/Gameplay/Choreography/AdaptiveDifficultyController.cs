@@ -77,10 +77,7 @@ public class AdaptiveDifficultyController : MonoBehaviour
 
         ApplyDifficulty();
 
-        Debug.Log(
-            $"[AdaptiveDifficulty] Seq {result.sequenceId} | " +
-            $"accuracy={result.accuracy:F2} | avg={averageAccuracy:F2} | difficulty={difficulty:F2}"
-        );
+        //Debug.Log($"[AdaptiveDifficulty] Seq {result.sequenceId} | " + $"accuracy={result.accuracy:F2} | avg={averageAccuracy:F2} | difficulty={difficulty:F2}");
     }
 
     private float GetAverageAccuracy()
@@ -110,7 +107,7 @@ public class AdaptiveDifficultyController : MonoBehaviour
 
         beatClock.SetBpm(newBpm);
 
-        Debug.Log($"[AdaptiveDifficulty] BPM={newBpm:F1}");
+        //Debug.Log($"[AdaptiveDifficulty] BPM={newBpm:F1}");
     }
 
     private void ApplyStructure()
@@ -129,8 +126,6 @@ public class AdaptiveDifficultyController : MonoBehaviour
         // promptQueue.SetPromptsPerSequence(promptsPerSequence);
         // promptQueue.SetExtraLaneRepeatsPerSequence(extraRepeats);
 
-        Debug.Log(
-            $"[AdaptiveDifficulty] Prompts/Seq={promptsPerSequence}, ExtraRepeats={extraRepeats}"
-        );
+        //Debug.Log( $"[AdaptiveDifficulty] Prompts/Seq={promptsPerSequence}, ExtraRepeats={extraRepeats}");
     }
 }

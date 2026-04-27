@@ -206,10 +206,7 @@ namespace Gameplay.Choreography
                 timing = PoseTiming.Late
             };
 
-            Debug.Log(
-                $"[PromptJudge - MISS] Seq {result.sequenceId} | Prompt {promptId}: {result.quality} | " +
-                $"Pose: {result.detectedPose} | SelectedPad: {result.selectedPad} | ExpectedLane: {result.laneIndex}"
-            );
+            //Debug.Log($"[PromptJudge - MISS] Seq {result.sequenceId} | Prompt {promptId}: {result.quality} | " +$"Pose: {result.detectedPose} | SelectedPad: {result.selectedPad} | ExpectedLane: {result.laneIndex}");
 
             OnJudged?.Invoke(result);
             UpdateSequenceProgress(promptId, prompt.sequenceId, result.quality);
@@ -295,10 +292,7 @@ namespace Gameplay.Choreography
 
             int totalEvaluated = status.hitsCount + status.missesCount;
 
-            Debug.Log(
-                $"[PromptJudge] Sequence {sequenceId} progress: {totalEvaluated}/{status.totalPrompts} " +
-                $"(Hits: {status.hitsCount}, Misses: {status.missesCount})"
-            );
+            //Debug.Log( $"[PromptJudge] Sequence {sequenceId} progress: {totalEvaluated}/{status.totalPrompts} " +$"(Hits: {status.hitsCount}, Misses: {status.missesCount})");
 
             if (totalEvaluated >= status.totalPrompts)
             {
@@ -315,10 +309,7 @@ namespace Gameplay.Choreography
                     accuracy = accuracy
                 };
 
-                Debug.Log(
-                    $"[PromptJudge] Sequence {sequenceId} COMPLETE! " +
-                    $"Hits: {status.hitsCount}, Misses: {status.missesCount}, Accuracy: {accuracy:P2}"
-                );
+                //Debug.Log($"[PromptJudge] Sequence {sequenceId} COMPLETE! " +$"Hits: {status.hitsCount}, Misses: {status.missesCount}, Accuracy: {accuracy:P2}");
 
                 OnSequenceComplete?.Invoke(seqResult);
                 _sequenceProgress.Remove(sequenceId);

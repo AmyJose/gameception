@@ -237,11 +237,11 @@ namespace Gameplay
                 cleanSequence &&
                 status.perfectCount == result.totalPrompts;
 
-            Debug.Log(
+            /*Debug.Log(
                 $"[ScoreManager] SequenceComplete | seq={result.sequenceId}, total={result.totalPrompts}, " +
                 $"perfect={status.perfectCount}, good={status.goodCount}, okay={status.okayCount}, misses={status.missCount}, " +
                 $"tracked={totalEvaluatedPrompts}"
-            );
+            );*/
 
             if (allPerfect)
             {

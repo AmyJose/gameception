@@ -35,6 +35,7 @@ namespace Gameplay.Choreography
 
         [Header("Audio Feedback")]
         [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioSource missSoundSource;
         [SerializeField] private AudioClip perfectSound;
         [SerializeField] private AudioClip goodSound;
         [SerializeField] private AudioClip missSound;
@@ -43,9 +44,6 @@ namespace Gameplay.Choreography
         private ElementPose _pose;
         private float _initialYPosition;
         private bool _isInHitZone = false;
-        private bool _missed = false;
-        private bool _succeeded = false;
-        private bool _midHit = false;
 
         private void Awake()
         {
@@ -128,8 +126,8 @@ namespace Gameplay.Choreography
 
                 ApplyFadeToIcon();
 
-            if (audioSource != null && missSound != null)
-                audioSource.PlayOneShot(missSound);
+        if (missSoundSource != null && missSound != null)
+            missSoundSource.PlayOneShot(missSound);
 
             //SpawnFeedback(failPrefab);
             SetBackgroundVisible(false);

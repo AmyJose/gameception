@@ -111,13 +111,11 @@ namespace InputLayer
                 if (shiftHeld)
                 {
                     selectionState.SoloSelect(idx);
-                    Debug.Log($"soloselect: {idx}");
                 }
                 else
                 {
                     if (selectionState.Selected.Contains(idx)) selectionState.Deselect(idx);
                     else selectionState.Select(idx);
-                    Debug.Log($"select: {idx}");
                 }
                 return;
             }
@@ -125,13 +123,11 @@ namespace InputLayer
             if (shiftHeld)
             {
                 selectionState.SoloSelect(idx);
-                Debug.Log($"select: {idx}");
             }
             else
             {
                 // Changed from Toggle to Select for "Hold to Select" mechanic
                 selectionState.Select(idx);
-                Debug.Log($"select: {idx}");
             }
         }
 
