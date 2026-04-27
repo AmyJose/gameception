@@ -29,6 +29,7 @@ public class TutorialSceneController : MonoBehaviour
     {
         public Sprite alien;
         public Sprite element;
+        public Color barColor = Color.white;
     }
 
     [Header("Alien Visuals")]
@@ -37,7 +38,6 @@ public class TutorialSceneController : MonoBehaviour
     [SerializeField] private List<PoseSpritePair> poseSpritePairs;
     [SerializeField] private Sprite defaultAlienSprite;
     [SerializeField] private Sprite defaultElementSprite;
-    [SerializeField] private Sprite grumpyAlienSprite;
 
     [Header("Pose Detection")]
     [SerializeField] private PoseDetectionRunner poseDetectionRunner;
@@ -49,6 +49,7 @@ public class TutorialSceneController : MonoBehaviour
 
     [Header("Ready Selection")]
     [SerializeField] private int readyPadIndex = 0;
+    [SerializeField] private bool requireOnlyThisPadSelected = false;
 
     [Header("Pose Tutorial")]
     [SerializeField] private List<PoseTutorialStep> poseSteps = new();
@@ -98,6 +99,11 @@ public class TutorialSceneController : MonoBehaviour
         if (danceMatInputProvider != null)
         {
             danceMatInputProvider.OnPadPressed += HandlePadPressed;
+            Debug.Log("[Tutorial] Subscribed to DanceMatInputProvider.OnPadPressed");
+        }
+        else
+        {
+            Debug.LogWarning("[Tutorial] DanceMatInputProvider is NOT assigned! Pad presses won't work.");
         }
 
         if (selectionState != null)
@@ -120,14 +126,19 @@ public class TutorialSceneController : MonoBehaviour
 
     private void HandlePadPressed(int idx)
     {
+        Debug.Log($"[Tutorial] Pad pressed: idx={idx}, waiting={waitingForSpecificPad}, required={requiredPadIndex}");
+
         if (!waitingForSpecificPad) return;
         if (idx != requiredPadIndex) return;
+
+        Debug.Log($"[Tutorial] Pad matched! Setting requiredPadPressed=true");
         requiredPadPressed = true;
     }
 
     private void HandleSelectionChanged(IReadOnlyCollection<int> selected)
     {
         string selectedText = selected == null ? "null" : string.Join(", ", selected);
+        Debug.Log($"[TutorialSceneController] Selection changed: [{selectedText}]");
     }
 
     private void Start()
@@ -172,10 +183,16 @@ public class TutorialSceneController : MonoBehaviour
                 if (verbosePoseDebug && Time.time >= _nextHoldDebugTime)
                 {
                     _nextHoldDebugTime = Time.time + 0.25f;
+                    Debug.Log($"[Tutorial] HOLD progress for {currentExpectedPoseId}: {currentHoldTimer:F2}/{currentRequiredHoldTime:F2}");
                 }
 
                 if (currentHoldTimer >= currentRequiredHoldTime)
                 {
+                    if (verbosePoseDebug)
+                    {
+                        Debug.Log($"[Tutorial] HOLD COMPLETE for {currentExpectedPoseId}");
+                    }
+
                     currentPoseMatched = true;
                 }
             }
@@ -185,6 +202,12 @@ public class TutorialSceneController : MonoBehaviour
                 {
                     float previous = currentHoldTimer;
                     currentHoldTimer = Mathf.Max(0f, currentHoldTimer - Time.deltaTime * holdLossPerSecondOnMismatch);
+
+                    if (verbosePoseDebug)
+                    {
+                        Debug.Log($"[Tutorial] HOLD decayed for {currentExpectedPoseId}: {previous:F2} -> {currentHoldTimer:F2}. " +
+                                  $"CurrentPose={poseState?.CurrentPose}, Confidence={poseState?.Confidence:F2}");
+                    }
                 }
             }
             //progress bar updating
@@ -202,49 +225,23 @@ public class TutorialSceneController : MonoBehaviour
 
     private IEnumerator RunTutorialRoutine()
     {
-        string intro = "Hey ... you! " + PlayerSession.PlayerName + ", yes you!";
-        yield return SpeakAndPause(intro, 0.8f);
-        yield return SpeakAndPause("Oh thank goodness, I found someone.", 1.0f);
-        yield return SpeakAndPause("My planet system is completely broken.", 1.0f);
-        yield return SpeakAndPause("And I... may have made it worse.", 1.0f);
-        yield return SpeakAndPause("So now you have to help me fix it.", 1.0f);
-
-        yield return SpeakAndPause("Listen… I’ve been gathering survivors.", 1.0f);
-        yield return SpeakAndPause("Different species. Different planets.", 1.0f);
-        yield return SpeakAndPause("Most of their worlds are… gone.", 1.2f);
-
-        SetAlienVisual(grumpyAlienSprite, defaultElementSprite);
-        yield return SpeakAndPause("Long story. Bad timing. Not my fault.", 0.9f);
-
-        RestoreDefaultAlienVisuals();
-
-        yield return SpeakAndPause("Now they’re all here, and they all need something different to survive.", 1.2f);
-        yield return SpeakAndPause("The problem is… they don’t understand me.", 1.0f);
-        yield return SpeakAndPause("But they might understand you.", 0.9f);
-
-        yield return SpeakAndPause("Every species responds to movement.", 1.0f);
-        yield return SpeakAndPause("Different shapes. Different energy.", 1.0f);
-        yield return SpeakAndPause("When you hold the right pose… they recognise it.", 1.2f);
-        yield return SpeakAndPause("It gives them what they need.", 1.0f);
-
-        yield return SpeakAndPause("First, I need to see you properly.", 0.9f);
+        string intro = "Hey " + PlayerSession.PlayerName + "! We need your help!";
+        yield return SpeakAndPause(intro, 1.0f);
+        yield return SpeakAndPause("First, we need to calibrate our camera system.", 1.0f);
 
         ActivatePoseDetection();
 
         SetObjective("Stand so your whole body is visible in the camera.");
+        yield return SpeakAndPause("Position yourself in the middle of the camera so we can see your entire body.", 1.2f);
 
-        yield return SpeakAndPause("Stand in the middle so I can read your movement.", 1.0f);
-        yield return SpeakAndPause("If I can’t see you, I can’t translate anything.", 1.0f);
-
-        yield return SpeakAndPause("Step on the <sprite name=\"arrowup\"> pad when you're ready.", 0.7f);
-        SetObjective("Step on <sprite name=\"arrowup\"> when you're ready.");
+        // yield return SpeakAndPause($"Jump on pad {readyPadIndex + 1} once you're ready.", 0.5f);
+        yield return SpeakAndPause($"Jump on pad <sprite name=\"arrowup\"> once you're ready.", 0.5f);
+        SetObjective($"Select pad <sprite name=\"arrowup\"> when you're ready.");
 
         yield return WaitForSpecificPadPress(readyPadIndex);
         //selectionState?.Clear();
 
-        yield return SpeakAndPause("I’ll show you what each one needs.", 0.8f);
-        yield return SpeakAndPause("Copy the pose… and hold it.", 0.9f);
-        yield return SpeakAndPause("If you lose it, they lose it too.", 1.2f);
+        yield return SpeakAndPause("Perfect. Let's try a few poses.", 0.8f);
 
         for (int i = 0; i < poseSteps.Count; i++)
         {
@@ -253,17 +250,8 @@ public class TutorialSceneController : MonoBehaviour
 
         RestoreDefaultAlienVisuals();
 
-        yield return SpeakAndPause("Now… the dancemat.", 0.8f);
+        yield return SpeakAndPause("Let's learn the lanes and pads one by one.", 0.8f);
         SetLanePadObjectsVisible(true);
-        yield return SpeakAndPause("They’re spread across different lanes.", 0.9f);
-        yield return SpeakAndPause("Your pose gives the energy.", 0.9f);
-        yield return SpeakAndPause("Your feet decide who receives it.", 1.1f);
-        yield return SpeakAndPause("So step on the pad I call out.", 0.8f);
-        SetAlienVisual(grumpyAlienSprite, defaultElementSprite);
-        yield return SpeakAndPause("Try not to mix them up.", 0.8f);
-        yield return SpeakAndPause("They get… tricky.", 0.9f);
-
-        RestoreDefaultAlienVisuals();
 
         // UP
         yield return SpeakAndWaitForPadWithGlow("Step on the  <sprite name=\"arrowup\"> pad", 0, 0.5f);
@@ -283,19 +271,14 @@ public class TutorialSceneController : MonoBehaviour
         // RIGHT
         yield return SpeakAndWaitForPadWithGlow("Finally step on the  <sprite name=\"arrowright\"> pad", 3, 0.5f);
 
-        yield return SpeakAndPause("Yes! You're getting it", 0.7f);
+        yield return SpeakAndPause("Perfect! You’ve mastered the pads.", 1.0f);
 
-        yield return SpeakAndPause("Okay. Final thing, promise...", 1.0f);
-        yield return SpeakAndPause("They won’t wait forever.", 0.9f);
-        yield return SpeakAndPause("When a prompt reaches the target… you have to respond in time.", 1.2f);
+        yield return SpeakAndPause("Amazing! You are ready to help us.", 1.0f);
+        yield return SpeakAndPause("Next, prompts will move down the lane. Match the pose at the right moment!", 1.2f);
 
-        SetAlienVisual(grumpyAlienSprite, defaultElementSprite);
-        yield return SpeakAndPause("Miss too many, and… let’s not miss too many.", 1.0f);
 
-        RestoreDefaultAlienVisuals();
-
-        yield return SpeakAndPause("Ready?", 0.6f);
-        yield return SpeakAndPause("Let’s keep them alive.", 1.2f);
+        StartChoreographyTutorial();
+        SetObjective("Choreography tutorial coming next...");
 
         OnTutorialFinished?.Invoke();
 
@@ -312,7 +295,14 @@ public class TutorialSceneController : MonoBehaviour
         if (poseSpritePairs != null && poseSpritePairs.Count >= index)
         {
             PoseSpritePair pair = poseSpritePairs[index - 1];
-            SetAlienVisual(pair.alien, pair.element);
+
+            if (alienSpriteRenderer1 != null) alienSpriteRenderer1.sprite = pair.alien;
+            if (alienSpriteRenderer2 != null) alienSpriteRenderer2.sprite = pair.element;
+
+            if (holdFillImage != null)
+            {
+                holdFillImage.color = pair.barColor;
+            }
         }
 
         currentExpectedPoseId = null;
@@ -340,6 +330,12 @@ public class TutorialSceneController : MonoBehaviour
         _nextHoldDebugTime = Time.time;
         currentPoseMatched = false;
 
+        if (verbosePoseDebug)
+        {
+            Debug.Log($"[Tutorial] Step start expected={currentExpectedPoseId}, hold={currentRequiredHoldTime}");
+            Debug.Log($"[Tutorial] Waiting for pose match: {step.poseId}");
+        }
+
         SetObjective($"Hold the pose: {step.poseId}");
 
 
@@ -352,19 +348,16 @@ public class TutorialSceneController : MonoBehaviour
             holdFillImage.transform.parent.gameObject.SetActive(false);
         }
 
+        if (verbosePoseDebug)
+        {
+            Debug.Log($"[Tutorial] Wait finished for pose: {step.poseId}");
+        }
+
         currentExpectedPoseId = null;
         currentHoldTimer = 0f;
 
-        string[] praiseLines =
-        {
-            "They're responding to you.",
-            "That's... actually working",
-            "I knew this would work",
-            "You’re actually good at this… weird."
-        };
-
         SetObjective($"Great! {step.poseId} complete.");
-        yield return SpeakAndPause(praiseLines[index-1], 0.5f);
+        yield return SpeakAndPause("Nice!", 0.5f);
 
         OnPoseStepCompleted?.Invoke(step.poseId);
 
@@ -420,18 +413,11 @@ public class TutorialSceneController : MonoBehaviour
 
         if (alienSpriteRenderer2 != null)
             alienSpriteRenderer2.sprite = defaultElementSprite != null ? defaultElementSprite : _initialElementSprite;
-    }
-    private void SetAlienVisual(Sprite alienSprite, Sprite elementSprite)
-    {
-        if (alienSpriteRenderer1 != null && alienSprite != null)
-        {
-            alienSpriteRenderer1.sprite = alienSprite;
-        }
 
-        if (alienSpriteRenderer2 != null && elementSprite != null)
-        {
-            alienSpriteRenderer2.sprite = elementSprite;
-        }
+            if (holdFillImage != null)
+            {
+                holdFillImage.color = Color.white;
+            }
     }
 
     private void ActivatePoseDetection()
