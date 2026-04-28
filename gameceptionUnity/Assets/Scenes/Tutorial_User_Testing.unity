@@ -779,7 +779,6 @@ MonoBehaviour:
   holdFillImage: {fileID: 2054738910}
   minPoseConfidence: 0.75
   readyPadIndex: 0
-  requireOnlyThisPadSelected: 0
   poseSteps:
   - poseId: ice
     instructionText: Raise both arms above your head!
@@ -795,7 +794,7 @@ MonoBehaviour:
     holdDuration: 2
   countdownSeconds: 0
   allowKeyboardDebug: 1
-  verbosePoseDebug: 1
+  verbosePoseDebug: 0
   holdLossPerSecondOnMismatch: 0.5
   choreographyTutorialRoot: {fileID: 0}
   hideUntilLanePadStep:

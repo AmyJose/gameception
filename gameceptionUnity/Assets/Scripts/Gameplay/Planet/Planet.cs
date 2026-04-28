@@ -204,13 +204,13 @@ namespace Gameplay
             choreographyActive = true;
             RefreshAlienMood();
             RefreshDeteriorationVisuals();
-            Debug.Log($"[Planet] Planet {planetIndex} choreography activated");
+            //Debug.Log($"[Planet] Planet {planetIndex} choreography activated");
         }
         public void DeactivateChoreography()
         {
             choreographyActive = false;
             RefreshAlienMood();
-            Debug.Log($"[Planet] Planet {planetIndex} choreography deactivated");
+            //Debug.Log($"[Planet] Planet {planetIndex} choreography deactivated");
         }
 
         public void SetVitality(float amount)
@@ -267,12 +267,12 @@ namespace Gameplay
             RefreshAlienMood();
             RefreshDeteriorationVisuals();
 
-            Debug.Log(
+            /*Debug.Log(
                 $"[Planet] Planet {planetIndex} got {result.quality}/{result.timing}. " +
                 $"Vitality delta={vitalityDelta:+0.0;-0.0;0.0}, " +
                 $"Population delta={populationDelta:+0.0;-0.0;0.0}, " +
                 $"Vitality={vitality:F1}/{maxVitality}, Population={population:F1}"
-            );
+            );*/
         }
         private void SpawnJudgementFeedback(PromptJudge.JudgementResult result)
         {
@@ -473,7 +473,7 @@ namespace Gameplay
 
                 RefreshDeteriorationVisuals();
 
-                Debug.Log("[Planet] Growth complete");
+                //Debug.Log("[Planet] Growth complete");
             }
         }
 

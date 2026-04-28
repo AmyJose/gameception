@@ -1,3 +1,4 @@
+using Audio;
 using Gameplay;
 using InputLayer;
 using System;
@@ -143,6 +144,7 @@ public class TutorialSceneController : MonoBehaviour
 
     private void Start()
     {
+        MusicManager.Instance.SetTutorialMode();
         _initialAlienSprite = alienSpriteRenderer1 != null ? alienSpriteRenderer1.sprite : null;
         _initialElementSprite = alienSpriteRenderer2 != null ? alienSpriteRenderer2.sprite : null;
 

@@ -1,3 +1,4 @@
+using Audio;
 using Gameplay;
 using TMPro;
 using UnityEngine;
@@ -18,6 +19,7 @@ public class MenuSceneController : MonoBehaviour
 
     private void Start()
     {
+        MusicManager.Instance.SetMenuMode();
         namePopup.SetActive(false);
     }
 
