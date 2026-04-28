@@ -50,7 +50,6 @@ public class TutorialSceneController : MonoBehaviour
 
     [Header("Ready Selection")]
     [SerializeField] private int readyPadIndex = 0;
-    [SerializeField] private bool requireOnlyThisPadSelected = false;
 
     [Header("Pose Tutorial")]
     [SerializeField] private List<PoseTutorialStep> poseSteps = new();
