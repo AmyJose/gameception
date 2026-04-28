@@ -139,7 +139,7 @@ MonoBehaviour:
   judgementFeedbackLifetime: 1
   fireIcon: {fileID: 21300000, guid: 86f2ef379c3a6654f9ecb0ebafed6f65, type: 3}
   waterIcon: {fileID: 21300000, guid: 98d673921f18df041a16a3b4953fd650, type: 3}
-  earthIcon: {fileID: 21300000, guid: 09bb7a07cb7c7e340b3041fd93c1a176, type: 3}
+  earthIcon: {fileID: 21300000, guid: 8253614b43f3cc745bb76677338c04cb, type: 3}
   iceIcon: {fileID: 21300000, guid: 2bcd956c1b5e3b94291d1c08fd5c0606, type: 3}
   fireColor: {r: 0.98039216, g: 0.6745098, b: 0.54901963, a: 1}
   waterColor: {r: 0.43137255, g: 0.99607843, b: 0.96862745, a: 1}

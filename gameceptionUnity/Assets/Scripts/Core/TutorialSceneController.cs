@@ -47,6 +47,7 @@ public class TutorialSceneController : MonoBehaviour
     [SerializeField] private TMP_Text countdownText;
     [SerializeField] private TMP_Text objectiveText;
     [SerializeField] private UnityEngine.UI.Image holdFillImage;
+    [SerializeField] private GameObject progressPanel;
     [SerializeField, Range(0f, 1f)] private float minPoseConfidence = 0.75f;
 
     [Header("Ready Selection")]
@@ -161,6 +162,7 @@ public class TutorialSceneController : MonoBehaviour
             holdFillImage.fillAmount = 1f;
             holdFillImage.transform.parent.gameObject.SetActive(false);
         }
+        if(progressPanel != null) progressPanel.gameObject.SetActive(false);
 
         laneGlowController?.ResetAllToNormal();
 
@@ -356,6 +358,7 @@ public class TutorialSceneController : MonoBehaviour
         currentRequiredHoldTime = step.holdDuration;
         currentHoldTimer = 0f;
 
+        if (progressPanel != null) progressPanel.gameObject.SetActive(true);
         //show progress bar
         if (holdFillImage != null)
         {
@@ -383,6 +386,7 @@ public class TutorialSceneController : MonoBehaviour
             holdFillImage.fillAmount = 1f;
             holdFillImage.transform.parent.gameObject.SetActive(false);
         }
+        if (progressPanel != null) progressPanel.gameObject.SetActive(false);
 
         if (verbosePoseDebug)
         {
