@@ -79,9 +79,26 @@ public class AlienSpeechBubble : MonoBehaviour
 
         float delay = 1f / Mathf.Max(1f, charactersPerSecond);
 
-        for (int i = 0; i < fullText.Length; i++)
+        int i = 0;
+
+        while (i < fullText.Length)
         {
-            messageText.text = fullText.Substring(0, i + 1);
+            if (fullText[i] == '<')
+            {
+                int closingIndex = fullText.IndexOf('>', i);
+
+                if (closingIndex != -1)
+                {
+                    // Reveal the whole rich-text tag instantly.
+                    i = closingIndex + 1;
+                    messageText.text = fullText.Substring(0, i);
+                    continue;
+                }
+            }
+
+            i++;
+            messageText.text = fullText.Substring(0, i);
+
             yield return new WaitForSeconds(delay);
         }
 
