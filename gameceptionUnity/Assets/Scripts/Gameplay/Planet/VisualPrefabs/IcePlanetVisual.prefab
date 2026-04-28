@@ -47,17 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2e19e27383461242a290a0871d33260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.IcePlanetVisual
-  alienOrbitRadiusWorld: 1.3
+  alienOrbitRadiusWorld: 1.15
   basePlanetRenderer: {fileID: 7334885470414300178}
   shineRenderer: {fileID: 5149614352468887723}
-  tintedRenderers: []
-  effectsToToggleWhenLowVitality: []
-  healthyColor: {r: 1, g: 1, b: 1, a: 1}
-  strugglingColor: {r: 0.78, g: 0.78, b: 0.82, a: 1}
-  dyingColor: {r: 0.5, g: 0.5, b: 0.55, a: 1}
-  tintShineWithVitality: 0
-  disableShineWhenVeryLow: 0
-  shineDisableThreshold: 0.15
 --- !u!1 &3386895578435667157
 GameObject:
   m_ObjectHideFlags: 0

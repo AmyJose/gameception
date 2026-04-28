@@ -1869,9 +1869,12 @@ MonoBehaviour:
   m_text: Enter Name
   m_isRightToLeft: 0
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   m_fontAsset: {fileID: 11400000, guid: 0abf9ea4add64514192507c273b9ab3f, type: 2}
   m_sharedMaterial: {fileID: -7689323027916225956, guid: 0abf9ea4add64514192507c273b9ab3f, type: 2}
 =======
+=======
+>>>>>>> Stashed changes
   m_fontAsset: {fileID: 11400000, guid: 39114c5971de5a04f95c1cfb38c27dcf, type: 2}
   m_sharedMaterial: {fileID: -1860596158230258832, guid: 39114c5971de5a04f95c1cfb38c27dcf, type: 2}
 >>>>>>> Stashed changes
