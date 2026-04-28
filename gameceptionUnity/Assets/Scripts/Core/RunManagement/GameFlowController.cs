@@ -25,6 +25,8 @@ namespace Gameplay
     }
     public class GameFlowController : MonoBehaviour
     {
+        private const string RunDurationPrefsKey = "run_duration_seconds";
+
         [Header("References")]
         [SerializeField] private PromptQueue promptQueue;
         [SerializeField] private ScoreManager scoreManager;
@@ -51,6 +53,7 @@ namespace Gameplay
 
         private void Awake()
         {
+            runDurationSeconds = Mathf.Max(1f, PlayerPrefs.GetFloat(RunDurationPrefsKey, runDurationSeconds));
             RemainingTime = runDurationSeconds;
             ChangeState(GameState.WaitingToStart);
         }
@@ -79,6 +82,16 @@ namespace Gameplay
                 yield return new WaitForSeconds(startDelaySeconds);
             }
             StartRun();
+        }
+
+        public void SetRunDurationSeconds(float durationSeconds)
+        {
+            runDurationSeconds = Mathf.Max(1f, durationSeconds);
+
+            if (!IsRunActive)
+            {
+                RemainingTime = runDurationSeconds;
+            }
         }
 
         public void StartRun()
