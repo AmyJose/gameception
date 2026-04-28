@@ -48,6 +48,7 @@ public class TutorialSceneController : MonoBehaviour
     [SerializeField] private TMP_Text objectiveText;
     [SerializeField] private UnityEngine.UI.Image holdFillImage;
     [SerializeField] private GameObject progressPanel;
+    [SerializeField] private GameObject queuePanel;
     [SerializeField, Range(0f, 1f)] private float minPoseConfidence = 0.75f;
 
     [Header("Ready Selection")]
@@ -162,7 +163,9 @@ public class TutorialSceneController : MonoBehaviour
             holdFillImage.fillAmount = 1f;
             holdFillImage.transform.parent.gameObject.SetActive(false);
         }
+        if (queuePanel != null) queuePanel.SetActive(false);
         if(progressPanel != null) progressPanel.gameObject.SetActive(false);
+
 
         laneGlowController?.ResetAllToNormal();
 
@@ -272,6 +275,8 @@ public class TutorialSceneController : MonoBehaviour
 
         yield return SpeakAndPause("Now onto the dancemat!", 0.8f);
         SetLanePadObjectsVisible(true);
+
+        if (queuePanel != null) queuePanel.SetActive(true);
         yield return SpeakAndPause("Our planets are spread across different lanes.", 0.9f);
         yield return SpeakAndPause("Your pose gives them energy and your steps decides where it goes!", 0.9f);
         SetAlienVisual(grumpyAlienSprite, defaultElementSprite);
