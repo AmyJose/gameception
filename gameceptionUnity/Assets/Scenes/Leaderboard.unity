@@ -577,8 +577,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Leaderboard
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 39114c5971de5a04f95c1cfb38c27dcf, type: 2}
-  m_sharedMaterial: {fileID: -1860596158230258832, guid: 39114c5971de5a04f95c1cfb38c27dcf, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
+  m_sharedMaterial: {fileID: -4066559052782185188, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1026,7 +1026,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2627451, g: 1, b: 0.57254905, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1110,8 +1110,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Main Menu
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 39114c5971de5a04f95c1cfb38c27dcf, type: 2}
-  m_sharedMaterial: {fileID: -1860596158230258832, guid: 39114c5971de5a04f95c1cfb38c27dcf, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
+  m_sharedMaterial: {fileID: -4066559052782185188, guid: 5ca12c9d3caef3e469ce9b6873590a09, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

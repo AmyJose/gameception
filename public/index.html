@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Groove Galaxy - Leaderboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', 'Segoe UI', 'Arial', monospace;
+            background: #0a0a1a;
+            min-height: 100vh;
+            padding: 2rem;
+            background-image: 
+                radial-gradient(white 1px, transparent 1px),
+                radial-gradient(white 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: 0 0, 25px 25px;
+            background-color: #0a0e1a;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(10, 20, 40, 0.95);
+            border-radius: 0.5rem;
+            border: 1px solid #2a4a6a;
+            box-shadow: 0 0 20px rgba(0, 100, 200, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0a1628 0%, #1a2a3a 100%);
+            color: #8abae0;
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 2px solid #2a5a8a;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 4px;
+            color: #c0e0ff;
+            text-shadow: 0 0 10px #2a6a9a;
+        }
+
+        .header p {
+            color: #6a8aa8;
+            font-size: 0.9rem;
+            font-family: monospace;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem 2rem;
+            background: #0a1222;
+            border-bottom: 1px solid #2a4a6a;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 0.5rem 1rem;
+            background: #0a1428;
+            border-radius: 0.25rem;
+            border-left: 3px solid #3a7aaa;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #6ac0ff;
+            font-family: monospace;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #6a8aaa;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 1.5rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        th {
+            background: #0a1628;
+            color: #8ac0e8;
+            padding: 1rem 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 2px solid #2a6a9a;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #1a2a3a;
+            color: #b0c8e0;
+        }
+
+        tr:hover {
+            background: rgba(50, 100, 150, 0.2);
+        }
+
+        .player-name {
+            font-weight: bold;
+            color: #7ac0ff;
+        }
+
+        .score {
+            font-weight: bold;
+            color: #6affb0;
+            font-size: 1.1rem;
+            font-family: monospace;
+        }
+
+        .accuracy-high {
+            color: #6affb0;
+        }
+
+        .accuracy-medium {
+            color: #ffcc66;
+        }
+
+        .accuracy-low {
+            color: #ff8866;
+        }
+
+        .footer {
+            background: #0a1222;
+            padding: 1rem;
+            text-align: center;
+            color: #5a7a9a;
+            font-size: 0.7rem;
+            border-top: 1px solid #2a4a6a;
+            font-family: monospace;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a1222;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2a5a8a;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
+            th, td {
+                padding: 0.5rem;
+                font-size: 0.7rem;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            .stat-number {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>GROOVE GALAXY</h1>
+            <p>LEADERBOARD | LIVE DATA STREAM</p>
+        </div>
+
+        <div class="stats-bar" id="stats-bar">
+            <div class="stat-card">
+                <div class="stat-number" id="total-players">0</div>
+                <div class="stat-label">Pilots</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="top-score">0</div>
+                <div class="stat-label">High Score</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avg-accuracy">0%</div>
+                <div class="stat-label">Avg Precision</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="total-runs">0</div>
+                <div class="stat-label">Missions</div>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>RANK</th>
+                        <th>CALLSIGN</th>
+                        <th>SCORE</th>
+                        <th>PRECISION</th>
+                        <th>STREAK</th>
+                        <th>HITS</th>
+                        <th>MISSES</th>
+                        <th>WAVES</th>
+                        <th>DURATION</th>
+                        <th>STAMP</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <tr><td colspan="10">[ ACQUIRING DATA STREAM ... ]</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="footer">
+            [ AUTO-UPDATING | SORTED BY SCORE | LIVE FROM DEEP SPACE ]
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDC7JYMnG7qZJaeHd7y3IgXbcYyiTmfdfI",
+            authDomain: "groove-galaxy-6d5c7.firebaseapp.com",
+            databaseURL: "https://groove-galaxy-6d5c7-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "groove-galaxy-6d5c7",
+            storageBucket: "groove-galaxy-6d5c7.firebasestorage.app",
+            messagingSenderId: "603416128744",
+            appId: "1:603416128744:web:3049644d65630d7ff72d5d"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const scoresRef = database.ref('/leaderboard/scores');
+
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return 'N/A';
+            const date = timestamp.toString().length === 10 
+                ? new Date(timestamp * 1000) 
+                : new Date(timestamp);
+            return date.toLocaleString();
+        }
+
+        function getAccuracyClass(accuracy) {
+            if (accuracy >= 0.8) return 'accuracy-high';
+            if (accuracy >= 0.5) return 'accuracy-medium';
+            return 'accuracy-low';
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        scoresRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            const tableBody = document.getElementById('table-body');
+            
+            if (!data) {
+                tableBody.innerHTML = '<tr><td colspan="10">[ NO SIGNAL | AWAITING DATA ]</td></tr>';
+                document.getElementById('total-players').innerText = '0';
+                document.getElementById('top-score').innerText = '0';
+                document.getElementById('avg-accuracy').innerText = '0%';
+                document.getElementById('total-runs').innerText = '0';
+                return;
+            }
+
+            const scores = Object.entries(data).map(([id, entry]) => ({
+                id,
+                name: entry.name || 'Unknown',
+                score: entry.score || 0,
+                accuracy: entry.accuracy || 0,
+                longestStreak: entry.longestStreak || 0,
+                promptsHit: entry.promptsHit || 0,
+                promptsMissed: entry.promptsMissed || 0,
+                sequencesCompleted: entry.sequencesCompleted || 0,
+                runDuration: entry.runDuration || 0,
+                timestamp: entry.timestamp || null
+            })).sort((a, b) => b.score - a.score);
+
+            const uniquePlayers = new Set(scores.map(s => s.name));
+            const topScore = scores.length > 0 ? Math.max(...scores.map(s => s.score)) : 0;
+            const avgAccuracy = scores.length > 0 
+                ? (scores.reduce((sum, s) => sum + s.accuracy, 0) / scores.length * 100).toFixed(1) 
+                : 0;
+            const totalRuns = scores.length;
+
+            document.getElementById('total-players').innerText = uniquePlayers.size;
+            document.getElementById('top-score').innerText = topScore;
+            document.getElementById('avg-accuracy').innerText = avgAccuracy + '%';
+            document.getElementById('total-runs').innerText = totalRuns;
+
+            if (scores.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="10">[ NO SIGNAL | AWAITING DATA ]</td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = scores.map((entry, index) => {
+                const accuracyPercent = (entry.accuracy * 100).toFixed(1);
+                const accuracyClass = getAccuracyClass(entry.accuracy);
+                const rank = index + 1;
+                const rankDisplay = rank === 1 ? '[STAR]' : rank === 2 ? '[NOVA]' : rank === 3 ? '[PULSAR]' : ' ' + rank;
+                
+                return `
+                    <tr>
+                        <td>${rankDisplay}</td>
+                        <td class="player-name">${escapeHtml(entry.name)}</td>
+                        <td class="score">${entry.score.toLocaleString()}</td>
+                        <td class="${accuracyClass}">${accuracyPercent}%</td>
+                        <td>${entry.longestStreak}</td>
+                        <td>${entry.promptsHit}</td>
+                        <td>${entry.promptsMissed}</td>
+                        <td>${entry.sequencesCompleted || 0}</td>
+                        <td>${entry.runDuration || 0}s</td>
+                        <td>${formatTimestamp(entry.timestamp)}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            console.log(`Leaderboard synced: ${scores.length} entries`);
+        }, (error) => {
+            console.error("Database error:", error);
+            document.getElementById('table-body').innerHTML = `
+                <tr><td colspan="10" style="color: #ff8866;">
+                    [ ERROR: ${error.message} | CHECK CONNECTION ]
+                </td></tr>
+            `;
+        });
+    </script>
+</body>
+</html>

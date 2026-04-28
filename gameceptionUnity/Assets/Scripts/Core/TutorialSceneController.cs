@@ -225,23 +225,39 @@ public class TutorialSceneController : MonoBehaviour
 
     private IEnumerator RunTutorialRoutine()
     {
-        string intro = "Hey " + PlayerSession.PlayerName + "! We need your help!";
-        yield return SpeakAndPause(intro, 1.0f);
-        yield return SpeakAndPause("First, we need to calibrate our camera system.", 1.0f);
+        string intro = "Zorp, you! " + PlayerSession.PlayerName + ", yes you!";
+        yield return SpeakAndPause(intro, 0.8f);
+        yield return SpeakAndPause("Oh finally, I found someone.", 1.0f);
+        yield return SpeakAndPause("Our homes have been destroyed. My friends and I need your help!", 1.0f);
+
+        SetAlienVisual(grumpyAlienSprite, defaultElementSprite);
+        yield return SpeakAndPause("Long story. Evil space rock. Not my fault.", 0.9f);
+
+        RestoreDefaultAlienVisuals();
+
+        yield return SpeakAndPause("Everyone here needs something different to survive.", 1.2f);
+        yield return SpeakAndPause("The problem is… the universe doesn’t understand us.", 1.0f);
+        yield return SpeakAndPause("But it will understand you.", 0.9f);
+
+        yield return SpeakAndPause("Everything responds to movement. Different shapes, different energy.", 1.0f);
+        yield return SpeakAndPause("When you hold the right pose at the right time, the atoms align.", 1.2f);
+
+        yield return SpeakAndPause("First, we need to see you properly.", 0.9f);
 
         ActivatePoseDetection();
 
         SetObjective("Stand so your whole body is visible in the camera.");
         yield return SpeakAndPause("Position yourself in the middle of the camera so we can see your entire body.", 1.2f);
 
-        // yield return SpeakAndPause($"Jump on pad {readyPadIndex + 1} once you're ready.", 0.5f);
-        yield return SpeakAndPause($"Jump on pad <sprite name=\"arrowup\"> once you're ready.", 0.5f);
-        SetObjective($"Select pad <sprite name=\"arrowup\"> when you're ready.");
+        yield return SpeakAndPause("Please stand in the middle so I can translate your movement.", 1.0f);
+
+        yield return SpeakAndPause("Step on the <sprite name=\"arrowup\"> pad when you're ready.", 0.7f);
+        SetObjective("Step on <sprite name=\"arrowup\"> when you're ready.");
 
         yield return WaitForSpecificPadPress(readyPadIndex);
         //selectionState?.Clear();
 
-        yield return SpeakAndPause("Perfect. Let's try a few poses.", 0.8f);
+        yield return SpeakAndPause("I’ll show you what we need, copy our poses and hold it!", 0.8f);
 
         for (int i = 0; i < poseSteps.Count; i++)
         {
@@ -250,35 +266,53 @@ public class TutorialSceneController : MonoBehaviour
 
         RestoreDefaultAlienVisuals();
 
-        yield return SpeakAndPause("Let's learn the lanes and pads one by one.", 0.8f);
+        yield return SpeakAndPause("Now onto the dancemat!", 0.8f);
         SetLanePadObjectsVisible(true);
+        yield return SpeakAndPause("Our planets are spread across different lanes.", 0.9f);
+        yield return SpeakAndPause("Your pose gives them energy and your steps decides where it goes!", 0.9f);
+        SetAlienVisual(grumpyAlienSprite, defaultElementSprite);
+        yield return SpeakAndPause("Don't mix them up.", 0.8f);
 
-        // UP
-        yield return SpeakAndWaitForPadWithGlow("Step on the  <sprite name=\"arrowup\"> pad", 0, 0.5f);
+        RestoreDefaultAlienVisuals();
 
-        yield return SpeakAndPause("Good!", 0.5f);
+        // yield return SpeakAndWaitForPadWithGlow("Step on the <sprite name=\"arrowup\"> <sprite name=\"arrowleft\"> <sprite name=\"arrowdown\"> <sprite name=\"arrowright\"> pads!", 0, 0.5f);
 
-        // LEFT
-        yield return SpeakAndWaitForPadWithGlow("Now step on the  <sprite name=\"arrowleft\"> pad", 1, 0.5f);
 
-        yield return SpeakAndPause("Nice!", 0.5f);
 
-        // DOWN
-        yield return SpeakAndWaitForPadWithGlow("Now step on the  <sprite name=\"arrowdown\"> pad", 2, 0.5f);
+        // // UP
+        // yield return SpeakAndWaitForPadWithGlow("Step on the  <sprite name=\"arrowup\"> pad", 0, 0.5f);
 
-        yield return SpeakAndPause("Great!", 0.5f);
+        // yield return SpeakAndPause("Good!", 0.5f);
 
-        // RIGHT
-        yield return SpeakAndWaitForPadWithGlow("Finally step on the  <sprite name=\"arrowright\"> pad", 3, 0.5f);
+        // // LEFT
+        // yield return SpeakAndWaitForPadWithGlow("Now step on the  <sprite name=\"arrowleft\"> pad", 1, 0.5f);
+
+        // yield return SpeakAndPause("Nice!", 0.5f);
+
+        // // DOWN
+        // yield return SpeakAndWaitForPadWithGlow("Now step on the  <sprite name=\"arrowdown\"> pad", 2, 0.5f);
+
+        // yield return SpeakAndPause("Great!", 0.5f);
+
+        // // RIGHT
+        // yield return SpeakAndWaitForPadWithGlow("Finally step on the  <sprite name=\"arrowright\"> pad", 3, 0.5f);
+
+        List<int> allPads = new List<int> { 0, 1, 2, 3 };
+        yield return WaitForAllPadsWithGlow("Try stepping on all the pads!", allPads, 0.5f);
 
         yield return SpeakAndPause("Perfect! You’ve mastered the pads.", 1.0f);
 
-        yield return SpeakAndPause("Amazing! You are ready to help us.", 1.0f);
-        yield return SpeakAndPause("Next, prompts will move down the lane. Match the pose at the right moment!", 1.2f);
+        yield return SpeakAndPause("Okay. One last thing, they won’t wait forever.", 1.0f);
+        yield return SpeakAndPause("When a prompt reaches the target, you have to respond in time.", 1.2f);
 
+        yield return SpeakAndPause("Miss too many, and…", 1.0f);
+        SetAlienVisual(grumpyAlienSprite, defaultElementSprite);
+        yield return SpeakAndPause("You don't wanna know.", 1.0f);
 
-        StartChoreographyTutorial();
-        SetObjective("Choreography tutorial coming next...");
+        RestoreDefaultAlienVisuals();
+
+        yield return SpeakAndPause("Ready?", 0.6f);
+        yield return SpeakAndPause("Let’s groove!", 1.2f);
 
         OnTutorialFinished?.Invoke();
 
@@ -355,6 +389,14 @@ public class TutorialSceneController : MonoBehaviour
 
         currentExpectedPoseId = null;
         currentHoldTimer = 0f;
+
+        string[] praiseLines =
+        {
+            "They're responding to you!",
+            "It's really working!",
+            "I knew this would work.",
+            "You’re actually good at this!"
+        };
 
         SetObjective($"Great! {step.poseId} complete.");
         yield return SpeakAndPause("Nice!", 0.5f);
@@ -469,6 +511,32 @@ public class TutorialSceneController : MonoBehaviour
     {
         yield return new WaitUntil(() => IsSinglePadSelected(padIndex));
         selectionState?.Clear();
+    }
+
+    private IEnumerator WaitForAllPadsWithGlow(string message, List<int> padIndices, float extraWait)
+    {
+    yield return SpeakAndPause(message, extraWait);
+
+    laneGlowController?.ResetAllToNormal();
+
+    HashSet<int> unpressedPads = new HashSet<int>(padIndices);
+
+    Action<int> onPadPressedHandler = null;
+    onPadPressedHandler = (idx) =>
+    {
+        if (unpressedPads.Contains(idx))
+        {
+            laneGlowController?.ActivateGlowForPad(idx);
+            unpressedPads.Remove(idx);
+        }
+    };
+
+    danceMatInputProvider.OnPadPressed += onPadPressedHandler;
+
+    yield return new WaitUntil(() => unpressedPads.Count == 0);
+    
+    danceMatInputProvider.OnPadPressed -= onPadPressedHandler;
+    
     }
 
     /*private bool IsReadyPadSelected()
