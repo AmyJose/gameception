@@ -38,6 +38,7 @@ public class TutorialSceneController : MonoBehaviour
     [SerializeField] private List<PoseSpritePair> poseSpritePairs;
     [SerializeField] private Sprite defaultAlienSprite;
     [SerializeField] private Sprite defaultElementSprite;
+    [SerializeField] private Sprite grumpyAlienSprite;
 
     [Header("Pose Detection")]
     [SerializeField] private PoseDetectionRunner poseDetectionRunner;
@@ -424,6 +425,22 @@ public class TutorialSceneController : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         countdownText.gameObject.SetActive(false);
+    }
+    private void SetAlienVisual(Sprite alienSprite, Sprite elementSprite)
+    {
+        if (alienSpriteRenderer1 != null)
+        {
+            alienSpriteRenderer1.sprite = alienSprite != null
+                ? alienSprite
+                : defaultAlienSprite;
+        }
+
+        if (alienSpriteRenderer2 != null)
+        {
+            alienSpriteRenderer2.sprite = elementSprite != null
+                ? elementSprite
+                : defaultElementSprite;
+        }
     }
 
     private IEnumerator SpeakAndPause(string message, float extraWait)

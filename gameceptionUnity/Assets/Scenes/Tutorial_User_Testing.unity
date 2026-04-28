@@ -769,8 +769,9 @@ MonoBehaviour:
   - alien: {fileID: 21300000, guid: 8313b7b033689a447b9503953172d7aa, type: 3}
     element: {fileID: 21300000, guid: 98d673921f18df041a16a3b4953fd650, type: 3}
     barColor: {r: 0.14117648, g: 0.74463516, b: 0.95686275, a: 1}
-  defaultAlienSprite: {fileID: 0}
+  defaultAlienSprite: {fileID: 21300000, guid: b432f809c9e66ee4590f454bdb093003, type: 3}
   defaultElementSprite: {fileID: 0}
+  grumpyAlienSprite: {fileID: 21300000, guid: 87f54d08e5c8c5a4a838938099610e74, type: 3}
   poseDetectionRunner: {fileID: 184578138}
   poseState: {fileID: 1825261778}
   countdownText: {fileID: 0}
