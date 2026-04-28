@@ -14,7 +14,6 @@ namespace Gameplay
         [SerializeField] private TMP_Text timerText;
         [SerializeField] private TMP_Text scoreText;
         [SerializeField] private TMP_Text bonusText;
-        [SerializeField] private BonusUFOFlyBy bonusUFO;
 
         [Header("Formatting")]
         [SerializeField] private string timerPrefix = "Time: ";
@@ -111,11 +110,6 @@ namespace Gameplay
                 }
 
                 bonusRoutine = StartCoroutine(ShowBonusRoutine(label, amount));
-            }
-
-            if (bonusUFO != null)
-            {
-                bonusUFO.Play();
             }
         }
 

@@ -761,7 +761,7 @@ MonoBehaviour:
     element: {fileID: 21300000, guid: 2bcd956c1b5e3b94291d1c08fd5c0606, type: 3}
     barColor: {r: 0.8651331, g: 0.7075472, b: 1, a: 1}
   - alien: {fileID: 21300000, guid: c82bd52e6ea0efe4a9ccdc123c799642, type: 3}
-    element: {fileID: 21300000, guid: d0f35a32a02c5d04897a27e8c633ca74, type: 3}
+    element: {fileID: 21300000, guid: 8253614b43f3cc745bb76677338c04cb, type: 3}
     barColor: {r: 0.57842445, g: 0.990566, b: 0.41117832, a: 1}
   - alien: {fileID: 21300000, guid: 932793a757ad0774bb3b275486046b6c, type: 3}
     element: {fileID: 21300000, guid: 86f2ef379c3a6654f9ecb0ebafed6f65, type: 3}
@@ -777,9 +777,9 @@ MonoBehaviour:
   countdownText: {fileID: 0}
   objectiveText: {fileID: 1376567004}
   holdFillImage: {fileID: 2054738910}
+  progressPanel: {fileID: 1769159550}
   minPoseConfidence: 0.75
   readyPadIndex: 0
-  requireOnlyThisPadSelected: 0
   poseSteps:
   - poseId: ice
     instructionText: Raise both arms above your head!
@@ -788,14 +788,14 @@ MonoBehaviour:
     instructionText: Stretch your arms out to the sides!
     holdDuration: 2
   - poseId: fire
-    instructionText: bend arms towards your waist
+    instructionText: Put your hands on your hips!
     holdDuration: 2
   - poseId: water
     instructionText: Make a water drop above your head!
     holdDuration: 2
   countdownSeconds: 0
   allowKeyboardDebug: 1
-  verbosePoseDebug: 1
+  verbosePoseDebug: 0
   holdLossPerSecondOnMismatch: 0.5
   choreographyTutorialRoot: {fileID: 0}
   hideUntilLanePadStep:
@@ -3685,7 +3685,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2627451, g: 1, b: 0.57254905, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

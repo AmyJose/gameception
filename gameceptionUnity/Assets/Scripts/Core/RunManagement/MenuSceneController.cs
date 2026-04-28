@@ -1,3 +1,4 @@
+using Audio;
 using System.Globalization;
 using Gameplay;
 using TMPro;
@@ -48,6 +49,7 @@ public class MenuSceneController : MonoBehaviour
 
     private void Start()
     {
+        MusicManager.Instance.SetMenuMode();
         skipTutorial = PlayerPrefs.GetInt(SkipTutorialPrefsKey, skipTutorial ? 1 : 0) == 1;
         namePopup.SetActive(false);
         OptionsMenu.SetActive(false);
