@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "603416128744",
+    "firebase_url": "https://groove-galaxy-6d5c7-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "groove-galaxy-6d5c7",
+    "storage_bucket": "groove-galaxy-6d5c7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603416128744:android:5cb7c3b63195cf39f72d5d",
+        "android_client_info": {
+          "package_name": "com.amyjose.gameception"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfmggRjr7F8qrpQyHbnRkcVUzAz2LEQTI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
