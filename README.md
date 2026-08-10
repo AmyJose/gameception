@@ -2,6 +2,9 @@
 
 # 🕺 Groove Galaxy
 
+<img width="2014" height="1102" alt="fire pose skeleton" src="https://github.com/user-attachments/assets/a2e9c45c-c646-423a-a037-61003219d566" />
+
+
 **"Dance Dance Revolution" meets "Just Dance" — in space!**
 
 Groove Galaxy is a party rhythm game built around a shared performance: one player takes the stage as an interstellar performer, while everyone else watches and cheers as a spectator audience. Players help displaced alien species — each tied to a unique elemental identity (Fire, Water, Earth, Air) — reclaim their home planets by hitting choreographed dance poses in time with the music, using a combination of full-body pose tracking and a custom-built dance mat.
