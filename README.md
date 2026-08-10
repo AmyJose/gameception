@@ -1,4 +1,3 @@
-<img width="932" height="532" alt="element prompts" src="https://github.com/user-attachments/assets/4b6e11f7-2009-418c-91c1-344de8fef231" />
 # gameception
 
 # 🕺 Groove Galaxy
@@ -32,8 +31,14 @@ Meanwhile, spectators experience the game passively through reactive alien anima
 
 <table>
   <tr>
-    <td><img width="1600" height="1200" alt="gameplayAmyGamesDay" src="https://github.com/user-attachments/assets/8c922899-0579-44d5-82b9-434a4ef7e8f5" /></td>
-    <td><img width="1600" height="1200" alt="viewingAreaGamesDay" src="https://github.com/user-attachments/assets/8daec1c8-ad68-4935-8a0d-961258bb5e8a" /></td>
+    <td align="center">
+      <img width="400" alt="gameplayAmyGamesDay" src="https://github.com/user-attachments/assets/8c922899-0579-44d5-82b9-434a4ef7e8f5" /><br/>
+      <sub>Performer on the dance mat</sub>
+    </td>
+    <td align="center">
+      <img width="400" alt="viewingAreaGamesDay" src="https://github.com/user-attachments/assets/8daec1c8-ad68-4935-8a0d-961258bb5e8a" /><br/>
+      <sub>Spectator viewing area</sub>
+    </td>
   </tr>
 </table>
 
