@@ -1,5 +1,3 @@
-# gameception
-
 # 🕺 Groove Galaxy
 
 <img width="2014" height="1102" alt="fire pose skeleton" src="https://github.com/user-attachments/assets/a2e9c45c-c646-423a-a037-61003219d566" />
