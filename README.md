@@ -12,21 +12,6 @@ Built by **Team Gameception** for COMS30043 (University of Bristol).
 
 ---
 
-## Table of Contents
-
-- [Gameplay](#gameplay)
-- [Key Features](#key-features)
-- [Tech Stack](#tech-stack)
-- [System Architecture](#system-architecture)
-  - [Pose Detection & Classification](#pose-detection--classification)
-  - [Custom Dance Mat](#custom-dance-mat)
-  - [Online Leaderboard](#online-leaderboard)
-- [Look & Feel](#look--feel)
-- [User Testing](#user-testing)
-- [Team](#team)
-
----
-
 ## Gameplay
 
 A single **performer** stands on the dance mat while choreography prompts scroll down planetary lanes toward a judgement zone. Each prompt combines:
