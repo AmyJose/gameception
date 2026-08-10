@@ -1,3 +1,4 @@
+<img width="932" height="532" alt="element prompts" src="https://github.com/user-attachments/assets/4b6e11f7-2009-418c-91c1-344de8fef231" />
 # gameception
 
 # 🕺 Groove Galaxy
@@ -91,6 +92,30 @@ A persistent leaderboard was built on **Firebase Realtime Database**. Initial cl
 ## Look & Feel
 
 Every sprite, animation, and sound effect is original, hand-drawn in MediBang Paint to a consistent cartoon space aesthetic. Each alien species has a distinct visual identity and reacts uniquely as its planet is restored, planets are animated with frame-by-frame stop motion, and a parallax starfield runs throughout. Music and sound design were produced by a three-person composer team, including adaptive, planet-specific tracks that respond to gameplay.
+
+<table>
+  <tr>
+    <td align="center">
+      <img width="400" alt="resultsMainPhoto" src="https://github.com/user-attachments/assets/d147e570-acf7-426a-ac06-019ed2191e0f" /><br/>
+      <sub>Results screen</sub>
+    </td>
+    <td align="center">
+      <img width="400" alt="planet assets" src="https://github.com/user-attachments/assets/1b88888a-501e-49f9-9f50-0f08bf3e9dd7" /><br/>
+      <sub>Planet assets</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img width="400" alt="alien assets" src="https://github.com/user-attachments/assets/fcbc3d85-368d-4bfd-ba0b-728f238456f1" /><br/>
+      <sub>Alien assets</sub>
+    </td>
+    <td align="center">
+      <img width="400" alt="element prompts" src="https://github.com/user-attachments/assets/6f087a2a-51e6-4875-a00a-8ecdd0a53878" /><br/>
+      <sub>Element prompts</sub>
+    </td>
+  </tr>
+</table>
+
 
 ## User Testing
 
