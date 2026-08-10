@@ -26,36 +26,10 @@ Difficulty scales dynamically across three stages (**Easy → Medium → Hard**)
 
 Meanwhile, spectators experience the game passively through reactive alien animations, layered adaptive music, and visual feedback — turning gameplay into a communal performance rather than a solo experience.
 
-GitHub markdown doesn't have a native side-by-side image layout, but the standard trick is to put them in an HTML table — GitHub renders HTML fine in READMEs:
-
-html
 <table>
   <tr>
     <td><img width="1600" height="1200" alt="gameplayAmyGamesDay" src="https://github.com/user-attachments/assets/8c922899-0579-44d5-82b9-434a4ef7e8f5" /></td>
     <td><img width="1600" height="1200" alt="viewingAreaGamesDay" src="https://github.com/user-attachments/assets/8daec1c8-ad68-4935-8a0d-961258bb5e8a" /></td>
-  </tr>
-</table>
-A couple of notes:
-
-Since both images are 1600×1200 (full size), they'll render huge side by side and probably overflow. I'd drop the width/height attributes (or shrink them, e.g. width="400") so they actually fit next to each other:
-html
-<table>
-  <tr>
-    <td><img width="400" alt="gameplayAmyGamesDay" src="https://github.com/user-attachments/assets/8c922899-0579-44d5-82b9-434a4ef7e8f5" /></td>
-    <td><img width="400" alt="viewingAreaGamesDay" src="https://github.com/user-attachments/assets/8daec1c8-ad68-4935-8a0d-961258bb5e8a" /></td>
-  </tr>
-</table>
-html
-<table>
-  <tr>
-    <td align="center">
-      <img width="400" alt="gameplayAmyGamesDay" src="https://github.com/user-attachments/assets/8c922899-0579-44d5-82b9-434a4ef7e8f5" /><br/>
-      <sub>Performer on the dance mat</sub>
-    </td>
-    <td align="center">
-      <img width="400" alt="viewingAreaGamesDay" src="https://github.com/user-attachments/assets/8daec1c8-ad68-4935-8a0d-961258bb5e8a" /><br/>
-      <sub>Spectator viewing area</sub>
-    </td>
   </tr>
 </table>
 
