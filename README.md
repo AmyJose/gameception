@@ -26,6 +26,12 @@ Difficulty scales dynamically across three stages (**Easy → Medium → Hard**)
 
 Meanwhile, spectators experience the game passively through reactive alien animations, layered adaptive music, and visual feedback — turning gameplay into a communal performance rather than a solo experience.
 
+<img width="1600" height="1200" alt="gameplayAmyGamesDay" src="https://github.com/user-attachments/assets/8c922899-0579-44d5-82b9-434a4ef7e8f5" />
+
+<img width="1600" height="1200" alt="viewingAreaGamesDay" src="https://github.com/user-attachments/assets/8daec1c8-ad68-4935-8a0d-961258bb5e8a" />
+
+
+
 ## Key Features
 
 - 🩰 **Custom-built dance mat** — designed, wired, and iterated through 7 hardware revisions (Velostat pressure sensing on a Teensy 3.6 microcontroller)
