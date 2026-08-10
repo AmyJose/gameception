@@ -8,7 +8,7 @@ Groove Galaxy is a party rhythm game built around a shared performance: one play
 
 Built by **Team Gameception** for COMS30043 (University of Bristol).
 
-> 📹 [Watch the technical demo video](#) — *(see report for link)*
+> 📹 [Watch the technical demo video](#) — *(https://www.youtube.com/watch?v=R8g3ffu7vaI)*
 
 ---
 
